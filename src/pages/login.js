@@ -1,16 +1,21 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import React, { useState } from "react";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  Link,
+  InputAdornment,
+} from "@mui/material/";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 function Copyright(props) {
@@ -22,8 +27,8 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href=".">
+        Sook Blule Market
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -31,14 +36,32 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
 const defaultTheme = createTheme();
 
 export default function Login() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const username = data.get("username");
+    const password = data.get("password");
+    navigate("/home"); // 홈 이동 테스트용
+    try {
+      const response = await axios.post("/auth/login", { username, password });
+      if (response.dats.success) {
+        navigate("/home");
+      } else {
+        if (response.data.message === "User not found")
+          setError("아이디가 존재하지 않습니다. 회원가입을 해주세요.");
+        else if (response.data.message === "Invalid password")
+          setError("비밀번호가 틀렸습니다.");
+        else setError("로그인 실패");
+      }
+    } catch (error) {
+      setError(error, "서버 오류. 로그인 불가");
+    }
     console.log({
       email: data.get("email"),
       password: data.get("password"),
@@ -61,7 +84,7 @@ export default function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            로그인
           </Typography>
           <Box
             component="form"
@@ -74,24 +97,31 @@ export default function Login() {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="아이디"
               name="email"
               autoComplete="email"
               autoFocus
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    @sookmyung.ac.kr
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               margin="normal"
               required
               fullWidth
               name="password"
-              label="Password"
+              label="비밀번호"
               type="password"
               id="password"
               autoComplete="current-password"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label="내 정보 기억하기"
             />
             <Button
               type="submit"
@@ -99,17 +129,17 @@ export default function Login() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              로그인하기
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
+                <Link href="/forgetpwd" variant="body2">
+                  비밀번호 찾기
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link href="/register" variant="body2">
+                  {"회원가입"}
                 </Link>
               </Grid>
             </Grid>

@@ -2,12 +2,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
 import "../css/LoginScreen.css";
 
-const First = () => {
+const Forgetpwd = () => {
   const navigate = useNavigate(); // navigate 함수 초기화
 
   // 회원가입 페이지로 이동하는 함수
-  const handleSignupClick = () => {
-    navigate("/register");
+  const handleHomeClick = () => {
+    navigate("/home");
   };
 
   // 로그인 페이지로 이동하는 함수
@@ -26,19 +26,16 @@ const First = () => {
           <p>물결처럼 흐르는 파란 장터</p>
         </div>
         <div className="form-container">
-          <button className="signup-button" onClick={handleSignupClick}>
-            회원가입
+          <button className="signup-button" onClick={handleHomeClick}>
+            메인페이지로 돌아가기
           </button>
           <button className="login-button" onClick={handleLoginClick}>
             로그인
           </button>
-          <a href="/findpwd" className="forgot-password-link">
-            비밀번호를 잊으셨습니까?
-          </a>
         </div>
       </main>
     </div>
   );
 };
 
-export default First;
+export default Forgetpwd;

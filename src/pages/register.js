@@ -32,22 +32,61 @@ const Boxs = styled(Box)`
 
 const Register = () => {
   const theme = createTheme();
-  const [checked, setChecked] = useState(false);
+  const [email, setEmail] = useState("");
+  const [nickname, setNickname] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordState, setPasswordState] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [nameError, setNameError] = useState("");
+  const [nicknameError, setNicknameError] = useState("");
   const [registerError, setRegisterError] = useState("");
+  const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
 
+  /* 회원 동의 <삭제>
   const handleAgree = (event) => {
     setChecked(event.target.checked);
   };
+  */
+
+  const emailCheck = async (email) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/auth/email/check?email=${email}`
+      );
+      if (response.data.message === "success") {
+        setEmailError("");
+        return true;
+      } else if (response.data.message === "already_exist_email") {
+        setEmailError("중복된 이메일입니다. 다른 이메일을 사용해주세요.");
+        return false;
+      }
+    } catch (error) {
+      setEmailError("이메일 중복 검사 중 오류 발생");
+      return false;
+    }
+  };
+
+  const nicknameCheck = async (nickname) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/auth/nick/check?nickname=${nickname}`
+      );
+      if (response.data.message === "success") {
+        setNicknameError("");
+        return true;
+      } else if (response.data.message === "already_exist_nick") {
+        setNicknameError("중복된 이메일입니다. 다른 이메일을 사용해주세요.");
+        return false;
+      }
+    } catch (error) {
+      setNicknameError("닉네임 검사 중 오류 발생");
+      return false;
+    }
+  };
 
   const onhandlePost = async (data) => {
-    const { email, name, password } = data;
-    const postData = { email, name, password };
-    console.log("회원 정보 전달 완료");
+    const { email, nickname, password } = data;
+    const postData = { email, nickname, password };
 
     await axios
       .post("http://localhost:5000/auth/register", postData)
@@ -61,20 +100,23 @@ const Register = () => {
       });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("온클릭 이벤트 실행");
     const data = new FormData(e.currentTarget);
     const emailInput = data.get("email").trim(); //사용자 입력 공백 제거
     const fullEmail = `${emailInput}@sookmyung.ac.kr`; // 숙명 이메일 주소
+    const isNicknameAvailable = await nicknameCheck(data.get("nickname"));
+    const isEmailAvailable = await emailCheck(emailInput);
+
+    if (!isNicknameAvailable || !isEmailAvailable) return;
 
     const joinData = {
-      email: fullEmail,
-      name: data.get("name"),
+      email: emailInput,
+      nickname: data.get("nickname"),
       password: data.get("password"),
       rePassword: data.get("rePassword"),
     };
-    const { email, password, rePassword, name } = joinData;
+    const { email, password, rePassword, nickname } = joinData;
 
     const emailRegex = /^[\w-.]+$/; // 도메인은 @sookmyung.ac.kr로 고정
     if (!emailRegex.test(emailInput))
@@ -95,35 +137,29 @@ const Register = () => {
       setPasswordError("비밀번호가 일치하지 않습니다.");
     else setPasswordError("");
 
-    // 이름 유효성 검사
-    const nameRegex = /^[가-힣a-zA-Z]+$/;
-    if (!nameRegex.test(name) || name.length < 1)
-      setNameError("올바른 이름을 입력해주세요.");
-    else setNameError("");
+    // 닉네임 유효성 검사
+    const nicknameRegex = /^[가-힣a-zA-Z]+$/;
+    if (!nicknameRegex.test(nickname) || nickname.length < 1)
+      setNicknameError("올바른 닉네임을 입력해주세요.");
+    else setNicknameError("");
 
-    // 회원가입 동의 체크
+    /* 회원가입 동의 체크 <삭제됨>
     if (!checked) alert("회원가입 약관에 동의해주세요.");
+    */
 
-    console.log("Email valid:", emailRegex.test(emailInput));
-    console.log("Password valid:", passwordRegex.test(password));
-    console.log("Passwords match:", password === rePassword);
-    console.log("Name valid:", nameRegex.test(name));
-    console.log("Terms agreed:", checked);
     // 다 적었는지 확인
     if (
       emailRegex.test(emailInput) &&
       passwordRegex.test(password) &&
       password === rePassword &&
-      nameRegex.test(name) &&
-      checked
+      nicknameRegex.test(nickname)
     ) {
       onhandlePost(joinData);
-      console.log("홈 페이지로 이동합니다.");
+      console.log("로그인 페이지로 이동합니다.");
       console.log(joinData);
     } else {
       console.log("One or more conditions failed.");
     }
-    console.log("온클릭 이벤트 실행!!");
   };
 
   return (
@@ -154,8 +190,8 @@ const Register = () => {
             }}
           >
             <FormControl component="fieldset" variant="standard">
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={8}>
                   <TextField
                     required
                     autoFocus
@@ -163,16 +199,27 @@ const Register = () => {
                     type="email"
                     id="email"
                     name="email"
-                    label="이메일 주소"
+                    label="숙명이메일 주소"
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          @sookmyung.ac.kr
+                          @sm.ac.kr
                         </InputAdornment>
                       ),
                     }}
+                    onChange={(e) => setEmail(e.target.value)}
                     error={emailError !== "" || false}
                   />
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    onClick={() => emailCheck(email)}
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                  >
+                    중복확인
+                  </Button>
                 </Grid>
                 <FormHelperTexts>{emailError}</FormHelperTexts>
                 <Grid item xs={12}>
@@ -199,25 +246,28 @@ const Register = () => {
                   />
                 </Grid>
                 <FormHelperTexts>{passwordError}</FormHelperTexts>
-                <Grid item xs={12}>
+                <Grid item xs={8}>
                   <TextField
                     required
                     fullWidth
-                    id="name"
-                    name="name"
-                    label="이름"
-                    error={nameError !== "" || false}
+                    id="nickname"
+                    name="nickname"
+                    label="닉네임"
+                    error={nicknameError !== "" || false}
+                    onChange={(e) => setNickname(e.target.value)}
                   />
                 </Grid>
-                <FormHelperTexts>{nameError}</FormHelperTexts>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox onChange={handleAgree} color="primary" />
-                    }
-                    label="회원가입 약관에 동의합니다."
-                  />
+                <Grid item xs={4}>
+                  <Button
+                    onClick={() => nicknameCheck(nickname)}
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                  >
+                    중복확인
+                  </Button>
                 </Grid>
+                <FormHelperTexts>{nicknameError}</FormHelperTexts>
               </Grid>
               <Button
                 type="submit"
