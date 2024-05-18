@@ -5,16 +5,20 @@ import "../css/LoginScreen.css";
 const First = () => {
   const navigate = useNavigate(); // navigate 함수 초기화
 
-  // 회원가입 페이지로 이동하는 함수
+  // 회원가입 페이지로 이동
   const handleSignupClick = () => {
     navigate("/register");
   };
 
-  // 로그인 페이지로 이동하는 함수
+  // 로그인 페이지로 이동
   const handleLoginClick = () => {
     navigate("/login");
   };
 
+  //로고 클릭시 홈페이지로 이동
+  const handleLogoClick = () => {
+    navigate("/home");
+  };
   return (
     <div className="login-screen">
       <header className="header">
@@ -22,7 +26,7 @@ const First = () => {
       </header>
       <main className="main-content">
         <div className="logo-container">
-          <img src="logo.png" alt="Logo" />
+          <img src="logo.png" alt="Logo" onClick={handleLogoClick} />
           <p>물결처럼 흐르는 파란 장터</p>
         </div>
         <div className="form-container">

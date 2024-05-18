@@ -76,8 +76,10 @@ export default function Login() {
           sx={{
             marginTop: 8,
             display: "flex",
+            minHeight: "85vh",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -127,6 +129,7 @@ export default function Login() {
               type="submit"
               fullWidth
               variant="contained"
+              size="large"
               sx={{ mt: 3, mb: 2 }}
             >
               로그인하기

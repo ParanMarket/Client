@@ -163,7 +163,7 @@ const Register = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} alignItems="center">
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -171,7 +171,9 @@ const Register = () => {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
+            minHeight: "85vh",
             alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }} />
