@@ -15,8 +15,10 @@ import {
   Container,
   Link,
   InputAdornment,
+  FormHelperText,
 } from "@mui/material/";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import styled from "styled-components";
 
 function Copyright(props) {
   return (
@@ -36,32 +38,47 @@ function Copyright(props) {
   );
 }
 
+const FormHelperTexts = styled(FormHelperText)`
+  width: 100%;
+  padding-left: 16px;
+  font-weight: 700 !important;
+  color: #d32f2f !important;
+`;
+
 const defaultTheme = createTheme();
 
-export default function Login() {
+function Login() {
   const navigate = useNavigate();
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [pwdError, setPwdError] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const username = data.get("username");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const email = data.get("email");
     const password = data.get("password");
-    navigate("/home"); // 홈 이동 테스트용
+    if (!email || !password) {
+      setLoginError("이메일과 비밀번호를 모두 입력해주세요.");
+      return;
+    }
     try {
-      const response = await axios.post("/auth/login", { username, password });
-      if (response.dats.success) {
+      const response = await axios.post("http://localhost:5000/auth/login", {
+        email: email,
+        password: password,
+      });
+      if (response.data.message === "incorrect_pw") {
+        setPwdError("비밀번호가 틀렸습니다.");
+      } else if (response.data.message === "undefined_email")
+        setLoginError("이메일이 존재하지 않습니다. 회원가입을 해주세요.");
+      else if (typeof response.data.message === "number") {
         navigate("/home");
-      } else {
-        if (response.data.message === "User not found")
-          setError("아이디가 존재하지 않습니다. 회원가입을 해주세요.");
-        else if (response.data.message === "Invalid password")
-          setError("비밀번호가 틀렸습니다.");
-        else setError("로그인 실패");
       }
     } catch (error) {
-      setError(error, "서버 오류. 로그인 불가");
+      setLoginError("서버 오류. 로그인 불가");
     }
+    //확인용
     console.log({
       email: data.get("email"),
       password: data.get("password"),
@@ -110,7 +127,10 @@ export default function Login() {
                   </InputAdornment>
                 ),
               }}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
+            <FormHelperTexts>{loginError}</FormHelperTexts>
             <TextField
               margin="normal"
               required
@@ -120,7 +140,10 @@ export default function Login() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
+            <FormHelperTexts>{pwdError}</FormHelperTexts>
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="내 정보 기억하기"
@@ -153,3 +176,5 @@ export default function Login() {
     </ThemeProvider>
   );
 }
+
+export default Login;
