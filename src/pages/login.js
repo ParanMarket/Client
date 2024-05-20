@@ -59,10 +59,12 @@ function Login() {
     const data = new FormData(e.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
+
     if (!email || !password) {
       setLoginError("이메일과 비밀번호를 모두 입력해주세요.");
       return;
     }
+
     try {
       const response = await axios.post("http://localhost:5000/auth/login", {
         email: email,
@@ -73,6 +75,7 @@ function Login() {
       } else if (response.data.message === "undefined_email")
         setLoginError("이메일이 존재하지 않습니다. 회원가입을 해주세요.");
       else if (typeof response.data.message === "number") {
+        localStorage.setItem('userToken', response.data.token); // 세션 유지를 위한 토큰 저장(서버에서 추가 로직 필요)
         navigate("/home");
       }
     } catch (error) {

@@ -6,18 +6,25 @@ import Home from "./pages/home";
 import Register from "./pages/register";
 import Login from "./pages/login";
 import First from "./pages/first";
-import Findpwd from "./pages/findpwd";
+import FindPwd from "./pages/findPwd";
+import Chat from "./pages/chat";
+import Settings from "./pages/settings";
+import UploadItem from "./pages/uploadItem";
+import FooterNav from "./components/footer";
 
 function App() {
   return (
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/home" element={<Home />}></Route>
           <Route path="/register" element={<Register />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/first" element={<First />}></Route>
-          <Route path="/findpwd" element={<Findpwd />}></Route>
+          <Route path="/findpwd" element={<FindPwd />}></Route>
+          <Route path="/home" element={<Home />}></Route>
+          <Route path="/chat" element={<Chat />}></Route>
+          <Route path="/settings" element={<Settings />}></Route>
+          <Route path="/uploadItem" element={<UploadItem />}></Route>
         </Routes>
       </div>
     </BrowserRouter>

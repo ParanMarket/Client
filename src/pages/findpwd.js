@@ -1,6 +1,6 @@
 import React from "react";
 
-const Forgetpwd = () => {
+const FindPwd = () => {
   return (
     <div className="findpwd">
       <h1>비밀번호 찾기 페이지</h1>
@@ -8,4 +8,4 @@ const Forgetpwd = () => {
   );
 };
 
-export default Forgetpwd;
+export default FindPwd;
