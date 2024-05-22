@@ -7,7 +7,7 @@ const Search = () => {
   return (
     <div className="screen">
       <Header />
-      <h1>검색 페이지입니다.</h1>
+      <h1>구매 내역 페이지입니다.</h1>
       <Footer />
     </div>
   );

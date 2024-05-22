@@ -20,6 +20,9 @@ import {
   AccountCircle,
   Settings,
   ExitToApp,
+  Favorite,
+  Receipt,
+  LocalMall,
 } from "@mui/icons-material";
 import LogoutButton from "./logoutButton";
 import { indigo } from "@mui/material/colors";
@@ -91,15 +94,33 @@ const Header = () => {
               alt={user.nickname}
               sx={{ width: 64, height: 64, marginBottom: 2 }}
             />
-            <Typography variant="h6">{user.nickname}</Typography>
+            <Typography variant="h6">{user.nickname}님</Typography>
             <List>
-              <ListItem button onClick={() => navigate("/profile")}>
+              <ListItem onClick={() => navigate("/profile")}>
                 <ListItemIcon>
                   <AccountCircle />
                 </ListItemIcon>
                 <ListItemText primary="프로필" />
               </ListItem>
-              <ListItem button onClick={() => navigate("/settings")}>
+              <ListItem onClick={() => navigate("/favorite")}>
+                <ListItemIcon>
+                  <Favorite />
+                </ListItemIcon>
+                <ListItemText primary="찜 목록" />
+              </ListItem>
+              <ListItem onClick={() => navigate("/sell")}>
+                <ListItemIcon>
+                  <Receipt />
+                </ListItemIcon>
+                <ListItemText primary="판매 내역" />
+              </ListItem>
+              <ListItem onClick={() => navigate("/buy")}>
+                <ListItemIcon>
+                  <LocalMall />
+                </ListItemIcon>
+                <ListItemText primary="구매 내역" />
+              </ListItem>
+              <ListItem onClick={() => navigate("/settings")}>
                 <ListItemIcon>
                   <Settings />
                 </ListItemIcon>

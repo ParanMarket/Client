@@ -1,30 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Typography,
   Button,
-  Checkbox,
   TextField,
-  FormControlLabel,
   Box,
-  FormControl,
-  Radio,
-  RadioGroup,
   ImageList,
   ImageListItem,
   IconButton,
+  ButtonGroup,
 } from "@mui/material";
 import { PhotoCamera, Delete } from "@mui/icons-material";
 import Footer from "../components/footer";
 import Header from "../components/header";
-import { blue } from "@mui/material/colors";
+import { indigo } from "@mui/material/colors";
+import axios from "axios";
 
 const WritePost = () => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
+  const [type, setType] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [agreeTerms, setAgreeTerms] = useState(false);
   const [files, setFiles] = useState([]);
+  const [titleError, setTitleError] = useState("");
+  const [priceError, setPriceError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [typeError, setTypeError] = useState("");
+  const [postError, setPostError] = useState("");
+  const navigate = useNavigate();
 
   // 사진 업로드
   const handleFileChange = (e) => {
@@ -48,16 +51,93 @@ const WritePost = () => {
     URL.revokeObjectURL(fileToRemove.preview);
   };
 
+  // 유형 미선택시 에러
+  const handleTypeChange = (newType) => {
+    setType(newType);
+    setTypeError(newType ? "" : "유형을 선택해주세요.");
+  };
+
+  //서버로 입력 내용 보내기
+  const handlePost = async (formData) => {
+    try {
+      const response = await axios.post("http://localhost:5000/", formData);
+      console.log(response.data, "성공");
+      alert("등록하였습니다.");
+      console.log("홈 페이지로 이동합니다.");
+      navigate("/home");
+    } catch (error) {
+      console.error(error);
+      setPostError("등록에 실패하였습니다.");
+    }
+  };
+
+  const formRef = useRef(null); // 폼 요소에 대한 참조 생성
+
   // 폼 제출시 통신 연결
-  const handleSubmit = () => {
-    console.log("Submitted:", title, price, description, agreeTerms);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(formRef.current);
+    let isValid = true;
+
+    if (!title || title.length < 4) {
+      setTitleError("제목은 4자 이상 적어주세요.");
+      isValid = false;
+    } else {
+      setTitleError("");
+    }
+
+    if (!price) {
+      setPriceError("가격을 입력해주세요.");
+      isValid = false;
+    } else if (!/^[0-9]*$/.test(price)) {
+      setPriceError("숫자만 입력 가능합니다.");
+      isValid = false;
+    } else {
+      setPriceError("");
+    }
+
+    if (!type) {
+      setTypeError("유형을 선택해주세요.");
+      isValid = false;
+    } else {
+      setTypeError("");
+    }
+
+    if (!description || description.length < 10) {
+      setDescriptionError("내용은 10자 이상 적어주세요.");
+      isValid = false;
+    } else {
+      setDescriptionError("");
+    }
+
+    if (!isValid) {
+      alert("입력한 정보를 확인해주세요.");
+      return;
+    }
+
+    formData.append("title", title);
+    formData.append("price", price);
+    formData.append("type", type);
+    formData.append("description", description);
+    files.forEach((file, index) =>
+      formData.append(`files[${index}]`, file.file)
+    );
+
+    //잘 올라가는지 확인 (추후 삭제 예정)
+    // 파일은 보안상 경로가 나타지 않고 업로드 확인용으로 이름만 표시함
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value instanceof File ? value.name : value);
+    }
+
+    //서버 통신
+    handlePost(formData);
   };
 
   return (
-    <div>
+    <div style={{ paddingBottom: "10%" }}>
       <Header />
-      <div>
-        <Box sx={{ flexGrow: 1, p: 2 }}>
+      <form ref={formRef} onSubmit={handleSubmit}>
+        <Box sx={{ flexGrow: 1, p: 1 }}>
           <Box sx={{ p: 2 }}>
             <Typography>사진</Typography>
             <div
@@ -66,17 +146,20 @@ const WritePost = () => {
               <Button
                 variant="contained"
                 component="label"
-                startIcon={<PhotoCamera />}
+                color="secondary"
                 sx={{
                   minWidth: 100,
                   height: 100,
                   marginRight: 2,
-                  backgroundColor: blue["A100"],
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                   "&:hover": {
-                    backgroundColor: blue["A200"],
+                    backgroundColor: indigo[500],
                   },
                 }}
               >
+                <PhotoCamera />
                 <input
                   type="file"
                   hidden
@@ -132,42 +215,46 @@ const WritePost = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               margin="normal"
+              error={titleError !== ""}
+              helperText={titleError}
             />
-            <Typography>거래방식</Typography>
-            <FormControl component="fieldset" margin="normal">
-              <RadioGroup
-                row
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <FormControlLabel
-                  value="판매하기"
-                  control={<Radio />}
-                  label="판매하기"
-                />
-                <FormControlLabel
-                  value="구하기"
-                  control={<Radio />}
-                  label="구하기"
-                />
-              </RadioGroup>
-            </FormControl>
+            <Box>
+              <Typography sx={{ marginBottom: 1 }}>유형</Typography>
+              <ButtonGroup fullWidth>
+                <Button
+                  variant={type === "판매" ? "contained" : "outlined"}
+                  onClick={() => handleTypeChange("판매")}
+                >
+                  판매하기
+                </Button>
+                <Button
+                  variant={type === "구매" ? "contained" : "outlined"}
+                  onClick={() => handleTypeChange("구매")}
+                >
+                  구하기
+                </Button>
+              </ButtonGroup>
+              {typeError && (
+                <Typography
+                  color="error"
+                  variant="caption"
+                  sx={{ marginLeft: 1.5 }}
+                >
+                  {typeError}
+                </Typography>
+              )}
+            </Box>
             <TextField
               fullWidth
               label="가격"
+              type="text"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+              error={priceError !== ""}
+              helperText={priceError}
               margin="normal"
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={agreeTerms}
-                  onChange={(e) => setAgreeTerms(e.target.value)}
-                />
-              }
-              label="가격 제안 받기"
-            />
+
             <Typography>설명</Typography>
             <TextField
               fullWidth
@@ -177,18 +264,19 @@ const WritePost = () => {
               multiline
               rows={5}
               margin="normal"
+              error={descriptionError !== ""}
+              helperText={descriptionError}
             />
             <Button
               fullWidth
+              color="secondary"
               variant="contained"
-              color="primary"
               onClick={handleSubmit}
               size="large"
               sx={{
-                backgroundColor: blue["A100"],
                 mt: 2,
                 "&:hover": {
-                  backgroundColor: blue["A200"],
+                  backgroundColor: indigo[500],
                 },
               }}
             >
@@ -196,7 +284,7 @@ const WritePost = () => {
             </Button>
           </Box>
         </Box>
-      </div>
+      </form>
       <Footer />
     </div>
   );

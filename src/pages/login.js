@@ -17,7 +17,6 @@ import {
   InputAdornment,
   FormHelperText,
 } from "@mui/material/";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import styled from "styled-components";
 
 function Copyright(props) {
@@ -45,8 +44,6 @@ const FormHelperTexts = styled(FormHelperText)`
   color: #ff4747 !important;
 `;
 
-const defaultTheme = createTheme();
-
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -60,10 +57,14 @@ function Login() {
     const email = data.get("email");
     const password = data.get("password");
 
-    if (!email || !password) {
+    if (!email) {
       setLoginError("이메일과 비밀번호를 모두 입력해주세요.");
       return;
-    }
+    } else setLoginError("");
+    if (!password) {
+      setPwdError("이메일과 비밀번호를 모두 입력해주세요.");
+      return;
+    } else setPwdError("");
 
     try {
       const response = await axios.post("http://localhost:5000/auth/login", {
@@ -89,7 +90,7 @@ function Login() {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <div className="screen">
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -132,6 +133,7 @@ function Login() {
               }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              error={loginError !== "" || false}
             />
             <FormHelperTexts>{loginError}</FormHelperTexts>
             <TextField
@@ -145,6 +147,7 @@ function Login() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              error={pwdError !== "" || false}
             />
             <FormHelperTexts>{pwdError}</FormHelperTexts>
             <FormControlLabel
@@ -176,7 +179,7 @@ function Login() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
-    </ThemeProvider>
+    </div>
   );
 }
 
