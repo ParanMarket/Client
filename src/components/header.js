@@ -22,7 +22,7 @@ import {
   ExitToApp,
 } from "@mui/icons-material";
 import LogoutButton from "./logoutButton";
-import { blue } from "@mui/material/colors";
+import { indigo } from "@mui/material/colors";
 import axios from "axios";
 
 const Header = () => {
@@ -59,7 +59,7 @@ const Header = () => {
     <AppBar
       position="static"
       sx={{
-        backgroundColor: blue["A100"],
+        backgroundColor: indigo[500],
         boxShadow:
           "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)",
       }}

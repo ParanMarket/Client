@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { blue } from "@mui/material/colors";
+import { indigo } from "@mui/material/colors";
 
 const LogoutButton = () => {
   const navigate = useNavigate();
@@ -13,10 +13,10 @@ const LogoutButton = () => {
   };
 
   const ColorButton = styled(Button)(({ theme }) => ({
-    color: theme.palette.getContrastText(blue["A100"]),
-    backgroundColor: blue["A100"],
+    color: theme.palette.getContrastText(indigo[500]),
+    backgroundColor: indigo[500],
     "&:hover": {
-      backgroundColor: blue["A400"],
+      backgroundColor: indigo[700],
     },
   }));
 
