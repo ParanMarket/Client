@@ -36,7 +36,7 @@ const Header = () => {
         const response = await axios.get("http://localhost:5000/user");
         setUser({
           nickname: response.data.nickname,
-          imgUrl: response.data.img,
+          img: response.data.img,
         });
       } catch (Error) {
         console.error("데이터를 가지고 오는데 실패했습니다.", Error);
@@ -117,9 +117,9 @@ const Header = () => {
           </Box>
         </Drawer>
         <img
-          src="logo.png"
-          alt="logo"
-          style={{ width: "20%", marginLeft: "16px" }}
+          src="logo_name.png"
+          alt="logo_name"
+          style={{ width: "30%", marginLeft: "16px" }}
         />
         <div style={{ marginLeft: "auto" }}>
           <IconButton color="inherit" onClick={() => navigate("/search")}>

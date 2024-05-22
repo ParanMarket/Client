@@ -51,7 +51,7 @@ const Register = () => {
   const emailCheck = async (email) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/auth/email/check?email=${email}`
+        `http://localhost:5000/auth/email_check/${email}`
       );
       if (response.data.message === "success") {
         setEmailError("");
@@ -69,13 +69,13 @@ const Register = () => {
   const nicknameCheck = async (nickname) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/auth/nick/check?nickname=${nickname}`
+        `http://localhost:5000/auth/nick_check/${nickname}`
       );
       if (response.data.message === "success") {
         setNicknameError("");
         return true;
       } else if (response.data.message === "already_exist_nick") {
-        setNicknameError("중복된 이메일입니다. 다른 이메일을 사용해주세요.");
+        setNicknameError("중복된 닉네임입니다. 다른 이메일을 사용해주세요.");
         return false;
       }
     } catch (error) {

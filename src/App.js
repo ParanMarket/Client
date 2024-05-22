@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 //import Header from "./Header"; //공통헤더
 import Home from "./pages/home";
@@ -16,6 +16,13 @@ import Settings from "./pages/settings";
 import Profile from "./pages/profile";
 
 function App() {
+  //우클릭 방지
+  useEffect(() => {
+    document.oncontextmenu = function () {
+      return false;
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <div className="App">
