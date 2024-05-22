@@ -18,7 +18,7 @@ import Footer from "../components/footer";
 import Header from "../components/header";
 import { blue } from "@mui/material/colors";
 
-const UploadItem = () => {
+const WritePost = () => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
@@ -202,4 +202,4 @@ const UploadItem = () => {
   );
 };
 
-export default UploadItem;
+export default WritePost;

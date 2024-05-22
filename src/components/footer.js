@@ -13,7 +13,7 @@ const Footer = () => {
         return 0;
       case "/chat":
         return 1;
-      case "/uploadItem":
+      case "/WritePost":
         return 2;
       case "/favorite":
         return 3;
@@ -31,7 +31,7 @@ const Footer = () => {
         navigate("/chat");
         break;
       case 2:
-        navigate("/uploadItem");
+        navigate("/WritePost");
         break;
       case 3:
         navigate("/favorite");
