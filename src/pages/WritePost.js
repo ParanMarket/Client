@@ -28,6 +28,7 @@ const WritePost = () => {
   const [typeError, setTypeError] = useState("");
   const [postError, setPostError] = useState("");
   const navigate = useNavigate();
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
   // 사진 업로드
   const handleFileChange = (e) => {
@@ -60,10 +61,19 @@ const WritePost = () => {
   //서버로 입력 내용 보내기
   const handlePost = async (formData) => {
     try {
-      const response = await axios.post("http://localhost:5000/", formData);
-      console.log(response.data, "성공");
-      alert("등록하였습니다.");
-      console.log("홈 페이지로 이동합니다.");
+      const response = await axios.post("http://localhost:5000/", formData, {
+        headers: {
+          Authorization: `Bearer ${userToken}`, // Authorization 헤더에 토큰 포함
+        },
+      });
+      if (response.data.message === "success") {
+        console.log(response.data, "성공");
+        alert("등록하였습니다.");
+        console.log("홈 페이지로 이동합니다.");
+        navigate("/home");
+      } else {
+        console.log(response.data.message + "서버 오류");
+      }
       navigate("/home");
     } catch (error) {
       console.error(error);
@@ -114,6 +124,13 @@ const WritePost = () => {
       alert("입력한 정보를 확인해주세요.");
       return;
     }
+
+    /*로그인 했을 때만 글쓰기 가능
+    if (!userToken) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }*/
 
     formData.append("title", title);
     formData.append("price", price);

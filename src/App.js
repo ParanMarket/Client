@@ -18,7 +18,7 @@ import WritePost from "./pages/WritePost";
 import Mypage from "./pages/mypage";
 import Sell from "./pages/sell";
 import Buy from "./pages/buy";
-
+import DetailItem from "./pages/detailItem";
 function App() {
   //우클릭 방지
   useEffect(() => {
@@ -62,6 +62,7 @@ function App() {
             <Route path="/mypage" element={<Mypage />}></Route>
             <Route path="/buy" element={<Buy />}></Route>
             <Route path="/sell" element={<Sell />}></Route>
+            <Route path="/detailItem" element={<DetailItem />}></Route>
             <Route path="/notifications" element={<Notifications />}></Route>
           </Routes>
         </div>

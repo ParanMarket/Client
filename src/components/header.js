@@ -12,6 +12,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Button,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
@@ -19,7 +20,6 @@ import {
   Notifications,
   AccountCircle,
   Settings,
-  ExitToApp,
   Favorite,
   Receipt,
   LocalMall,
@@ -32,20 +32,29 @@ const Header = () => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [user, setUser] = useState({ nickname: "", img: "" });
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/user");
-        setUser({
-          nickname: response.data.nickname,
-          img: response.data.img,
-        });
-      } catch (Error) {
-        console.error("데이터를 가지고 오는데 실패했습니다.", Error);
-      }
-    };
-    fetchUserData();
+    // userToken이 있을 때만 (프로필, 이름) 표시 아니면 로그인 표시
+    if (userToken) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get("http://localhost:5000/user", {
+            headers: {
+              Authorization: `Bearer ${userToken}`, //Authorizaion 헤더에 토큰 포함
+            },
+          });
+
+          setUser({
+            nickname: response.data.nickname,
+            img: response.data.img,
+          });
+        } catch (err) {
+          console.error("데이터를 가지고 오는데 실패했습니다.", err);
+        }
+      };
+      fetchUserData();
+    }
   }, []);
 
   const toggleDrawer = (open) => (event) => {
@@ -84,6 +93,7 @@ const Header = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              marginTop: 5,
             }}
             role="presentation"
             onClick={toggleDrawer(false)}
@@ -94,8 +104,10 @@ const Header = () => {
               alt={user.nickname}
               sx={{ width: 64, height: 64, marginBottom: 2 }}
             />
-            <Typography variant="h6">{user.nickname}님</Typography>
-            <List>
+            <Typography variant="h6">
+              {user.nickname} {userToken ? "님" : "로그인을 해주세요."}
+            </Typography>
+            <List sx={{ marginTop: 5 }}>
               <ListItem onClick={() => navigate("/profile")}>
                 <ListItemIcon>
                   <AccountCircle />
@@ -126,14 +138,31 @@ const Header = () => {
                 </ListItemIcon>
                 <ListItemText primary="설정" />
               </ListItem>
-              <ListItem sx={{ marginTop: "50%" }}>
-                <LogoutButton />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <ExitToApp />
-                </ListItemIcon>
-              </ListItem>
+              {userToken ? (
+                <>
+                  {" "}
+                  <ListItem sx={{ marginTop: "50%" }}>
+                    <LogoutButton />
+                  </ListItem>
+                </>
+              ) : (
+                <ListItem
+                  onClick={() => navigate("/login")}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{ marginTop: "50%" }}
+                  >
+                    로그인
+                  </Button>
+                </ListItem>
+              )}
             </List>
           </Box>
         </Drawer>
