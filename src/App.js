@@ -14,6 +14,7 @@ import Notifications from "./pages/notifications";
 import Settings from "./pages/settings";
 import Profile from "./pages/profile";
 import WritePost from "./pages/WritePost";
+import Mypage from "./pages/mypage";
 
 function App() {
   //우클릭 방지
@@ -30,7 +31,6 @@ function App() {
           <Route path="/" element={<First />}></Route>
           <Route path="/register" element={<Register />}></Route>
           <Route path="/login" element={<Login />}></Route>
-
           <Route path="/findPwd" element={<FindPwd />}></Route>
           <Route path="/home" element={<Home />}></Route>
           <Route path="/chat" element={<Chat />}></Route>
@@ -39,6 +39,7 @@ function App() {
           <Route path="/search" element={<Search />}></Route>
           <Route path="/settings" element={<Settings />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
+          <Route path="/mypage" element={<Mypage />}></Route>
           <Route path="/notifications" element={<Notifications />}></Route>
         </Routes>
       </div>

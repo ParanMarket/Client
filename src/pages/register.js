@@ -23,7 +23,7 @@ const FormHelperTexts = styled(FormHelperText)`
   width: 100%;
   padding-left: 16px;
   font-weight: 700 !important;
-  color: #d32f2f !important;
+  color: #ff4747 !important;
 `;
 
 const Boxs = styled(Box)`
@@ -211,6 +211,15 @@ const Register = () => {
                     }}
                     onChange={(e) => setEmail(e.target.value)}
                     error={emailError !== "" || false}
+                    sx={{
+                      "& .MuiOutlinedInput-root.Mui-error .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderColor: "#ff4747",
+                        },
+                      "& .MuiInputLabel-root.Mui-error": {
+                        color: "#ff4747",
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={4}>
@@ -233,6 +242,15 @@ const Register = () => {
                     name="password"
                     label="비밀번호 (숫자+영문자+특수문자 8자리 이상)"
                     error={passwordState !== "" || false}
+                    sx={{
+                      "& .MuiOutlinedInput-root.Mui-error .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderColor: "#ff4747",
+                        },
+                      "& .MuiInputLabel-root.Mui-error": {
+                        color: "#ff4747",
+                      },
+                    }}
                   />
                 </Grid>
                 <FormHelperTexts>{passwordState}</FormHelperTexts>
@@ -245,6 +263,15 @@ const Register = () => {
                     name="rePassword"
                     label="비밀번호 재입력"
                     error={passwordError !== "" || false}
+                    sx={{
+                      "& .MuiOutlinedInput-root.Mui-error .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderColor: "#ff4747",
+                        },
+                      "& .MuiInputLabel-root.Mui-error": {
+                        color: "#ff4747",
+                      },
+                    }}
                   />
                 </Grid>
                 <FormHelperTexts>{passwordError}</FormHelperTexts>
@@ -257,6 +284,15 @@ const Register = () => {
                     label="닉네임"
                     error={nicknameError !== "" || false}
                     onChange={(e) => setNickname(e.target.value)}
+                    sx={{
+                      "& .MuiOutlinedInput-root.Mui-error .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderColor: "#ff4747",
+                        },
+                      "& .MuiInputLabel-root.Mui-error": {
+                        color: "#ff4747",
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={4}>

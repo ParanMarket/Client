@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
-import { Home, Add, Chat, Favorite } from "@mui/icons-material";
+import { Home, Add, Chat, Person } from "@mui/icons-material";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const Footer = () => {
         return 1;
       case "/WritePost":
         return 2;
-      case "/favorite":
+      case "/mypage":
         return 3;
       default:
         return 0;
@@ -34,7 +34,7 @@ const Footer = () => {
         navigate("/WritePost");
         break;
       case 3:
-        navigate("/favorite");
+        navigate("/mypage");
         break;
       default:
         navigate("/home");
@@ -58,7 +58,7 @@ const Footer = () => {
         <BottomNavigationAction label="홈" icon={<Home />} />
         <BottomNavigationAction label="채팅" icon={<Chat />} />
         <BottomNavigationAction label="글쓰기" icon={<Add />} />
-        <BottomNavigationAction label="좋아요" icon={<Favorite />} />
+        <BottomNavigationAction label="나의 장터" icon={<Person />} />
       </BottomNavigation>
     </footer>
   );
