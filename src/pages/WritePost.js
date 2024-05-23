@@ -9,8 +9,9 @@ import {
   ImageListItem,
   IconButton,
   ButtonGroup,
+  Grid,
 } from "@mui/material";
-import { PhotoCamera, Delete } from "@mui/icons-material";
+import { PhotoCamera, Delete, AllInbox, People } from "@mui/icons-material";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import { indigo } from "@mui/material/colors";
@@ -19,6 +20,8 @@ import axios from "axios";
 const WritePost = () => {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
+  const [wayPeople, setWayPeople] = useState("");
+  const [wayLocker, setWayLocker] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState([]);
@@ -26,6 +29,7 @@ const WritePost = () => {
   const [priceError, setPriceError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [typeError, setTypeError] = useState("");
+  const [wayError, setWayError] = useState("");
   const [postError, setPostError] = useState("");
   const navigate = useNavigate();
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
@@ -56,6 +60,16 @@ const WritePost = () => {
   const handleTypeChange = (newType) => {
     setType(newType);
     setTypeError(newType ? "" : "유형을 선택해주세요.");
+  };
+
+  const handleWayPeopleClick = () => {
+    setWayPeople((prev) => (prev === "0" ? "" : "0"));
+    setWayError("");
+  };
+
+  const handleWayLockerClick = () => {
+    setWayLocker((prev) => (prev === "1" ? "" : "1"));
+    setWayError("");
   };
 
   //서버로 입력 내용 보내기
@@ -120,6 +134,13 @@ const WritePost = () => {
       setTypeError("");
     }
 
+    if (!wayPeople && !wayLocker) {
+      setWayError("거래방식을 선택해주세요.");
+      isValid = false;
+    } else {
+      setWayError("");
+    }
+
     if (!description || description.length < 10) {
       setDescriptionError("내용은 10자 이상 적어주세요.");
       isValid = false;
@@ -132,10 +153,24 @@ const WritePost = () => {
       return;
     }
 
+    let way;
+    if (wayPeople === "0" && wayLocker === "1") {
+      way = 2;
+    } else if (wayLocker === "1") {
+      way = 1;
+    } else if (wayPeople === "0") {
+      way = 0;
+    } else {
+      way = null;
+    }
+
     formData.append("title", title);
     formData.append("price", price);
     formData.append("type", type);
     formData.append("description", description);
+    if (way !== null) {
+      formData.append("way", way);
+    }
     files.forEach((file, index) =>
       formData.append(`files[${index}]`, file.file)
     );
@@ -151,12 +186,12 @@ const WritePost = () => {
   };
 
   return (
-    <div style={{ paddingBottom: "10%" }}>
+    <div style={{ paddingTop: "15%", paddingBottom: "15%" }}>
       <Header />
       <form ref={formRef} onSubmit={handleSubmit}>
         <Box sx={{ flexGrow: 1, p: 1 }}>
           <Box sx={{ p: 2 }}>
-            <Typography>사진</Typography>
+            <Typography fontWeight="bold">사진</Typography>
             <div
               style={{ display: "flex", overflowX: "auto", padding: "8px 0" }}
             >
@@ -225,7 +260,7 @@ const WritePost = () => {
                 ))}
               </ImageList>
             </div>
-            <Typography>제목</Typography>
+            <Typography fontWeight="bold">제목</Typography>
             <TextField
               fullWidth
               label="제목"
@@ -236,7 +271,9 @@ const WritePost = () => {
               helperText={titleError}
             />
             <Box>
-              <Typography sx={{ marginBottom: 1 }}>유형</Typography>
+              <Typography sx={{ marginBottom: 1 }} fontWeight="bold">
+                유형
+              </Typography>
               <ButtonGroup fullWidth>
                 <Button
                   variant={type === "판매" ? "contained" : "outlined"}
@@ -261,6 +298,42 @@ const WritePost = () => {
                 </Typography>
               )}
             </Box>
+            <Typography sx={{ margin: 1, marginLeft: 0 }} fontWeight="bold">
+              거래방식
+            </Typography>
+            <Box display="flex">
+              <Box sx={{ marginRight: 2 }}>
+                <Button
+                  variant={
+                    wayError ? "outlined" : wayPeople ? "contained" : "outlined"
+                  }
+                  onClick={handleWayPeopleClick}
+                  value="대면"
+                  color={wayError ? "error" : "primary"}
+                >
+                  <People sx={{ marginRight: 2 }} />
+                  대면 거래
+                </Button>
+              </Box>
+              <Box>
+                <Button
+                  variant={
+                    wayError ? "outlined" : wayLocker ? "contained" : "outlined"
+                  }
+                  onClick={handleWayLockerClick}
+                  value="사물함"
+                  color={wayError ? "error" : "primary"}
+                >
+                  <AllInbox sx={{ marginRight: 2 }} />
+                  사물함 거래
+                </Button>
+              </Box>
+            </Box>
+            {wayError && (
+              <Typography color="error" variant="caption" sx={{ marginTop: 1 }}>
+                {wayError}
+              </Typography>
+            )}
             <TextField
               fullWidth
               label="가격"
@@ -271,8 +344,7 @@ const WritePost = () => {
               helperText={priceError}
               margin="normal"
             />
-
-            <Typography>설명</Typography>
+            <Typography fontWeight="bold">설명</Typography>
             <TextField
               fullWidth
               label="자세한 설명을 적어주세요."

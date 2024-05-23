@@ -28,7 +28,7 @@ import LogoutButton from "./logoutButton";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
 
-const Header = () => {
+const PostHeader = () => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [user, setUser] = useState({ nickname: "", img: "" });
@@ -69,7 +69,7 @@ const Header = () => {
 
   return (
     <AppBar
-      position="fixed"
+      position="static"
       sx={{
         backgroundColor: indigo[500],
         boxShadow:
@@ -170,7 +170,6 @@ const Header = () => {
           src="logo_name.png"
           alt="logo_name"
           style={{ width: "120px", marginLeft: "16px" }}
-          onClick={() => navigate("/")}
         />
         <div style={{ marginLeft: "auto" }}>
           <IconButton color="inherit" onClick={() => navigate("/search")}>
@@ -188,4 +187,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default PostHeader;
