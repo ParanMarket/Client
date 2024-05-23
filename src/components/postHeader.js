@@ -1,189 +1,91 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppBar, Toolbar, IconButton, Grid, Snackbar } from "@mui/material";
 import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Drawer,
-  Avatar,
-  Typography,
-  Box,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Button,
-} from "@mui/material";
-import {
-  Menu as MenuIcon,
-  Search,
-  Notifications,
-  AccountCircle,
-  Settings,
-  Favorite,
-  Receipt,
-  LocalMall,
+  HomeRounded,
+  IosShareRounded,
+  ArrowBackIosNewRounded,
 } from "@mui/icons-material";
-import LogoutButton from "./logoutButton";
-import { indigo } from "@mui/material/colors";
+import MoreIcon from "./moreIcon";
 import axios from "axios";
 
-const PostHeader = () => {
-  const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [user, setUser] = useState({ nickname: "", img: "" });
+const PostHeader = ({ post }) => {
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const navigate = useNavigate();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-  useEffect(() => {
-    // userToken이 있을 때만 (프로필, 이름) 표시 아니면 로그인 표시
-    if (userToken) {
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get("http://localhost:5000/user", {
-            headers: {
-              Authorization: `Bearer ${userToken}`, //Authorizaion 헤더에 토큰 포함
-            },
-          });
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
-          setUser({
-            nickname: response.data.nickname,
-            img: response.data.img,
-          });
-        } catch (err) {
-          console.error("데이터를 가지고 오는데 실패했습니다.", err);
-        }
-      };
-      fetchUserData();
+  const handleHomeClick = () => {
+    navigate("/home");
+  };
+
+  const handleShareClick = () => {
+    navigator.clipboard
+      .writeText(window.location.href) // 현재 페이지 URL을 복사
+      .then(() => {
+        setSnackbarOpen(true);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return; // 딴데 선택하면 스낵바 안닫힘
     }
-  }, []);
-
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-    setDrawerOpen(open);
+    setSnackbarOpen(false);
   };
 
   return (
-    <AppBar
-      position="static"
-      sx={{
-        backgroundColor: indigo[500],
-        boxShadow:
-          "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)",
-      }}
-    >
-      <Toolbar>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          onClick={toggleDrawer(true)}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-          <Box
-            sx={{
-              width: 250,
-              padding: 2,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: 5,
-            }}
-            role="presentation"
-            onClick={toggleDrawer(false)}
-            onKeyDown={toggleDrawer(false)}
-          >
-            <Avatar
-              src={user.img}
-              alt={user.nickname}
-              sx={{ width: 64, height: 64, marginBottom: 2 }}
-            />
-            <Typography variant="h6">
-              {user.nickname} {userToken ? "님" : "로그인을 해주세요."}
-            </Typography>
-            <List sx={{ marginTop: 5 }}>
-              <ListItem onClick={() => navigate("/profile")}>
-                <ListItemIcon>
-                  <AccountCircle />
-                </ListItemIcon>
-                <ListItemText primary="프로필" />
-              </ListItem>
-              <ListItem onClick={() => navigate("/favorite")}>
-                <ListItemIcon>
-                  <Favorite />
-                </ListItemIcon>
-                <ListItemText primary="찜 목록" />
-              </ListItem>
-              <ListItem onClick={() => navigate("/sell")}>
-                <ListItemIcon>
-                  <Receipt />
-                </ListItemIcon>
-                <ListItemText primary="판매 내역" />
-              </ListItem>
-              <ListItem onClick={() => navigate("/buy")}>
-                <ListItemIcon>
-                  <LocalMall />
-                </ListItemIcon>
-                <ListItemText primary="구매 내역" />
-              </ListItem>
-              <ListItem onClick={() => navigate("/settings")}>
-                <ListItemIcon>
-                  <Settings />
-                </ListItemIcon>
-                <ListItemText primary="설정" />
-              </ListItem>
-              {userToken ? (
-                <>
-                  {" "}
-                  <ListItem sx={{ marginTop: "50%" }}>
-                    <LogoutButton />
-                  </ListItem>
-                </>
-              ) : (
-                <ListItem
-                  onClick={() => navigate("/login")}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ marginTop: "50%" }}
-                  >
-                    로그인
-                  </Button>
-                </ListItem>
-              )}
-            </List>
-          </Box>
-        </Drawer>
-        <img
-          src="logo_name.png"
-          alt="logo_name"
-          style={{ width: "120px", marginLeft: "16px" }}
-        />
-        <div style={{ marginLeft: "auto" }}>
-          <IconButton color="inherit" onClick={() => navigate("/search")}>
-            <Search />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            onClick={() => navigate("/notifications")}
-          >
-            <Notifications />
-          </IconButton>
-        </div>
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar position="static" color="transparent">
+        <Toolbar>
+          <Grid container justifyContent="space-between" alignItems="center">
+            <Grid item>
+              <IconButton
+                color="inherit"
+                aria-label="back"
+                onClick={handleBackClick}
+              >
+                <ArrowBackIosNewRounded />
+              </IconButton>
+              <IconButton
+                color="inherit"
+                aria-label="home"
+                onClick={handleHomeClick}
+              >
+                <HomeRounded />
+              </IconButton>
+            </Grid>
+            <Grid item sx={{ display: "flex" }}>
+              <IconButton
+                color="inherit"
+                aria-label="share"
+                onClick={handleShareClick}
+              >
+                <IosShareRounded />
+              </IconButton>
+              <MoreIcon post={post} />
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={1500} // 자동닫힘처리
+        onClose={handleSnackbarClose}
+        message="링크가 클립보드에 복사되었습니다!"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        sx={{ padding: 7 }}
+      />
+    </>
   );
 };
 

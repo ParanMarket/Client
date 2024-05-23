@@ -7,7 +7,7 @@ import Home from "./pages/home";
 import Register from "./pages/register";
 import Login from "./pages/login";
 import First from "./pages/first";
-import FindPwd from "./pages/findPwd";
+import FindPwd from "./pages/findpwd";
 import Chat from "./pages/chat";
 import Favorite from "./pages/favorite";
 import Search from "./pages/search";
@@ -18,7 +18,9 @@ import WritePost from "./pages/WritePost";
 import Mypage from "./pages/mypage";
 import Sell from "./pages/sell";
 import Buy from "./pages/buy";
-import DetailItem from "./pages/detailItem";
+import Report from "./pages/report";
+import ChatRoom from "./pages/chatRoom";
+import PostDetail from "./pages/postDetail";
 function App() {
   //우클릭 방지
   useEffect(() => {
@@ -34,7 +36,7 @@ function App() {
       },
       secondary: {
         main: "#7986CB",
-        sub: "#E8EAF6",
+        light: "#E8EAF6",
       },
       error: {
         main: "#ff4747",
@@ -51,7 +53,7 @@ function App() {
             <Route path="/" element={<First />}></Route>
             <Route path="/register" element={<Register />}></Route>
             <Route path="/login" element={<Login />}></Route>
-            <Route path="/findPwd" element={<FindPwd />}></Route>
+            <Route path="/findpwd" element={<FindPwd />}></Route>
             <Route path="/home" element={<Home />}></Route>
             <Route path="/chat" element={<Chat />}></Route>
             <Route path="/favorite" element={<Favorite />}></Route>
@@ -62,7 +64,9 @@ function App() {
             <Route path="/mypage" element={<Mypage />}></Route>
             <Route path="/buy" element={<Buy />}></Route>
             <Route path="/sell" element={<Sell />}></Route>
-            <Route path="/detailItem" element={<DetailItem />}></Route>
+            <Route path="/post/:no" element={<PostDetail />}></Route>
+            <Route path="/report/:no" element={<Report />}></Route>
+            <Route path="/chatRoom/:chatRoomNo" element={<ChatRoom />}></Route>
             <Route path="/notifications" element={<Notifications />}></Route>
           </Routes>
         </div>

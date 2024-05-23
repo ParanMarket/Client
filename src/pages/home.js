@@ -4,104 +4,49 @@ import Footer from "../components/footer";
 import Header from "../components/header";
 import { Container, Grid, Button } from "@mui/material";
 import Postcard from "../components/postcard";
+import { indigo } from "@mui/material/colors";
 import axios from "axios";
 
+//테스트용 임시 데이터
+import Posts from "../data";
+
 const Home = () => {
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "샘플 제목 1",
-      image: "https://via.placeholder.com/100",
-      price: "10000",
-      likes: 15,
-      chatCount: 3,
-      postedAt: "2024.05.23",
-    },
-    {
-      id: 2,
-      title: "샘플 제목 2",
-      image: "https://via.placeholder.com/200",
-      price: "20000",
-      likes: 25,
-      chatCount: 5,
-      postedAt: "2024.05.23",
-    },
-    {
-      id: 3,
-      title: "샘플 제목 3",
-      image: "https://via.placeholder.com/300",
-      price: "20000",
-      likes: 2,
-      chatCount: 0,
-      postedAt: "2024.05.23",
-    },
-    {
-      id: 2,
-      title: "샘플 제목 4",
-      image: "https://via.placeholder.com/400",
-      price: "20000",
-      likes: 3,
-      chatCount: 1,
-      postedAt: "2024.05.23",
-    },
-    {
-      id: 2,
-      title: "샘플 제목 4",
-      image: "https://via.placeholder.com/400",
-      price: "20000",
-      likes: 3,
-      chatCount: 1,
-      postedAt: "2024.05.23",
-    },
-    {
-      id: 2,
-      title: "샘플 제목 4",
-      image: "https://via.placeholder.com/400",
-      price: "20000",
-      likes: 3,
-      chatCount: 1,
-      postedAt: "2024.05.23",
-    },
-    {
-      id: 2,
-      title: "샘플 제목 4",
-      image: "https://via.placeholder.com/400",
-      price: "20000",
-      likes: 3,
-      chatCount: 1,
-      postedAt: "2024.05.23",
-    },
-    {
-      id: 2,
-      title: "샘플 제목 4",
-      image: "https://via.placeholder.com/400",
-      price: "20000",
-      likes: 3,
-      chatCount: 1,
-      postedAt: "2024.05.23",
-    },
-    {
-      id: 2,
-      title: "샘플 제목 4",
-      image: "https://via.placeholder.com/400",
-      price: "20000",
-      likes: 3,
-      chatCount: 1,
-      postedAt: "2024.05.23",
-    },
-  ]); // 샘플 데이터로 초기화
+  const [posts, setPosts] = useState(Posts); // 샘플 데이터로 초기화
+  const [visibleCount, setVisibleCount] = useState(6); // 초기에 표시할 포스트 수
+
+  const loadMorePosts = () => {
+    setVisibleCount((prevVisibleCount) => prevVisibleCount + 3); // 3개씩 더 불러오기
+  };
 
   return (
-    <div className="screen">
+    <div style={{ paddingTop: 50 }}>
       <Header />
       <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
         <Grid container spacing={2}>
-          {posts.map((post) => (
+          {posts.slice(0, visibleCount).map((post) => (
             <Grid item key={post.id} xs={12} sm={6} md={4}>
               <Postcard post={post} />
             </Grid>
           ))}
         </Grid>
+        {visibleCount < posts.length && (
+          <Button
+            fullWidth
+            color="secondary"
+            variant="contained"
+            onClick={loadMorePosts}
+            size="large"
+            sx={{
+              mt: 2,
+              "&:hover": {
+                backgroundColor: indigo[500],
+              },
+            }}
+            style={{ margin: "20px auto", display: "block" }}
+          >
+            더보기
+          </Button>
+        )}
       </Container>
       <Footer />
     </div>

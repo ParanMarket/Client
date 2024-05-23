@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import {
   Card,
   CardMedia,
@@ -18,17 +17,22 @@ import { indigo } from "@mui/material/colors";
 const Postcard = ({ post }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   const handleCardClick = () => {
-    navigate(`/posts/${post.id}`);
+    navigate(`/post/${post.no}`);
   };
 
-  const handleMenuOpen = (event) => {
+  const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleReport = () => {
+    navigate(`/report/${post.no}`);
   };
 
   return (
@@ -38,10 +42,9 @@ const Postcard = ({ post }) => {
         height: 140,
         position: "relative",
         "&:hover": {
-          backgroundColor: indigo[100],
+          backgroundColor: indigo[50],
         },
       }}
-      onClick={handleCardClick}
     >
       <CardActionArea
         onClick={handleCardClick}
@@ -50,7 +53,7 @@ const Postcard = ({ post }) => {
         <CardMedia
           component="img"
           sx={{ width: 120, height: 120, margin: "3%" }}
-          image={post.image || "https://via.placeholder.com/140"}
+          image={post.images[0] || "https://via.placeholder.com/140"}
           alt={post.title}
         />
         <CardContent sx={{ flexGrow: 1, overflow: "hidden", padding: 0 }}>
@@ -65,7 +68,7 @@ const Postcard = ({ post }) => {
             {post.price}원
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            {new Date(post.postedAt).toLocaleDateString()}
+            {new Date(post.sdd).toLocaleDateString()}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -94,19 +97,41 @@ const Postcard = ({ post }) => {
       <IconButton
         aria-label="더보기"
         sx={{ position: "absolute", top: "-1%", right: "-1%" }}
-        onClick={handleMenuOpen}
+        id="long-button"
+        aria-controls={open ? "long-menu" : undefined}
+        aria-expanded={open ? "true" : undefined}
+        aria-haspopup="true"
+        onClick={handleMenuClick}
       >
         <MoreVert />
       </IconButton>
       <Menu
+        id="long-button"
         anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        open={open}
         onClose={handleMenuClose}
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
       >
-        <MenuItem onClick={handleMenuClose}>신고하기</MenuItem>
+        <MenuItem
+          onClick={handleReport}
+          sx={{
+            "&:hover": {
+              backgroundColor: indigo[50],
+            },
+          }}
+        >
+          신고하기
+        </MenuItem>
       </Menu>
     </Card>
   );
