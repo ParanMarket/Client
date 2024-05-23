@@ -89,6 +89,13 @@ const WritePost = () => {
     const formData = new FormData(formRef.current);
     let isValid = true;
 
+    //로그인 했을 때만 글쓰기 가능
+    if (!userToken) {
+      alert("로그인이 필요합니다.");
+      navigate("/");
+      return;
+    }
+
     if (!title || title.length < 4) {
       setTitleError("제목은 4자 이상 적어주세요.");
       isValid = false;
@@ -124,13 +131,6 @@ const WritePost = () => {
       alert("입력한 정보를 확인해주세요.");
       return;
     }
-
-    /*로그인 했을 때만 글쓰기 가능
-    if (!userToken) {
-      alert("로그인이 필요합니다.");
-      navigate("/login");
-      return;
-    }*/
 
     formData.append("title", title);
     formData.append("price", price);
