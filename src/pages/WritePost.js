@@ -23,11 +23,11 @@ const WritePost = () => {
   const [wayPeople, setWayPeople] = useState("");
   const [wayLocker, setWayLocker] = useState("");
   const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const [comment, setComment] = useState("");
   const [files, setFiles] = useState([]);
   const [titleError, setTitleError] = useState("");
   const [priceError, setPriceError] = useState("");
-  const [descriptionError, setDescriptionError] = useState("");
+  const [commentError, setCommentError] = useState("");
   const [typeError, setTypeError] = useState("");
   const [wayError, setWayError] = useState("");
   const [postError, setPostError] = useState("");
@@ -121,7 +121,7 @@ const WritePost = () => {
       setPriceError("가격을 입력해주세요.");
       isValid = false;
     } else if (!/^[0-9]*$/.test(price)) {
-      setPriceError("숫자만 입력 가능합니다.");
+      setPriceError("숫자만 입력해주세요.");
       isValid = false;
     } else {
       setPriceError("");
@@ -141,11 +141,11 @@ const WritePost = () => {
       setWayError("");
     }
 
-    if (!description || description.length < 10) {
-      setDescriptionError("내용은 10자 이상 적어주세요.");
+    if (!comment || comment.length < 10) {
+      setCommentError("내용은 10자 이상 적어주세요.");
       isValid = false;
     } else {
-      setDescriptionError("");
+      setCommentError("");
     }
 
     if (!isValid) {
@@ -166,8 +166,8 @@ const WritePost = () => {
 
     formData.append("title", title);
     formData.append("price", price);
-    formData.append("type", type);
-    formData.append("description", description);
+    formData.append("type", parseInt(type, 10)); //숫자형태로 보내기(10진법)
+    formData.append("comment", comment);
     if (way !== null) {
       formData.append("way", way);
     }
@@ -276,14 +276,14 @@ const WritePost = () => {
               </Typography>
               <ButtonGroup fullWidth>
                 <Button
-                  variant={type === "판매" ? "contained" : "outlined"}
-                  onClick={() => handleTypeChange("판매")}
+                  variant={type === "0" ? "contained" : "outlined"}
+                  onClick={() => handleTypeChange("0")}
                 >
                   판매하기
                 </Button>
                 <Button
-                  variant={type === "구매" ? "contained" : "outlined"}
-                  onClick={() => handleTypeChange("구매")}
+                  variant={type === "1" ? "contained" : "outlined"}
+                  onClick={() => handleTypeChange("1")}
                 >
                   구하기
                 </Button>
@@ -348,13 +348,13 @@ const WritePost = () => {
             <TextField
               fullWidth
               label="자세한 설명을 적어주세요."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
               multiline
               rows={5}
               margin="normal"
-              error={descriptionError !== ""}
-              helperText={descriptionError}
+              error={commentError !== ""}
+              helperText={commentError}
             />
             <Button
               fullWidth
