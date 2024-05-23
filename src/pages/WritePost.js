@@ -6,10 +6,8 @@ import {
   TextField,
   Box,
   ImageList,
-  ImageListItem,
   IconButton,
   ButtonGroup,
-  Grid,
 } from "@mui/material";
 import { PhotoCamera, Delete, AllInbox, People } from "@mui/icons-material";
 import Footer from "../components/footer";
@@ -104,11 +102,11 @@ const WritePost = () => {
     let isValid = true;
 
     //로그인 했을 때만 글쓰기 가능
-    if (!userToken) {
-      alert("로그인이 필요합니다.");
-      navigate("/");
-      return;
-    }
+    // if (!userToken) {
+    //   alert("로그인이 필요합니다.");
+    //   navigate("/");
+    //   return;
+    // }
 
     if (!title || title.length < 4) {
       setTitleError("제목은 4자 이상 적어주세요.");
@@ -186,7 +184,7 @@ const WritePost = () => {
   };
 
   return (
-    <div style={{ paddingTop: "15%", paddingBottom: "15%" }}>
+    <div style={{ paddingTop: 50, paddingBottom: 50 }}>
       <Header />
       <form ref={formRef} onSubmit={handleSubmit}>
         <Box sx={{ flexGrow: 1, p: 1 }}>
