@@ -44,10 +44,13 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [passwordState, setPasswordState] = useState("");
+  const [rePasswordError, setRePasswordError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [nicknameError, setNicknameError] = useState("");
   const [registerError, setRegisterError] = useState("");
+  const [emailChecked, setEmailChecked] = useState(false);
+  const [nicknameChecked, setNicknameChecked] = useState(false);
+
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
 
@@ -58,55 +61,71 @@ const Register = () => {
   */
 
   const emailCheck = async (email) => {
+    if (!email) {
+      setEmailError("내용을 작성해주세요.");
+      return false;
+    }
     try {
       const response = await axios.get(
-        `http://localhost:5000/auth/email_check/${email}`
+        `http://localhost:5001/auth/email_check/${email}`
       );
       if (response.data.message === "success") {
         setEmailError("");
+        setEmailChecked(true); // 중복 확인 완료
         return true;
       } else if (response.data.message === "already_exist_email") {
         setEmailError("중복된 이메일입니다. 다른 이메일을 사용해주세요.");
+        setEmailChecked(false);
         return false;
       }
     } catch (error) {
       setEmailError("이메일 중복 검사 중 오류 발생" + error);
+      setEmailChecked(false);
       return false;
     }
   };
 
   const nicknameCheck = async (nickname) => {
+    if (!nickname) {
+      setNicknameError("내용을 작성해주세요.");
+      return false;
+    }
     try {
       const response = await axios.get(
-        `http://localhost:5000/auth/nick_check/${nickname}`
+        `http://localhost:5001/auth/nick_check/${nickname}`
       );
       if (response.data.message === "success") {
         setNicknameError("");
+        setNicknameChecked(true); // 중복 확인 완료
         return true;
       } else if (response.data.message === "already_exist_nick") {
-        setNicknameError("중복된 닉네임입니다. 다른 이메일을 사용해주세요.");
+        setNicknameError("중복된 닉네임입니다. 다른 닉네임을 사용해주세요.");
+        setNicknameChecked(false);
         return false;
       }
     } catch (error) {
       setNicknameError("닉네임 검사 중 오류 발생" + error);
+      setNicknameChecked(false);
       return false;
     }
   };
 
   const onhandlePost = async (data) => {
     const { email, nickname, password } = data;
-    const postData = { email, nickname, password };
 
-    await axios
-      .post("http://localhost:5000/auth/register", postData)
-      .then(function (response) {
-        console.log(response, "성공");
-        navigate("/login");
-      })
-      .catch(function (err) {
-        console.log(err);
-        setRegisterError("회원가입에 실패하였습니다. 다시한번 확인해 주세요.");
+    try {
+      const response = await axios.post("http://localhost:5001/auth/register", {
+        email,
+        nickname,
+        password,
       });
+      console.log(response.data, "성공");
+
+      return true;
+    } catch (err) {
+      console.error("서버와 통신 실패 : ", err);
+      throw err; //상위 컴포넌트에 에러 전달
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -114,60 +133,72 @@ const Register = () => {
     const data = new FormData(e.currentTarget);
     const emailInput = data.get("email").trim(); //사용자 입력 공백 제거
     const fullEmail = `${emailInput}@sookmyung.ac.kr`; // 숙명 이메일 주소
-    const isNicknameAvailable = await nicknameCheck(data.get("nickname"));
-    const isEmailAvailable = await emailCheck(emailInput);
+    const nickname = data.get("nickname").trim();
+    const password = data.get("password");
+    const rePassword = data.get("rePassword");
 
-    if (!isNicknameAvailable || !isEmailAvailable) return;
+    if (!emailInput || !nickname || !password || !rePassword) {
+      if (!emailInput) setEmailError("이메일을 작성해주세요.");
+      if (!password) setPasswordError("비밀번호를 작성해주세요.");
+      if (!rePassword) setRePasswordError("비밀번호 재확인이 필요합니다.");
+      if (!nickname) setNicknameError("닉네임을 작성해주세요.");
+      return;
+    }
 
-    const joinData = {
-      email: emailInput,
-      nickname: data.get("nickname"),
-      password: data.get("password"),
-      rePassword: data.get("rePassword"),
-    };
-    const { email, password, rePassword, nickname } = joinData;
+    if (!emailChecked || !nicknameChecked) {
+      if (!emailChecked) setEmailError("이메일 중복 확인을 해주세요.");
+      if (!nicknameChecked) setNicknameError("닉네임 중복 확인을 해주세요.");
+      return;
+    }
 
-    const emailRegex = /^[\w-.]+$/; // 도메인은 @sookmyung.ac.kr로 고정
-    if (!emailRegex.test(emailInput))
-      setEmailError("올바른 이메일 형식이 아닙니다.");
-    else setEmailError("");
-
-    // 비밀번호 유효성 체크
+    //유효성 체크
+    const emailRegex = /^[\w-.]+$/;
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+    const nicknameRegex = /^[가-힣a-zA-Z]+$/;
+
+    if (!emailRegex.test(emailInput)) {
+      setEmailError("올바른 이메일 형식이 아닙니다.");
+      return;
+    } else setEmailError("");
+
     if (!passwordRegex.test(password)) {
-      setPasswordState(
+      setPasswordError(
         "숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요!"
       );
-    } else setPasswordState("");
+      return;
+    } else setPasswordError("");
 
     // 비밀번호 같은지 체크
-    if (password !== rePassword)
-      setPasswordError("비밀번호가 일치하지 않습니다.");
-    else setPasswordError("");
+    if (password !== rePassword) {
+      setRePasswordError("비밀번호가 일치하지 않습니다.");
+      return;
+    } else setRePasswordError("");
 
-    // 닉네임 유효성 검사
-    const nicknameRegex = /^[가-힣a-zA-Z]+$/;
-    if (!nicknameRegex.test(nickname) || nickname.length < 1)
-      setNicknameError("올바른 닉네임을 입력해주세요.");
-    else setNicknameError("");
+    if (!nicknameRegex.test(nickname) || nickname.length < 1) {
+      setNicknameError("2자 이상의 닉네임을 작성해주세요.");
+      return;
+    } else setNicknameError("");
 
-    /* 회원가입 동의 체크 <삭제됨>
-    if (!checked) alert("회원가입 약관에 동의해주세요.");
-    */
+    const isNicknameAvailable = await nicknameCheck(nickname);
+    const isEmailAvailable = await emailCheck(emailInput);
 
-    // 다 적었는지 확인
-    if (
-      emailRegex.test(emailInput) &&
-      passwordRegex.test(password) &&
-      password === rePassword &&
-      nicknameRegex.test(nickname)
-    ) {
-      onhandlePost(joinData);
-      console.log("로그인 페이지로 이동합니다.");
-      console.log(joinData);
+    if (isNicknameAvailable && isEmailAvailable) {
+      const joinData = {
+        email: emailInput,
+        nickname: nickname,
+        password: password,
+      };
+      try {
+        await onhandlePost(joinData);
+        console.log("회원가입 성공");
+        navigate("/login");
+      } catch (err) {
+        console.err("회원가입 실패, err");
+        setRegisterError("회원가입에 실패하였습니다. 다시 시도해주세요.");
+      }
     } else {
-      console.log("One or more conditions failed.");
+      setRegisterError("이메일과 닉네임 중복 확인이 필요합니다.");
     }
   };
 
@@ -228,8 +259,10 @@ const Register = () => {
                     variant="contained"
                     size="large"
                     fullWidth
+                    disabled={emailChecked}
+                    sx={{ bgcolor: emailChecked ? "grey.300" : "primary.main" }}
                   >
-                    중복확인
+                    {emailChecked ? "확인 완료" : "중복 확인"}
                   </Button>
                 </Grid>
                 <FormHelperTexts>{emailError}</FormHelperTexts>
@@ -241,10 +274,10 @@ const Register = () => {
                     id="password"
                     name="password"
                     label="비밀번호 (숫자+영문자+특수문자 8자리 이상)"
-                    error={passwordState !== "" || false}
+                    error={passwordError !== "" || false}
                   />
                 </Grid>
-                <FormHelperTexts>{passwordState}</FormHelperTexts>
+                <FormHelperTexts>{passwordError}</FormHelperTexts>
                 <Grid item xs={12}>
                   <TextField
                     required
@@ -253,10 +286,10 @@ const Register = () => {
                     id="rePassword"
                     name="rePassword"
                     label="비밀번호 재입력"
-                    error={passwordError !== "" || false}
+                    error={rePasswordError !== "" || false}
                   />
                 </Grid>
-                <FormHelperTexts>{passwordError}</FormHelperTexts>
+                <FormHelperTexts>{rePasswordError}</FormHelperTexts>
                 <Grid item xs={8}>
                   <TextField
                     required
@@ -274,8 +307,12 @@ const Register = () => {
                     variant="contained"
                     size="large"
                     fullWidth
+                    disabled={nicknameChecked}
+                    sx={{
+                      bgcolor: nicknameChecked ? "grey.300" : "primary.main",
+                    }}
                   >
-                    중복확인
+                    {nicknameChecked ? "확인 완료" : "중복 확인"}
                   </Button>
                 </Grid>
                 <FormHelperTexts>{nicknameError}</FormHelperTexts>
@@ -286,6 +323,7 @@ const Register = () => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
                 size="large"
+                disabled={!emailChecked || !nicknameChecked}
               >
                 회원가입
               </Button>

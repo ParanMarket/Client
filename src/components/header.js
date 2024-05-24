@@ -27,6 +27,7 @@ import {
 import LogoutButton from "./logoutButton";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
+import Logo from "../images/logo_name.png";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Header = () => {
           });
 
           setUser({
-            nickname: response.data.nickname,
+            nickname: "response.data.nickname",
             img: response.data.img,
           });
         } catch (err) {
@@ -167,7 +168,7 @@ const Header = () => {
           </Box>
         </Drawer>
         <img
-          src="logo_name.png"
+          src={Logo}
           alt="logo_name"
           style={{ width: "120px", marginLeft: "16px" }}
           onClick={() => navigate("/")}
