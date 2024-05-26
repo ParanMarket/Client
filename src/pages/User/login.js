@@ -73,20 +73,17 @@ function Login() {
       });
       if (response.data.message === "incorrect_pw") {
         setPwdError("비밀번호가 틀렸습니다.");
-      } else if (response.data.message === "undefined_email")
+      } else if (response.data.message === "undefined_email") {
         setLoginError("이메일이 존재하지 않습니다. 회원가입을 해주세요.");
-      else {
+        alert("이메일이 존재하지 않습니다. 회원가입을 해주세요.");
+        navigate("/register");
+      } else {
         localStorage.setItem("userToken", response.data.token); // 세션 유지를 위한 토큰 저장(서버에서 추가 로직 필요)
         navigate("/home");
       }
     } catch (error) {
       setLoginError("서버 오류. 로그인 불가");
     }
-    //확인용
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
   };
 
   return (
@@ -150,10 +147,6 @@ function Login() {
               error={pwdError !== "" || false}
             />
             <FormHelperTexts>{pwdError}</FormHelperTexts>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="내 정보 기억하기"
-            />
             <Button
               type="submit"
               fullWidth
@@ -167,6 +160,11 @@ function Login() {
               <Grid item xs>
                 <Link href="/forgetpwd" variant="body2">
                   비밀번호 찾기
+                </Link>
+              </Grid>
+              <Grid item xs>
+                <Link href="/home" variant="body2">
+                  홈으로 이동
                 </Link>
               </Grid>
               <Grid item>
