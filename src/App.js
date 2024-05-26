@@ -3,24 +3,24 @@ import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 //import Header from "./Header"; //공통헤더
-import Home from "./pages/home";
-import Register from "./pages/register";
-import Login from "./pages/login";
+import Home from "./pages/FooterNav/home";
+import Register from "./pages/User/register";
+import Login from "./pages/User/login";
 import First from "./pages/first";
-import FindPwd from "./pages/findpwd";
-import Chat from "./pages/chat";
-import Favorite from "./pages/favorite";
-import Search from "./pages/search";
-import Notifications from "./pages/notifications";
-import Settings from "./pages/settings";
-import Profile from "./pages/profile";
-import WritePost from "./pages/WritePost";
-import Mypage from "./pages/mypage";
-import Sell from "./pages/sell";
-import Buy from "./pages/buy";
-import Report from "./pages/report";
-import ChatRoom from "./pages/chatRoom";
-import PostDetail from "./pages/postDetail";
+import FindPwd from "./pages/User/findpwd";
+import Chat from "./pages/FooterNav/Chat/chat";
+import Favorite from "./pages/FooterNav/MyPage/favorite";
+import Search from "./pages/HeaderNav/search";
+import Notifications from "./pages/HeaderNav/notifications";
+import Settings from "./pages/FooterNav/MyPage/settings";
+import Profile from "./pages/FooterNav/MyPage/profile";
+import WritePost from "./pages/FooterNav/Post/WritePost";
+import Mypage from "./pages/FooterNav/MyPage/mypage";
+import Sell from "./pages/FooterNav/MyPage/sell";
+import Buy from "./pages/FooterNav/MyPage/buy";
+import Report from "./pages/HeaderNav/report";
+import ChatRoom from "./pages/FooterNav/Chat/chatRoom";
+import PostDetail from "./pages/FooterNav/Post/postDetail";
 function App() {
   //우클릭 방지
   useEffect(() => {

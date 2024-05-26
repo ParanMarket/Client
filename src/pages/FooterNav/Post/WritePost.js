@@ -10,8 +10,8 @@ import {
   ButtonGroup,
 } from "@mui/material";
 import { PhotoCamera, Delete, AllInbox, People } from "@mui/icons-material";
-import Footer from "../components/footer";
-import Header from "../components/header";
+import Footer from "../../../components/footer";
+import Header from "../../../components/header";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
 

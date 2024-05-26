@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
 import axios from "axios";
-import PostFooter from "../components/postFooter";
-import PostHeader from "../components/postHeader";
+import PostFooter from "../../../components/postFooter";
+import PostHeader from "../../../components/postHeader";
 import { Box, Typography, Divider, Avatar, IconButton } from "@mui/material";
 import moment from "moment"; // 시간 계산
 import "slick-carousel/slick/slick.css"; // 이미지 여러개 일 때 슬라이드
 import "slick-carousel/slick/slick-theme.css";
 
 //테스트용 임시 데이터
-import Posts from "../data";
+import Posts from "../../../data";
 
 const PostDetail = () => {
   const { no } = useParams();

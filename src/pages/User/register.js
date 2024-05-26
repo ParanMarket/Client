@@ -27,14 +27,6 @@ const FormHelperTexts = styled(FormHelperText)`
   color: #ff4747 !important;
 `;
 
-const ColorButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.getContrastText(indigo[500]),
-  backgroundColor: indigo[500],
-  "&:hover": {
-    backgroundColor: indigo[700],
-  },
-}));
-
 const Boxs = styled(Box)`
   padding-bottom: 40px !important;
 `;

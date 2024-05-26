@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
-import Footer from "../components/footer";
-import Header from "../components/header";
+import Footer from "../../components/footer";
+import Header from "../../components/header";
 import { Container, Grid, Button } from "@mui/material";
-import Postcard from "../components/postcard";
+import Postcard from "../../components/postcard";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
 
 //테스트용 임시 데이터
-import Posts from "../data";
+import Posts from "../../data";
 
 const Home = () => {
   const [posts, setPosts] = useState(Posts); // 샘플 데이터로 초기화

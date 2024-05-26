@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Footer from "../components/footer";
-import Header from "../components/header";
+import Footer from "../../components/footer";
+import Header from "../../components/header";
 
-import Posts from "../data";
+import Posts from "../../data";
 
 const Report = () => {
   const { no } = useParams(); // URL에서 no 추출
