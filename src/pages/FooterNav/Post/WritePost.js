@@ -8,8 +8,16 @@ import {
   ImageList,
   IconButton,
   ButtonGroup,
+  Grid,
 } from "@mui/material";
-import { PhotoCamera, Delete, AllInbox, People } from "@mui/icons-material";
+import {
+  PhotoCamera,
+  Delete,
+  AllInbox,
+  People,
+  SellRounded,
+  ShoppingCartRounded,
+} from "@mui/icons-material";
 import Footer from "../../../components/footer";
 import Header from "../../../components/header";
 import { indigo } from "@mui/material/colors";
@@ -23,35 +31,66 @@ const WritePost = () => {
   const [price, setPrice] = useState("");
   const [comment, setComment] = useState("");
   const [files, setFiles] = useState([]);
+  const [filesError, setFilesError] = useState("");
   const [titleError, setTitleError] = useState("");
   const [priceError, setPriceError] = useState("");
   const [commentError, setCommentError] = useState("");
   const [typeError, setTypeError] = useState("");
   const [wayError, setWayError] = useState("");
   const [postError, setPostError] = useState("");
+  const [fileCount, setFileCount] = useState("");
   const navigate = useNavigate();
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const [count, setCount] = useState(0);
 
   // 사진 업로드
   const handleFileChange = (e) => {
     const newFiles = Array.from(e.target.files);
-    if (files.length + newFiles.length > 10) {
-      alert("최대 업로드 개수는 10개입니다.");
-      return;
+    const existingFileData = files.map(
+      (file) => file.file.name + file.file.size
+    ); // 파일들 배열
+    const filteredNewFiles = newFiles.filter((newFile) => {
+      const newFileData = newFile.name + newFile.size;
+      return !existingFileData.includes(newFileData); // 중복 파일 업로드 불가
+    });
+
+    //중복 검사
+    const isDuplicate = newFiles.length > filteredNewFiles.length;
+    if (isDuplicate) {
+      alert("중복된 파일은 업로드되지 않습니다.");
     }
-    const mappedFiles = newFiles.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-    setFiles((prev) => [...prev, ...mappedFiles]);
+
+    // 중복되지 않는 파일들만 추가
+    if (filteredNewFiles.length > 0) {
+      if (files.length + filteredNewFiles.length > 10) {
+        // 최대 파일 개수를 초과하는 경우 경고 메시지를 표시
+        alert("최대 업로드 개수는 10개입니다.");
+        return;
+      }
+
+      const mappedFiles = filteredNewFiles.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      }));
+
+      setFiles((prev) => {
+        const updatedFiles = [...prev, ...mappedFiles];
+        setCount(updatedFiles.length); // 파일 목록 업데이트 후 개수를 설정
+        return updatedFiles;
+      });
+    }
   };
 
   // 사진 올린거 삭제하기
   const handleRemoveFile = (fileToRemove) => {
-    setFiles((prev) =>
-      prev.filter((file) => file.preview !== fileToRemove.preview)
-    );
-    URL.revokeObjectURL(fileToRemove.preview);
+    setFiles((prev) => {
+      const filteredFiles = prev.filter(
+        (file) => file.preview !== fileToRemove.preview
+      );
+      URL.revokeObjectURL(fileToRemove.preview);
+      setCount(filteredFiles.length); // 파일 목록 업데이트 후 개수를 설정
+      return filteredFiles;
+    });
   };
 
   // 유형 미선택시 에러
@@ -108,8 +147,14 @@ const WritePost = () => {
     //   return;
     // }
 
-    if (!title || title.length < 4) {
-      setTitleError("제목은 4자 이상 적어주세요.");
+    if (count < 1) {
+      setFilesError("하나 이상의 사진을 올려주세요.");
+      isValid = false;
+    } else {
+      setFilesError("");
+    }
+    if (!title || title.length > 15 || title.length < 2) {
+      setTitleError("제목은 2자 이상 15자 이하로 적어주세요.");
       isValid = false;
     } else {
       setTitleError("");
@@ -193,6 +238,7 @@ const WritePost = () => {
             <div
               style={{ display: "flex", overflowX: "auto", padding: "8px 0" }}
             >
+              {" "}
               <Button
                 variant="contained"
                 component="label"
@@ -209,14 +255,25 @@ const WritePost = () => {
                   },
                 }}
               >
-                <PhotoCamera />
-                <input
-                  type="file"
-                  hidden
-                  multiple
-                  onChange={handleFileChange}
-                  accept="image/*"
-                />
+                <Grid
+                  direction="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  sx={{ margin: "auto" }}
+                >
+                  <PhotoCamera sx={{ ml: 1 }} />
+                  <input
+                    type="file"
+                    hidden
+                    multiple
+                    onChange={handleFileChange}
+                    accept="image/*"
+                  />
+                  <Typography variant="body1" sx={{ mt: 1 }}>
+                    {" "}
+                    {count} / 10
+                  </Typography>
+                </Grid>
               </Button>
               <ImageList
                 cols={10}
@@ -258,6 +315,11 @@ const WritePost = () => {
                 ))}
               </ImageList>
             </div>
+            {filesError && (
+              <Typography color="error" variant="caption" sx={{ ml: 1.5 }}>
+                {filesError}
+              </Typography>
+            )}
             <Typography fontWeight="bold">제목</Typography>
             <TextField
               fullWidth
@@ -277,13 +339,15 @@ const WritePost = () => {
                   variant={type === "0" ? "contained" : "outlined"}
                   onClick={() => handleTypeChange("0")}
                 >
+                  <SellRounded sx={{ marginRight: 1 }} />
                   판매하기
                 </Button>
                 <Button
                   variant={type === "1" ? "contained" : "outlined"}
                   onClick={() => handleTypeChange("1")}
                 >
-                  구하기
+                  <ShoppingCartRounded sx={{ marginRight: 1 }} />
+                  구매하기
                 </Button>
               </ButtonGroup>
               {typeError && (
@@ -309,7 +373,7 @@ const WritePost = () => {
                   value="대면"
                   color={wayError ? "error" : "primary"}
                 >
-                  <People sx={{ marginRight: 2 }} />
+                  <People sx={{ marginRight: 1 }} />
                   대면 거래
                 </Button>
               </Box>
@@ -322,13 +386,17 @@ const WritePost = () => {
                   value="사물함"
                   color={wayError ? "error" : "primary"}
                 >
-                  <AllInbox sx={{ marginRight: 2 }} />
+                  <AllInbox sx={{ marginRight: 1 }} />
                   사물함 거래
                 </Button>
               </Box>
             </Box>
             {wayError && (
-              <Typography color="error" variant="caption" sx={{ marginTop: 1 }}>
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ marginTop: 1, ml: 2 }}
+              >
                 {wayError}
               </Typography>
             )}
