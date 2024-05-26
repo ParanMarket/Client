@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -42,6 +42,8 @@ const Register = () => {
   const [registerError, setRegisterError] = useState("");
   const [emailChecked, setEmailChecked] = useState(false);
   const [nicknameChecked, setNicknameChecked] = useState(false);
+  const [prevEmail, setPrevEmail] = useState("");
+  const [prevNickname, setPrevNickname] = useState("");
 
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
@@ -52,9 +54,42 @@ const Register = () => {
   };
   */
 
+  // 이전 이메일 저장
+  useEffect(() => {
+    if (emailChecked) {
+      setPrevEmail(email);
+    }
+  }, [emailChecked, email]);
+  // 이전 닉네임 저장
+  useEffect(() => {
+    if (nicknameChecked) {
+      setPrevNickname(nickname);
+    }
+  }, [nicknameChecked, nickname]);
+
+  // 이메일 변화 감지
+  useEffect(() => {
+    setEmailChecked(false);
+    setEmailError("");
+  }, [email]);
+
+  // 닉네임 변화 감지
+  useEffect(() => {
+    setNicknameChecked(false);
+    setNicknameError("");
+  }, [nickname]);
+
   const emailCheck = async (email) => {
     if (!email) {
       setEmailError("내용을 작성해주세요.");
+      return false;
+    }
+
+    //유효성 검사
+    const emailRegex = /^[\w-.]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("올바른 이메일 형식이 아닙니다.");
+      setEmailChecked(false);
       return false;
     }
     try {
@@ -80,6 +115,19 @@ const Register = () => {
   const nicknameCheck = async (nickname) => {
     if (!nickname) {
       setNicknameError("내용을 작성해주세요.");
+      return false;
+    }
+    if (nickname.length < 2 || nickname.length > 11) {
+      setNicknameError("2자 ~ 10자의 닉네임을 사용해주세요.");
+      setNicknameChecked(false);
+      return false;
+    }
+
+    //유효성 체크
+    const nicknameRegex = /^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]+$/;
+    if (!nicknameRegex.test(nickname)) {
+      setNicknameError("올바른 닉네임 형식이 아닙니다.");
+      setNicknameChecked(false);
       return false;
     }
     try {
@@ -126,8 +174,8 @@ const Register = () => {
     const emailInput = data.get("email").trim(); //사용자 입력 공백 제거
     const fullEmail = `${emailInput}@sookmyung.ac.kr`; // 숙명 이메일 주소
     const nickname = data.get("nickname").trim();
-    const password = data.get("password");
-    const rePassword = data.get("rePassword");
+    const password = data.get("password").trim();
+    const rePassword = data.get("rePassword").trim();
 
     if (!emailInput || !nickname || !password || !rePassword) {
       if (!emailInput) setEmailError("이메일을 작성해주세요.");
@@ -143,16 +191,9 @@ const Register = () => {
       return;
     }
 
-    //유효성 체크
-    const emailRegex = /^[\w-.]+$/;
+    //비밀번호 유효성 체크
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
-    const nicknameRegex = /^[가-힣a-zA-Z]+$/;
-
-    if (!emailRegex.test(emailInput)) {
-      setEmailError("올바른 이메일 형식이 아닙니다.");
-      return;
-    } else setEmailError("");
 
     if (!passwordRegex.test(password)) {
       setPasswordError(
@@ -166,11 +207,6 @@ const Register = () => {
       setRePasswordError("비밀번호가 일치하지 않습니다.");
       return;
     } else setRePasswordError("");
-
-    if (!nicknameRegex.test(nickname) || nickname.length < 1) {
-      setNicknameError("2자 이상의 닉네임을 작성해주세요.");
-      return;
-    } else setNicknameError("");
 
     const isNicknameAvailable = await nicknameCheck(nickname);
     const isEmailAvailable = await emailCheck(emailInput);
@@ -186,7 +222,7 @@ const Register = () => {
         console.log("회원가입 성공");
         navigate("/login");
       } catch (err) {
-        console.err("회원가입 실패, err");
+        console.error("회원가입 실패", err);
         setRegisterError("회원가입에 실패하였습니다. 다시 시도해주세요.");
       }
     } else {
@@ -251,7 +287,7 @@ const Register = () => {
                     variant="contained"
                     size="large"
                     fullWidth
-                    disabled={emailChecked}
+                    disabled={emailChecked && email === prevEmail}
                     sx={{ bgcolor: emailChecked ? "grey.300" : "primary.main" }}
                   >
                     {emailChecked ? "확인 완료" : "중복 확인"}
@@ -299,7 +335,7 @@ const Register = () => {
                     variant="contained"
                     size="large"
                     fullWidth
-                    disabled={nicknameChecked}
+                    disabled={nicknameChecked && nickname === prevNickname}
                     sx={{
                       bgcolor: nicknameChecked ? "grey.300" : "primary.main",
                     }}
