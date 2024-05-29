@@ -63,8 +63,8 @@ const Search = () => {
   });
 
   return (
-    <div style={{ paddingBottom: 50 }}>
-      <div style={{ paddingTop: 10, paddingLeft: 10 }}>
+    <div style={{ paddingBottom: 60 }}>
+      <div style={{ padding: 10 }}>
         <Box
           display="flex"
           justifyContent="space-between"
@@ -136,15 +136,17 @@ const Search = () => {
             </Button>
           </Box>
         )}
-        {isSearched && (
-          <Grid container spacing={2}>
-            {searched.map((post) => (
-              <Grid item key={post.id} xs={12} sm={6} md={4}>
-                <Postcard post={post} />
-              </Grid>
-            ))}
-          </Grid>
-        )}
+        <Box>
+          {isSearched && (
+            <Grid container spacing={2}>
+              {searched.map((post) => (
+                <Grid item key={post.id} xs={12} sm={6} md={4}>
+                  <Postcard post={post} />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Box>
       </div>
 
       <Footer />
