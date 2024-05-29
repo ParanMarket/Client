@@ -10,9 +10,11 @@ import {
   Menu,
   MenuItem,
   CardActionArea,
+  Box,
 } from "@mui/material";
 import { Favorite, Chat, MoreVert } from "@mui/icons-material";
 import { indigo } from "@mui/material/colors";
+import blurBox from "../css/blurBox";
 
 const Postcard = ({ post }) => {
   const navigate = useNavigate();
@@ -48,16 +50,34 @@ const Postcard = ({ post }) => {
     >
       <CardActionArea
         onClick={handleCardClick}
-        sx={{ display: "flex", width: "100%", padding: 0 }}
+        sx={{ display: "flex", width: "100%" }}
       >
-        <CardMedia
-          component="img"
-          sx={{ width: 120, height: 120, margin: "3%" }}
-          image={post.images[0] || "https://via.placeholder.com/140"}
-          alt={post.title}
-        />
-        <CardContent sx={{ flexGrow: 1, overflow: "hidden", padding: 0 }}>
-          <Typography variant="h6" component="div">
+        <Box
+          sx={{ position: "relative", width: 120, height: 120, margin: "3%" }}
+        >
+          <CardMedia
+            component="img"
+            sx={{ width: "100%", height: "100%", borderRadius: 2 }}
+            image={post.images[0] || "https://via.placeholder.com/140"}
+            alt={post.title}
+          />
+          {post.status === 2 && (
+            <Box sx={blurBox}>
+              <Typography
+                variant="subtitle1"
+                component="div"
+                sx={{ color: "white", fontWeight: "bold" }}
+              >
+                거래완료
+              </Typography>
+            </Box>
+          )}
+        </Box>
+        <CardContent sx={{ flexGrow: 1, overflow: "hidden", pr: 3 }}>
+          <Typography variant="button" component="div" color="primary">
+            {post.type === 0 ? "팔아요" : "구해요"}
+          </Typography>
+          <Typography variant="subtitle1" component="div">
             {post.title}
           </Typography>
           <Typography

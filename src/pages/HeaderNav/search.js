@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Input, Grid, Box, Button, IconButton } from "@mui/material";
+import {
+  Input,
+  Grid,
+  Box,
+  Button,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/footer";
 import Postcard from "../../components/postcard";
@@ -30,12 +37,14 @@ const Search = () => {
   };
 
   const handleSubmit = () => {
-    if (search.trim() !== "") {
+    // 검색 내용이 빈 문자열 / 공백만 있는 경우에는 검색 안됨
+    if (typeof search === "string" && search.trim() !== "") {
       setIsSearched(true);
     } else {
       setIsSearched(false); // 검색창이 ""이면 결과창에 아무것도 띄우지 않기
       setSearch([]);
       alert("검색어를 입력해주세요.");
+      return;
     }
   };
 
@@ -47,18 +56,24 @@ const Search = () => {
     switch (filter) {
       case "all":
         return true;
-      case "active":
-        return post.status === 0 || post.status === 1;
-      case "completed":
-        return post.status === 2;
+      case "sell":
+        return post.type === 0;
+      case "buy":
+        return post.type === 1;
       default:
         return true;
     }
   };
 
   const searched = Posts.filter((item) => {
-    const itemTitle = item.title.toLowerCase().replace(" ", "");
-    const searchTerm = search.toLowerCase().replace(" ", "");
+    const itemTitle =
+      typeof item.title === "string"
+        ? item.title.toLowerCase().replace(/\s+/g, "")
+        : "";
+    const searchTerm =
+      typeof search === "string"
+        ? search.toLowerCase().replace(/\s+/g, "")
+        : "";
     return itemTitle.includes(searchTerm) && getStatusFilter(item);
   });
 
@@ -122,17 +137,17 @@ const Search = () => {
             </Button>
             <Button
               variant={filter === "active" ? "contained" : "outlined"}
-              onClick={() => handleFilterChange("active")}
+              onClick={() => handleFilterChange("sell")}
               sx={{ mr: 1 }}
             >
-              거래가능
+              판매글
             </Button>
             <Button
               variant={filter === "completed" ? "contained" : "outlined"}
-              onClick={() => handleFilterChange("completed")}
+              onClick={() => handleFilterChange("buy")}
               sx={{ mr: 1 }}
             >
-              거래완료
+              구매글
             </Button>
           </Box>
         )}
@@ -145,6 +160,11 @@ const Search = () => {
                 </Grid>
               ))}
             </Grid>
+          )}
+          {isSearched && searched.length === 0 && (
+            <Typography variant="h6" sx={{ textAlign: "center", m: 10 }}>
+              검색 결과 없음
+            </Typography>
           )}
         </Box>
       </div>

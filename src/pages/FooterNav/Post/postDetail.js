@@ -8,6 +8,7 @@ import { Box, Typography, Divider, Avatar, IconButton } from "@mui/material";
 import moment from "moment"; // 시간 계산
 import "slick-carousel/slick/slick.css"; // 이미지 여러개 일 때 슬라이드
 import "slick-carousel/slick/slick-theme.css";
+import blurImg from "../../../css/blurImg";
 
 //테스트용 임시 데이터
 import Posts from "../../../data";
@@ -78,9 +79,16 @@ const PostDetail = () => {
             </div>
           ))}
         </Slider>
+        {post.status === 2 && (
+          <Box sx={blurImg}>
+            <Typography variant="h6" component="div" sx={{ color: "white" }}>
+              거래완료
+            </Typography>
+          </Box>
+        )}
       </Box>
       <Box sx={{ p: 2 }}>
-        {/* 사용자 정보 */}
+        {/* 사용자 정보 => 사용자 개인 프로필 볼 수 있도록 나중에 설정하기*/}
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Avatar src={post.user.image} alt={post.user.name} />
           <Box sx={{ ml: 1 }}>
@@ -92,6 +100,11 @@ const PostDetail = () => {
         </Box>
         <Divider sx={{ my: 2 }} />
         {/* 포스트 정보 */}
+        {post.status === 1 && (
+          <Typography variant="h6" component="div" color="primary">
+            거래중
+          </Typography>
+        )}
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           {post.title}
         </Typography>

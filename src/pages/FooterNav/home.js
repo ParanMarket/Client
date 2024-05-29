@@ -13,6 +13,7 @@ import Posts from "../../data";
 const Home = () => {
   const [posts, setPosts] = useState(Posts); // 샘플 데이터로 초기화
   const [visibleCount, setVisibleCount] = useState(6); // 초기에 표시할 포스트 수
+  const visiblePosts = posts.filter((post) => post.status !== 2); // 거래가능한 것만 띄우기
 
   const loadMorePosts = () => {
     setVisibleCount((prevVisibleCount) => prevVisibleCount + 3); // 3개씩 더 불러오기
@@ -23,13 +24,13 @@ const Home = () => {
       <Header />
       <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
         <Grid container spacing={2}>
-          {posts.slice(0, visibleCount).map((post) => (
+          {visiblePosts.slice(0, visibleCount).map((post) => (
             <Grid item key={post.id} xs={12} sm={6} md={4}>
               <Postcard post={post} />
             </Grid>
           ))}
         </Grid>
-        {visibleCount < posts.length && (
+        {visibleCount < visiblePosts.length && (
           <Button
             fullWidth
             color="secondary"
@@ -38,11 +39,12 @@ const Home = () => {
             size="large"
             sx={{
               mt: 2,
+              margin: "20px auto",
+              display: "block",
               "&:hover": {
                 backgroundColor: indigo[500],
               },
             }}
-            style={{ margin: "20px auto", display: "block" }}
           >
             더보기
           </Button>
