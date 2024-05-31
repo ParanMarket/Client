@@ -42,6 +42,8 @@ const WritePost = () => {
   const navigate = useNavigate();
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
   const [count, setCount] = useState(0);
+  const [category, setCategory] = useState("");
+  const [categoryError, setCategoryError] = useState("");
 
   // 사진 업로드
   const handleFileChange = (e) => {
@@ -109,6 +111,23 @@ const WritePost = () => {
     setWayError("");
   };
 
+  const handleCategoryClick = (selected) => {
+    setCategory(selected);
+    setCategoryError("");
+  };
+
+  const categories = [
+    { label: "의류", value: "의류" },
+    { label: "도서", value: "도서" },
+    { label: "전자제품", value: "전자제품" },
+    { label: "화장품", value: "화장품" },
+    { label: "생필품", value: "생필품" },
+    { label: "기프티콘", value: "기프티콘" },
+    { label: "대리예매", value: "대리예매" },
+    { label: "계정대여", value: "계정대여" },
+    { label: "기타", value: "기타" },
+  ];
+
   //서버로 입력 내용 보내기
   const handlePost = async (formData) => {
     try {
@@ -171,7 +190,7 @@ const WritePost = () => {
     }
 
     if (!type) {
-      setTypeError("유형을 선택해주세요.");
+      setTypeError("거래유형을 선택해주세요.");
       isValid = false;
     } else {
       setTypeError("");
@@ -182,6 +201,13 @@ const WritePost = () => {
       isValid = false;
     } else {
       setWayError("");
+    }
+
+    if (!category) {
+      setCategoryError("카테고리를 선택해주세요.");
+      isValid = false;
+    } else {
+      setCategoryError("");
     }
 
     if (!comment || comment.length < 10) {
@@ -211,6 +237,7 @@ const WritePost = () => {
     formData.append("price", price);
     formData.append("type", parseInt(type, 10)); //숫자형태로 보내기(10진법)
     formData.append("comment", comment);
+    formData.append("category", category);
     if (way !== null) {
       formData.append("way", way);
     }
@@ -371,7 +398,6 @@ const WritePost = () => {
                   }
                   onClick={handleWayPeopleClick}
                   value="대면"
-                  color={wayError ? "error" : "primary"}
                 >
                   <People sx={{ marginRight: 1 }} />
                   대면 거래
@@ -384,7 +410,6 @@ const WritePost = () => {
                   }
                   onClick={handleWayLockerClick}
                   value="사물함"
-                  color={wayError ? "error" : "primary"}
                 >
                   <AllInbox sx={{ marginRight: 1 }} />
                   사물함 거래
@@ -400,6 +425,36 @@ const WritePost = () => {
                 {wayError}
               </Typography>
             )}
+
+            <Typography sx={{ margin: 1, marginLeft: 0 }} fontWeight="bold">
+              물품유형
+            </Typography>
+            <Grid container spacing={1}>
+              {categories.map((categoryItem, index) => (
+                <Grid item xs={4} key={index}>
+                  <Button
+                    fullWidth
+                    variant={
+                      category === categoryItem.value ? "contained" : "outlined"
+                    }
+                    onClick={() => handleCategoryClick(categoryItem.value)}
+                    color="primary"
+                  >
+                    {categoryItem.label}
+                  </Button>
+                </Grid>
+              ))}
+            </Grid>
+            {categoryError && (
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ marginTop: 1, ml: 2 }}
+              >
+                {categoryError}
+              </Typography>
+            )}
+
             <TextField
               fullWidth
               label="가격"
