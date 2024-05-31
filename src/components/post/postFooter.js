@@ -13,7 +13,7 @@ import {
 import { ChatBubbleRounded, FavoriteRounded } from "@mui/icons-material";
 
 //확인용 나중에 지우기
-import Posts from "../data";
+import Posts from "../../data";
 
 const PostFooter = () => {
   const { no } = useParams(); //현재 페이지 URL에서 no 파라미터 추출
@@ -23,7 +23,7 @@ const PostFooter = () => {
   const [post, setPost] = useState("");
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
-  // post_no에 따른 post정보 가져오기
+  // post_no에 따른 post정보 가져오기 임시데이터
   useEffect(() => {
     const foundPost = Posts.find((post) => post.no.toString() === no); // 데이터를 문자열 no와 비교
     if (foundPost) {
@@ -34,10 +34,11 @@ const PostFooter = () => {
   }, [no]);
 
   useEffect(() => {
-    console.log(liked); // 상태 변경 확인
-  }, [liked]);
+    setLiked(post.liked);
+    console.log(post.liked); // 상태 변경 확인
+  }, [post.liked]);
   const handleLikeClick = async () => {
-    const newLikeState = liked ? null : 1; //좋아요 선택되면 1 아님 null
+    const newLikeState = !liked;
     setLiked(newLikeState);
   };
 
@@ -50,28 +51,40 @@ const PostFooter = () => {
   };
 
   /*
-  const fetchPost = async () => {
-    try {
-      const response = await axios.get("localohost:5000/post/${no}");
-      setPost(response.data);
-    } catch (err) {
-      console.error("정보를 가지고 오는데 실패했습니다.", err);
+  // 게시글데이터 가져오기
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/post/${no}`);
+        setPost(response.data)
+        setLiked(response.data.liked);
+      } catch (err) {
+        console.error("정보를 가지고 오는데 실패했습니다.", err)
+      }
+      fetchPost();
     }
-  };
+  }, [no])
+  
 
+  //좋아요 상태 변경
   const handleLikeClick = async () => {
-    const newLikeState = liked ? null : 1; //좋아요 선택되면 1 아님 null
+    const newLikeState = !liked; //현 상태의 반대 값을 저장
     setLiked(newLikeState);
     try {
-      await axios.post(`localhost:5000/post/${no}/like`, {
-        liked: newLikeState,
+      await axios.post(`http://localhost:5001/post/${no}/like`, {
+          liked: newLikeState, 
+        }, {  
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
       });
     } catch (err) {
-      console.error("좋아요를 db에 반영하는데 실패했습니다.", err);
+      console.error("좋아요 상태 변경에 실패했습니다.", err)
     }
-  };
 
-  //나중에 수정하기 완전 이상,, + 이미 채팅을 한 번 한 사람이면 채팅 수 증가 막기
+  } */
+
+  /*나중에 수정하기 완전 이상,, + 이미 채팅을 한 번 한 사람이면 채팅 수 증가 막기
   const handleChatClick = async () => {
     if (post.status === 2) return; // 거래완료 시 채팅불가
     const chatRoomId = `chat-${no}-${userToken}`; // eg 아이디

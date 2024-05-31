@@ -27,7 +27,7 @@ import {
 import LogoutButton from "./logoutButton";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
-import Logo from "../images/logo_name.png";
+import Logo from "../../images/logo_name.png";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const Header = () => {
     if (userToken) {
       const fetchUserData = async () => {
         try {
-          const response = await axios.get("http://localhost:5000/user", {
+          const response = await axios.get("http://localhost:5001/user", {
             headers: {
               Authorization: `Bearer ${userToken}`, //Authorizaion 헤더에 토큰 포함
             },
@@ -109,12 +109,6 @@ const Header = () => {
               {user.nickname} {userToken ? "님" : "로그인을 해주세요."}
             </Typography>
             <List sx={{ marginTop: 5 }}>
-              <ListItem onClick={() => navigate("/profile")}>
-                <ListItemIcon>
-                  <AccountCircle />
-                </ListItemIcon>
-                <ListItemText primary="프로필" />
-              </ListItem>
               <ListItem onClick={() => navigate("/favorite")}>
                 <ListItemIcon>
                   <Favorite />
@@ -132,12 +126,6 @@ const Header = () => {
                   <LocalMall />
                 </ListItemIcon>
                 <ListItemText primary="구매 내역" />
-              </ListItem>
-              <ListItem onClick={() => navigate("/settings")}>
-                <ListItemIcon>
-                  <Settings />
-                </ListItemIcon>
-                <ListItemText primary="설정" />
               </ListItem>
               {userToken ? (
                 <>

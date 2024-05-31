@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Favorite, Chat, MoreVert } from "@mui/icons-material";
 import { indigo } from "@mui/material/colors";
-import blurBox from "../css/blurBox";
+import blurBox from "../../css/blurBox";
 
 const Postcard = ({ post }) => {
   const navigate = useNavigate();

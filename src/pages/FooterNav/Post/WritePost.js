@@ -18,8 +18,8 @@ import {
   SellRounded,
   ShoppingCartRounded,
 } from "@mui/icons-material";
-import Footer from "../../../components/footer";
-import Header from "../../../components/header";
+import Footer from "../../../components/main/footer";
+import Header from "../../../components/main/header";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
 

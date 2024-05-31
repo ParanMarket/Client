@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
 import axios from "axios";
-import PostFooter from "../../../components/postFooter";
-import PostHeader from "../../../components/postHeader";
+import PostFooter from "../../../components/post/postFooter";
+import PostHeader from "../../../components/post/postHeader";
 import { Box, Typography, Divider, Avatar, IconButton } from "@mui/material";
 import moment from "moment"; // 시간 계산
 import "slick-carousel/slick/slick.css"; // 이미지 여러개 일 때 슬라이드
@@ -20,7 +20,7 @@ const PostDetail = () => {
   // 나중에 데이터 가져 올 수 있도록 하기
   // useEffect(() => {
   //   axios
-  //     .get(`https://api.yourdomain.com/posts/${id}`)
+  //     .get(`https://localhost:5001/posts/${id}`)
   //     .then((response) => {
   //       setPost(response.data);
   //     })
@@ -42,7 +42,8 @@ const PostDetail = () => {
 
   if (!post) return <div>Loading...</div>; //없으면 로딩임
 
-  const settings = {
+  // 이미지 슬라이더 세팅
+  const slider_setting = {
     dots: post.images.length > 1,
     infinite: post.images.length > 1,
     speed: 500,
@@ -51,7 +52,7 @@ const PostDetail = () => {
     arrows: false,
   };
 
-  // 업로드 시간 계산
+  // 업로드 시간 계산 (현재시간으로부터 ~)
   const uploadedTime = moment(post.sdd).fromNow();
   console.log(uploadedTime);
 
@@ -68,7 +69,7 @@ const PostDetail = () => {
         }}
       >
         {/* 이미지 슬라이더 */}
-        <Slider {...settings}>
+        <Slider {...slider_setting}>
           {post.images.map((image, index) => (
             <div key={index}>
               <img

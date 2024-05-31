@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Footer from "../../components/footer";
-import Header from "../../components/header";
+import Footer from "../../components/main/footer";
+import Header from "../../components/main/header";
 
 import Posts from "../../data";
 

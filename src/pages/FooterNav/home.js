@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
-import Footer from "../../components/footer";
-import Header from "../../components/header";
+import Footer from "../../components/main/footer";
+import Header from "../../components/main/header";
 import { Container, Grid, Button } from "@mui/material";
-import Postcard from "../../components/postcard";
+import Postcard from "../../components/post/postcard";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
 

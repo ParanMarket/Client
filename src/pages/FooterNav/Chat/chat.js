@@ -1,6 +1,6 @@
 import React from "react";
-import FooterNav from "../../../components/footer";
-import Header from "../../../components/header";
+import FooterNav from "../../../components/main/footer";
+import Header from "../../../components/main/header";
 
 const Chat = () => {
   return (

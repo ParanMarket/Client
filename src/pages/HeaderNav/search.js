@@ -8,8 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import Footer from "../../components/footer";
-import Postcard from "../../components/postcard";
+import Footer from "../../components/main/footer";
+import Postcard from "../../components/post/postcard";
 import Posts from "../../data";
 import { ArrowBackIosNewRounded } from "@mui/icons-material";
 
@@ -136,14 +136,14 @@ const Search = () => {
               전체
             </Button>
             <Button
-              variant={filter === "active" ? "contained" : "outlined"}
+              variant={filter === "sell" ? "contained" : "outlined"}
               onClick={() => handleFilterChange("sell")}
               sx={{ mr: 1 }}
             >
               판매글
             </Button>
             <Button
-              variant={filter === "completed" ? "contained" : "outlined"}
+              variant={filter === "buy" ? "contained" : "outlined"}
               onClick={() => handleFilterChange("buy")}
               sx={{ mr: 1 }}
             >
