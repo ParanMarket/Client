@@ -22,6 +22,7 @@ const posts = [
     sdd: "2024-03-23T10:30:00.000Z",
     comment: "신선하고 맛있는 사과즙입니다!",
     liked: true,
+    category: "의류",
   },
   {
     no: 2,
@@ -44,6 +45,7 @@ const posts = [
     sdd: "2024-05-23T15:45:00.000Z",
     comment: "건강한 오가닉 주스를 만나보세요!",
     liked: true,
+    category: "도서",
   },
   {
     no: 3,
@@ -66,6 +68,7 @@ const posts = [
     sdd: "2024-06-15T11:20:00.000Z",
     comment: "생일이나 특별한 날에 맞는 수제 케이크!",
     liked: true,
+    category: "전자제품",
   },
   {
     no: 4,
@@ -88,6 +91,7 @@ const posts = [
     sdd: "2024-07-03T09:10:00.000Z",
     comment: "세련된 핸드메이드 목걸이, 여기서만!",
     liked: false,
+    category: "화장품",
   },
   {
     no: 5,
@@ -110,6 +114,7 @@ const posts = [
     sdd: "2024-08-01T12:30:00.000Z",
     comment: "자연산 진미채, 지금 바로 구매 가능!",
     liked: false,
+    category: "생필품",
   },
   {
     no: 6,
@@ -133,6 +138,7 @@ const posts = [
     sdd: "2024-09-10T08:30:00.000Z",
     comment: "달콤한 망고 구매하실 분!",
     liked: false,
+    category: "기프티콘",
   },
   {
     no: 7,
@@ -155,6 +161,7 @@ const posts = [
     sdd: "2024-10-15T14:45:00.000Z",
     comment: "집들이 선물로 딱인 고급 치즈!",
     liked: true,
+    category: "대리예매",
   },
   {
     no: 8,
@@ -178,6 +185,7 @@ const posts = [
     sdd: "2024-11-23T17:00:00.000Z",
     comment: "신형 공기청정기, 저렴하게 판매합니다!",
     liked: true,
+    category: "계정대여",
   },
   {
     no: 9,
@@ -199,6 +207,7 @@ const posts = [
     sdd: "2024-12-05T12:15:00.000Z",
     comment: "최신 스마트워치, 기능 최고!",
     liked: false,
+    category: "기타",
   },
   {
     no: 10,
@@ -221,6 +230,7 @@ const posts = [
     sdd: "2024-12-25T16:20:00.000Z",
     comment: "신상 샌들, 여름에 딱 맞아요!",
     liked: false,
+    category: "의류",
   },
 ];
 
