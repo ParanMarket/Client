@@ -131,11 +131,15 @@ const WritePost = () => {
   //서버로 입력 내용 보내기
   const handlePost = async (formData) => {
     try {
-      const response = await axios.post("http://localhost:5000/", formData, {
-        headers: {
-          Authorization: `Bearer ${userToken}`, // Authorization 헤더에 토큰 포함
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5001/post/post_write",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`, // Authorization 헤더에 토큰 포함
+          },
+        }
+      );
       if (response.data.message === "success") {
         console.log(response.data, "성공");
         alert("등록하였습니다.");
@@ -241,9 +245,7 @@ const WritePost = () => {
     if (way !== null) {
       formData.append("way", way);
     }
-    files.forEach((file, index) =>
-      formData.append(`files[${index}]`, file.file)
-    );
+    files.forEach((file) => formData.append("files", file.file));
 
     //잘 올라가는지 확인 (추후 삭제 예정)
     // 파일은 보안상 경로가 나타지 않고 업로드 확인용으로 이름만 표시함
