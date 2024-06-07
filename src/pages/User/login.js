@@ -1,23 +1,23 @@
 import React, { useState } from "react";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Avatar,
-  Button,
   CssBaseline,
-  TextField,
-  FormControlLabel,
-  Checkbox,
-  Grid,
   Box,
   Typography,
   Container,
   Link,
-  InputAdornment,
-  FormHelperText,
+  Grid,
 } from "@mui/material/";
 import styled from "styled-components";
+import { Person } from "@mui/icons-material";
+import { jwtDecode } from "jwt-decode";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+
+// 구글 OAuth 클라이언트 ID 설정
+const clientId = process.env.REACT_APP_GOOGLE_CLIENT;
+const redirectUri = "https://localhost:3000/home";
 
 function Copyright(props) {
   return (
@@ -37,58 +37,56 @@ function Copyright(props) {
   );
 }
 
-const FormHelperTexts = styled(FormHelperText)`
+const FormHelperTexts = styled.div`
   width: 100%;
   padding-left: 16px;
-  font-weight: 700 !important;
-  color: #ff4747 !important;
+  font-weight: 700;
+  color: #ff4747;
+`;
+
+const CenteredGrid = styled(Grid)`
+  display: flex;
+  justify-content: center;
 `;
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
-  const [pwdError, setPwdError] = useState("");
+  const [googleToken, setGoogleToken] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    const decodedToken = jwtDecode(credentialResponse.credential);
+    const userEmail = decodedToken.email;
 
-    if (!email) {
-      setLoginError("이메일과 비밀번호를 모두 입력해주세요.");
+    // 숙명여자대학교 이메일 확인
+    if (!userEmail.endsWith("@sookmyung.ac.kr")) {
+      alert("숙명여자대학교 이메일을 사용해서 인증해주세요.");
       return;
-    } else setLoginError("");
-    if (!password) {
-      setPwdError("이메일과 비밀번호를 모두 입력해주세요.");
-      return;
-    } else setPwdError("");
+    }
+
+    setEmail(userEmail);
+    setGoogleToken(credentialResponse.credential);
 
     try {
-      const response = await axios.post("http://localhost:5001/auth/login", {
-        email: email,
-        password: password,
+      const response = await axios.post("http://localhost:5001/auth/google", {
+        token: credentialResponse.credential,
       });
-      if (response.data.message === "incorrect_pw") {
-        setPwdError("비밀번호가 틀렸습니다.");
-      } else if (response.data.message === "undefined_email") {
-        setLoginError("이메일이 존재하지 않습니다. 회원가입을 해주세요.");
-        alert("이메일이 존재하지 않습니다. 회원가입을 해주세요.");
-        navigate("/register");
-      } else {
-        localStorage.setItem("userToken", response.data.token); // 세션 유지를 위한 토큰 저장(서버에서 추가 로직 필요)
+
+      if (response.data.userExists) {
+        alert("로그인 완료되었습니다.");
+        localStorage.setItem("userToken", response.data.token);
         navigate("/home");
+      } else {
+        navigate("/profile");
       }
-    } catch (error) {
-      setLoginError("서버 오류. 로그인 불가");
+    } catch (err) {
+      console.error("서버 통신 에러:", err);
     }
   };
 
   return (
     <div className="screen">
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" sx={{ mt: 20 }}>
         <CssBaseline />
         <Box
           sx={{
@@ -101,81 +99,33 @@ function Login() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+            <Person />
           </Avatar>
           <Typography component="h1" variant="h5">
-            로그인
+            시작하기
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="아이디"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    @sookmyung.ac.kr
-                  </InputAdornment>
-                ),
-              }}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={loginError !== "" || false}
-            />
-            <FormHelperTexts>{loginError}</FormHelperTexts>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="비밀번호"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={pwdError !== "" || false}
-            />
-            <FormHelperTexts>{pwdError}</FormHelperTexts>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              로그인하기
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="/forgetpwd" variant="body2">
-                  비밀번호 찾기
-                </Link>
-              </Grid>
-              <Grid item xs>
-                <Link href="/home" variant="body2">
-                  홈으로 이동
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="/register" variant="body2">
-                  {"회원가입"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            숙명이메일로만 참여가 가능합니다!
+          </Typography>
+
+          <GoogleOAuthProvider clientId={clientId}>
+            <Box sx={{ mt: 5 }}>
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={() => console.log("로그인 실패")}
+                theme="filled_blue"
+                className="login_box"
+              />
+            </Box>
+          </GoogleOAuthProvider>
+
+          <CenteredGrid item xs sx={{ mt: 5 }}>
+            <Link href="/home" variant="body2">
+              홈으로 이동
+            </Link>
+          </CenteredGrid>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+        <Copyright />
       </Container>
     </div>
   );

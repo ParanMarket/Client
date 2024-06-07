@@ -30,15 +30,9 @@ const First = () => {
           <p>물결처럼 흐르는 파란 장터</p>
         </div>
         <div className="form-container">
-          <button className="signup-button" onClick={handleSignupClick}>
-            회원가입
-          </button>
           <button className="login-button" onClick={handleLoginClick}>
-            로그인
+            시작하기
           </button>
-          <a href="/findpwd" className="forgot-password-link">
-            비밀번호를 잊으셨습니까?
-          </a>
         </div>
       </main>
     </div>
