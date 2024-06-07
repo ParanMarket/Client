@@ -22,7 +22,7 @@ const Postcard = ({ post }) => {
   const open = Boolean(anchorEl);
 
   const handleCardClick = () => {
-    navigate(`/post/${post.no}`);
+    navigate(`/post/${post.post_no}`);
   };
 
   const handleMenuClick = (event) => {
@@ -34,7 +34,7 @@ const Postcard = ({ post }) => {
   };
 
   const handleReport = () => {
-    navigate(`/report/${post.no}`);
+    navigate(`/report/${post.post_no}`);
   };
 
   return (
@@ -58,10 +58,10 @@ const Postcard = ({ post }) => {
           <CardMedia
             component="img"
             sx={{ width: "100%", height: "100%", borderRadius: 2 }}
-            image={post.images[0] || "https://via.placeholder.com/140"}
-            alt={post.title}
+            image={post.post_img || "https://via.placeholder.com/140"}
+            alt={post.post_title}
           />
-          {post.status === 2 && (
+          {post.post_status === 2 && (
             <Box sx={blurBox}>
               <Typography
                 variant="subtitle1"
@@ -75,20 +75,20 @@ const Postcard = ({ post }) => {
         </Box>
         <CardContent sx={{ flexGrow: 1, overflow: "hidden", pr: 3 }}>
           <Typography variant="button" component="div" color="primary">
-            {post.type === 0 ? "팔아요" : "구해요"}
+            {post.post_type === 0 ? "팔아요" : "구해요"}
           </Typography>
           <Typography variant="subtitle1" component="div">
-            {post.title}
+            {post.post_title}
           </Typography>
           <Typography
             variant="subtitle1"
             component="div"
             sx={{ fontWeight: "bold" }}
           >
-            {post.price}원
+            {post.post_price}원
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            {new Date(post.sdd).toLocaleDateString()}
+            {new Date(post.post_sdd).toLocaleDateString()}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -104,13 +104,13 @@ const Postcard = ({ post }) => {
         <IconButton aria-label="찜" sx={{ padding: 0, margin: 0 }}>
           <Favorite sx={{ width: "30%" }} />
           <Typography variant="body2" sx={{ ml: 0.5 }}>
-            {post.likes}
+            {post.post_like_cnt}
           </Typography>
         </IconButton>
         <IconButton aria-label="채팅 수" sx={{ padding: 0, margin: 0 }}>
           <Chat sx={{ width: "35%" }} />
           <Typography variant="body2" sx={{ ml: 0.5 }}>
-            {post.chatCount}
+            {post.post_chat_cnt}
           </Typography>
         </IconButton>
       </CardActions>

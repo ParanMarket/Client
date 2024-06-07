@@ -19,6 +19,7 @@ import Buy from "./pages/FooterNav/MyPage/buy";
 import Report from "./pages/HeaderNav/report";
 import ChatRoom from "./pages/FooterNav/Chat/chatRoom";
 import PostDetail from "./pages/FooterNav/Post/postDetail";
+import NickSetting from "./pages/User/nickSetting";
 
 function App() {
   //우클릭 방지
@@ -61,10 +62,12 @@ function App() {
             <Route path="/mypage" element={<Mypage />}></Route>
             <Route path="/buy" element={<Buy />}></Route>
             <Route path="/sell" element={<Sell />}></Route>
-            <Route path="/post/:no" element={<PostDetail />}></Route>
-            <Route path="/report/:no" element={<Report />}></Route>
-            <Route path="/chatRoom/:chatRoomNo" element={<ChatRoom />}></Route>
+            <Route path="/post/:post_no" element={<PostDetail />}></Route>
+            <Route path="/report/:post_no" element={<Report />}></Route>
+            <Route path="/chatRoom/:chat_no" element={<ChatRoom />}></Route>
             <Route path="/notifications" element={<Notifications />}></Route>
+            <Route path="/nickSetting" element={<NickSetting />}></Route>
+
           </Routes>
         </div>
       </BrowserRouter>

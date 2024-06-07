@@ -66,18 +66,21 @@ function Login() {
 
     setEmail(userEmail);
     setGoogleToken(credentialResponse.credential);
+    console.log(userEmail)
+    console.log(credentialResponse.credential)
 
     try {
-      const response = await axios.post("http://localhost:5001/auth/google", {
+      const response = await axios.post("http://localhost:5001/auth/login", {
         token: credentialResponse.credential,
       });
 
-      if (response.data.userExists) {
+      if (response.data.userExists) { // 사용자의 정보가 있는 경우
         alert("로그인 완료되었습니다.");
         localStorage.setItem("userToken", response.data.token);
+        localStorage.setItem("userNickname", response.data.nickname);
         navigate("/home");
       } else {
-        navigate("/profile");
+        navigate("/nickSetting"); // 사용자의 정보가 없는 경우 닉네임 설정으로 이동
       }
     } catch (err) {
       console.error("서버 통신 에러:", err);
