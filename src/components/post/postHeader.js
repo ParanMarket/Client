@@ -10,7 +10,8 @@ import MoreIcon from "./moreIcon";
 import axios from "axios";
 
 const PostHeader = ({ post }) => {
-  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  //console.log("header recived: ", post);
+  const userToken = useState(localStorage.getItem("userToken"));
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 

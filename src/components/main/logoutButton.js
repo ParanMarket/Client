@@ -28,6 +28,7 @@ const LogoutButton = () => {
   const handleLogout = (e) => {
     e.stopPropagation(); // 이벤트 전파 중지
     localStorage.removeItem("userToken");
+    localStorage.removeItem("userNickname");
     navigate("/");
     setOpen(false); //로그아웃 후 대화 상자 닫기
   };

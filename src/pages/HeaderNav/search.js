@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Input,
   Grid,
@@ -10,21 +10,33 @@ import {
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/main/footer";
 import Postcard from "../../components/post/postcard";
-import Posts from "../../data";
-import { ArrowBackIosNewRounded } from "@mui/icons-material";
+//import Posts from "../../data"; 임시데이터
+import { ArrowBackIosNewRounded, Cancel } from "@mui/icons-material";
+import { indigo } from "@mui/material/colors";
+import axios from "axios";
 
 const Search = () => {
-  const [search, setSearch] = useState("");
+  const [keyword, setKeyword] = useState("");
   const [filter, setFilter] = useState("all");
   const [isSearched, setIsSearched] = useState(false);
+  const [recentSearchItem, setRecentSearchItem] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
+
+  // 로컬 스토리지에 저장된 최근 검색기록 가져오기
+  useEffect(() => {
+    const recentSearch = JSON.parse(localStorage.getItem("recentSearchItem"));
+    if (recentSearch) {
+      setRecentSearchItem(recentSearch);
+    }
+  }, []);
 
   const handleBackClick = () => {
     navigate(-1);
   };
 
   const handleSearch = (e) => {
-    setSearch(e.target.value);
+    setKeyword(e.target.value);
     if (e.target.value === "") {
       setIsSearched(false);
     }
@@ -38,14 +50,42 @@ const Search = () => {
 
   const handleSubmit = () => {
     // 검색 내용이 빈 문자열 / 공백만 있는 경우에는 검색 안됨
-    if (typeof search === "string" && search.trim() !== "") {
+    if (typeof keyword === "string" && keyword.trim() !== "") {
       setIsSearched(true);
+      updateRecentSearch(keyword.trim());
+      fetchSearchResults(keyword.trim(), 1);
     } else {
       setIsSearched(false); // 검색창이 ""이면 결과창에 아무것도 띄우지 않기
-      setSearch([]);
+      setKeyword("");
       alert("검색어를 입력해주세요.");
       return;
     }
+  };
+
+  // 최근 검색어 5개 저장하기
+  const updateRecentSearch = (searchTerm) => {
+    const updatedSearchItem = [
+      searchTerm,
+      ...recentSearchItem.filter((item) => item !== searchTerm),
+    ].slice(0, 5);
+    setRecentSearchItem(updatedSearchItem);
+    localStorage.setItem("recentSearchItem", JSON.stringify(updatedSearchItem));
+  };
+
+  const handleRecentSearchClick = (searchTerm) => {
+    setKeyword(searchTerm);
+    setIsSearched(true);
+    fetchSearchResults(searchTerm, 1);
+  };
+
+  // 삭제시에는 맞는거 빼고 다 저장
+  const handleDelRecentSearchClick = (e, delTerm) => {
+    e.stopPropagation(); // 상위컴포넌트에게 전달 금지
+    const updatedSearchItem = recentSearchItem.filter(
+      (item) => item !== delTerm,
+    );
+    setRecentSearchItem(updatedSearchItem);
+    localStorage.setItem("recentSearchItem", JSON.stringify(updatedSearchItem));
   };
 
   const handleFilterChange = (newFilter) => {
@@ -57,25 +97,37 @@ const Search = () => {
       case "all":
         return true;
       case "sell":
-        return post.type === 0;
+        return post.post_type === 0;
       case "buy":
-        return post.type === 1;
+        return post.post_type === 1;
       default:
         return true;
     }
   };
 
-  const searched = Posts.filter((item) => {
-    const itemTitle =
-      typeof item.title === "string"
-        ? item.title.toLowerCase().replace(/\s+/g, "")
-        : "";
-    const searchTerm =
-      typeof search === "string"
-        ? search.toLowerCase().replace(/\s+/g, "")
-        : "";
-    return itemTitle.includes(searchTerm) && getStatusFilter(item);
-  });
+  const fetchSearchResults = async (keyword, page) => {
+    try {
+      const encodedKeyword = encodeURIComponent(keyword);
+      console.log(keyword);
+      console.log(encodedKeyword); // 한국어 가능
+      const response = await axios.post(
+        `http://localhost:5001/post/search_post/${page}/${encodedKeyword}`,
+      );
+
+      if (response.data && response.data.results) {
+        setSearchResults(response.data.results);
+        console.log(response.data.results);
+      } else {
+        console.log("데이터를 가져오는데 실패했습니다.");
+        setSearchResults([]);
+      }
+    } catch (err) {
+      console.log("통신 에러.", err);
+      setSearchResults([]);
+    }
+  };
+
+  const filteredResults = searchResults.filter(getStatusFilter);
 
   return (
     <div style={{ paddingBottom: 60 }}>
@@ -97,12 +149,14 @@ const Search = () => {
           <Box
             display="flex"
             alignItems="center"
-            sx={{ flexGrow: 1, ml: "5%" }}
+            maxWidth="800px"
+            justifyContent="center"
+            sx={{ flexGrow: 1, margin: "0 auto" }}
           >
             <Input
               variant="outlined"
               type="text"
-              value={search}
+              value={keyword}
               onChange={handleSearch}
               onKeyDown={handleKeyDown} // 엔터키 가능
               placeholder="검색어를 입력해주세요."
@@ -126,8 +180,60 @@ const Search = () => {
             </Button>
           </Box>
         </Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          sx={{ mt: 2, mb: 2 }}
+        >
+          {recentSearchItem.length > 0 && !isSearched && (
+            <Box width="500px" sx={{ mt: 2, mb: 2 }}>
+              <Grid display="flex" flexDirection="column">
+                {recentSearchItem.map((term, index) => (
+                  <Box
+                    key={index}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{
+                      border: "1px solid #7986CB",
+                      borderRadius: "4px",
+                      p: 1,
+                      mb: 1,
+                      cursor: "pointer",
+                      "&:hover": {
+                        backgroundColor: indigo[50],
+                      },
+                    }}
+                    onClick={() => handleRecentSearchClick(term)}
+                  >
+                    <Typography variant="body2">{term}</Typography>
+                    <IconButton
+                      onClick={(e) => handleDelRecentSearchClick(e, term)}
+                    >
+                      <Cancel
+                        sx={{
+                          color: "#7986CB",
+                        }}
+                      />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Grid>
+              <Typography color="primary" variant="body1" sx={{ mt: 2, mb: 2 }}>
+                최근검색어 5개까지만 나타납니다.
+              </Typography>
+            </Box>
+          )}
+        </Box>
         {isSearched && (
-          <Box sx={{ mt: 2, mb: 2 }}>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            max-width="500px"
+            sx={{ mt: 2, mb: 2 }}
+          >
             <Button
               variant={filter === "all" ? "contained" : "outlined"}
               onClick={() => handleFilterChange("all")}
@@ -154,14 +260,14 @@ const Search = () => {
         <Box>
           {isSearched && (
             <Grid container spacing={2}>
-              {searched.map((post) => (
-                <Grid item key={post.id} xs={12} sm={6} md={4}>
+              {filteredResults.map((post) => (
+                <Grid item key={post.post_no} xs={12} sm={6} md={4}>
                   <Postcard post={post} />
                 </Grid>
               ))}
             </Grid>
           )}
-          {isSearched && searched.length === 0 && (
+          {isSearched && filteredResults.length === 0 && (
             <Typography variant="h6" sx={{ textAlign: "center", m: 10 }}>
               검색 결과 없음
             </Typography>

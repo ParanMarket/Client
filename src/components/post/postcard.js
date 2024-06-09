@@ -101,58 +101,23 @@ const Postcard = ({ post }) => {
           margin: 0,
         }}
       >
-        <IconButton aria-label="찜" sx={{ padding: 0, margin: 0 }}>
-          <Favorite sx={{ width: "30%" }} />
+        <IconButton disabled aria-label="찜" sx={{ padding: 0, margin: 0 }}>
+          <Favorite sx={{ width: "50%" }} />
           <Typography variant="body2" sx={{ ml: 0.5 }}>
-            {post.post_like_cnt}
+            {post.post_like_cnt === null ? 0 : post.post_like_cnt}
           </Typography>
         </IconButton>
-        <IconButton aria-label="채팅 수" sx={{ padding: 0, margin: 0 }}>
-          <Chat sx={{ width: "35%" }} />
+        <IconButton
+          disabled
+          aria-label="채팅 수"
+          sx={{ padding: 0, margin: 0 }}
+        >
+          <Chat sx={{ width: "50%" }} />
           <Typography variant="body2" sx={{ ml: 0.5 }}>
-            {post.post_chat_cnt}
+            {post.post_chat_cnt === null ? 0 : post.post_chat_cnt}
           </Typography>
         </IconButton>
       </CardActions>
-      <IconButton
-        aria-label="더보기"
-        sx={{ position: "absolute", top: "-1%", right: "-1%" }}
-        id="long-button"
-        aria-controls={open ? "long-menu" : undefined}
-        aria-expanded={open ? "true" : undefined}
-        aria-haspopup="true"
-        onClick={handleMenuClick}
-      >
-        <MoreVert />
-      </IconButton>
-      <Menu
-        id="long-button"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleMenuClose}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        <MenuItem
-          onClick={handleReport}
-          sx={{
-            "&:hover": {
-              backgroundColor: indigo[50],
-            },
-          }}
-        >
-          신고하기
-        </MenuItem>
-      </Menu>
     </Card>
   );
 };

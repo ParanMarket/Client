@@ -20,6 +20,7 @@ import Report from "./pages/HeaderNav/report";
 import ChatRoom from "./pages/FooterNav/Chat/chatRoom";
 import PostDetail from "./pages/FooterNav/Post/postDetail";
 import NickSetting from "./pages/User/nickSetting";
+import EditPost from "./pages/FooterNav/Post/editPost";
 
 function App() {
   //우클릭 방지
@@ -65,9 +66,9 @@ function App() {
             <Route path="/post/:post_no" element={<PostDetail />}></Route>
             <Route path="/report/:post_no" element={<Report />}></Route>
             <Route path="/chatRoom/:chat_no" element={<ChatRoom />}></Route>
+            <Route path="/editPost/:post_no" element={<EditPost />}></Route>
             <Route path="/notifications" element={<Notifications />}></Route>
             <Route path="/nickSetting" element={<NickSetting />}></Route>
-
           </Routes>
         </div>
       </BrowserRouter>

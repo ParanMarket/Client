@@ -9,81 +9,67 @@ import {
   Typography,
   Grid,
   IconButton,
+  Toolbar,
 } from "@mui/material";
 import { ChatBubbleRounded, FavoriteRounded } from "@mui/icons-material";
 
 //확인용 나중에 지우기
 import Posts from "../../data";
 
-const PostFooter = () => {
-  const { no } = useParams(); //현재 페이지 URL에서 no 파라미터 추출
-  const [liked, setLiked] = useState(null);
+const PostFooter = ({ post }) => {
+  //console.log("footer recived: ", postProp);
+  const { post_no } = useParams(); //현재 페이지 URL에서 no 파라미터 추출
+  //const [liked, setLiked] = useState(null);
+  const [likeStatus, setLikeStatus] = useState(false);
   const [chatCount, setChatCount] = useState(0);
   const navigate = useNavigate();
-  const [post, setPost] = useState("");
-  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
-
-  // post_no에 따른 post정보 가져오기 임시데이터
+  //const [post, setPost] = useState("");
+  //const userToken = useState(localStorage.getItem("userToken"));
+  const userToken = 1;
+  /* 사용자 찜 정보 가져오기
   useEffect(() => {
-    const foundPost = Posts.find((post) => post.no.toString() === no); // 데이터를 문자열 no와 비교
-    if (foundPost) {
-      setPost(foundPost);
-    } else {
-      console.error("정보를 가지고 오는데 실패했습니다.");
-    }
-  }, [no]);
-
-  useEffect(() => {
-    setLiked(post.liked);
-    console.log(post.liked); // 상태 변경 확인
-  }, [post.liked]);
-  const handleLikeClick = async () => {
-    const newLikeState = !liked;
-    setLiked(newLikeState);
-  };
+    const checkLikeStatus = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/status_like/${post_no}/${userToken}`,
+        );
+        setLikeStatus(response.data.liked);
+      } catch (err) {
+        console.error(" 좋아요 통신중 오류 발생", err);
+      }
+    };
+    checkLikeStatus();
+  }, [post_no, userToken]);*/
 
   const handleChatClick = async () => {
     if (post.status === 2) return; // 거래완료 시 채팅불가
-    const chatRoomNo = `chat-${no}`; // eg 아이디
+    const chatRoomNo = `chat-${post_no}`; // eg 아이디
 
-    navigate(`/chatRoom/${chatRoomNo}`, { state: { postNo: no } }); // 나중에 내 토큰(아이디) & 올린 사람 아이디 & 상품번호 넣어서 챗룸 만들기
+    navigate(`/chatRoom/${chatRoomNo}`, { state: { postNo: post_no } }); // 나중에 내 토큰(아이디) & 올린 사람 아이디 & 상품번호 넣어서 챗룸 만들기
     setChatCount((prev) => prev + 1);
   };
 
-  /*
-  // 게시글데이터 가져오기
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5001/post/${no}`);
-        setPost(response.data)
-        setLiked(response.data.liked);
-      } catch (err) {
-        console.error("정보를 가지고 오는데 실패했습니다.", err)
-      }
-      fetchPost();
-    }
-  }, [no])
-  
-
-  //좋아요 상태 변경
   const handleLikeClick = async () => {
-    const newLikeState = !liked; //현 상태의 반대 값을 저장
-    setLiked(newLikeState);
     try {
-      await axios.post(`http://localhost:5001/post/${no}/like`, {
-          liked: newLikeState, 
-        }, {  
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-      });
+      if (likeStatus) {
+        await axios.post(`http://localhost:5001/post/dislike_post/${post_no}`, {
+          user_no: userToken,
+        });
+        setLikeStatus(false);
+        console.log("안좋아요");
+      } else {
+        await axios.post(`http://localhost:5001/post/like_post/${post_no}`, {
+          user_no: userToken,
+        });
+        setLikeStatus(true);
+        console.log("좋아요");
+      }
     } catch (err) {
-      console.error("좋아요 상태 변경에 실패했습니다.", err)
+      console.log("좋아요 통신중 오류 발생", err);
     }
+  };
 
-  } */
-
+  /*
   /*나중에 수정하기 완전 이상,, + 이미 채팅을 한 번 한 사람이면 채팅 수 증가 막기
   const handleChatClick = async () => {
     if (post.status === 2) return; // 거래완료 시 채팅불가
@@ -102,7 +88,7 @@ const PostFooter = () => {
 
   return (
     <footer>
-      <BottomNavigation
+      <Toolbar
         sx={{
           width: "100%",
           height: "12%",
@@ -117,10 +103,13 @@ const PostFooter = () => {
             item
             sx={{ display: "flex", alignItems: "center", marginLeft: 2 }}
           >
-            <IconButton onClick={handleLikeClick} disabled={post.status === 2}>
+            <IconButton
+              onClick={handleLikeClick}
+              disabled={post.post_status === 2}
+            >
               <FavoriteRounded
-                color={liked ? "error" : "inherit"}
-                style={{ fontSize: "30" }}
+                color={likeStatus ? "error" : "inherit"}
+                style={{ fontSize: "30px" }}
               />
             </IconButton>
             <Divider
@@ -130,7 +119,7 @@ const PostFooter = () => {
               sx={{ mx: 1.5, opacity: 1 }}
             />
             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
-              {post.price}원
+              {post.post_price}원
             </Typography>
           </Grid>
           <Grid item sx={{ p: 3 }}>
@@ -138,13 +127,13 @@ const PostFooter = () => {
               startIcon={<ChatBubbleRounded color="secondary.light" />}
               onClick={handleChatClick}
               variant="contained"
-              disabled={post.status === 2}
+              disabled={post.post_status === 2}
             >
               채팅하기
             </Button>
           </Grid>
         </Grid>
-      </BottomNavigation>
+      </Toolbar>
     </footer>
   );
 };

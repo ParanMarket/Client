@@ -28,35 +28,37 @@ import LogoutButton from "./logoutButton";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
 import Logo from "../../images/logo_name.png";
+import MenuImg from "../../images/menuImg.png";
 
 const Header = () => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [user, setUser] = useState({ nickname: "", img: "" });
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const [userNickname, setUserNickname] = useState(localStorage.getItem("userNickname"));
 
-  useEffect(() => {
-    // userToken이 있을 때만 (프로필, 이름) 표시 아니면 로그인 표시
-    if (userToken) {
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get("http://localhost:5001/user", {
-            headers: {
-              Authorization: `Bearer ${userToken}`, //Authorizaion 헤더에 토큰 포함
-            },
-          });
-
-          setUser({
-            nickname: "response.data.nickname",
-            img: response.data.img,
-          });
-        } catch (err) {
-          console.error("데이터를 가지고 오는데 실패했습니다.", err);
-        }
-      };
-      fetchUserData();
-    }
-  }, []);
+  // useEffect(() => {
+  //   // userToken이 있을 때만 (프로필, 이름) 표시 아니면 로그인 표시
+  //   if (userToken) {
+  //     const fetchUserData = async () => {
+  //       try {
+  //         const response = await axios.get("http://localhost:5001/user", {
+  //           headers: {
+  //             Authorization: `Bearer ${userToken}`, //Authorizaion 헤더에 토큰 포함
+  //           },
+  //         });
+  //
+  //         setUser({
+  //           nickname: "response.data.nickname",
+  //           img: response.data.img,
+  //         });
+  //       } catch (err) {
+  //         console.error("데이터를 가지고 오는데 실패했습니다.", err);
+  //       }
+  //     };
+  //     fetchUserData();
+  //   }
+  // }, []);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -101,12 +103,12 @@ const Header = () => {
             onKeyDown={toggleDrawer(false)}
           >
             <Avatar
-              src={user.img}
-              alt={user.nickname}
+              src={MenuImg}
+              alt="숙명로고"
               sx={{ width: 64, height: 64, marginBottom: 2 }}
             />
             <Typography variant="h6">
-              {user.nickname} {userToken ? "님" : "로그인을 해주세요."}
+              {userNickname} {userNickname ? "님" : "로그인을 해주세요."}
             </Typography>
             <List sx={{ marginTop: 5 }}>
               <ListItem onClick={() => navigate("/favorite")}>
@@ -164,12 +166,6 @@ const Header = () => {
         <div style={{ marginLeft: "auto" }}>
           <IconButton color="inherit" onClick={() => navigate("/search")}>
             <Search />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            onClick={() => navigate("/notifications")}
-          >
-            <Notifications />
           </IconButton>
         </div>
       </Toolbar>

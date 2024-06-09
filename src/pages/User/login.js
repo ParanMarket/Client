@@ -66,8 +66,6 @@ function Login() {
 
     setEmail(userEmail);
     setGoogleToken(credentialResponse.credential);
-    console.log(userEmail)
-    console.log(credentialResponse.credential)
 
     try {
       const response = await axios.post("http://localhost:5001/auth/login", {
@@ -123,7 +121,7 @@ function Login() {
           </GoogleOAuthProvider>
 
           <CenteredGrid item xs sx={{ mt: 5 }}>
-            <Link href="/home" variant="body2">
+            <Link href="/" variant="body2">
               홈으로 이동
             </Link>
           </CenteredGrid>

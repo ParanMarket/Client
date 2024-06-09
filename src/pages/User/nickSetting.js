@@ -67,6 +67,7 @@ const NickSetting = () => {
             if (response.data.message === "success") {
                 setNicknameError("");
                 setNicknameChecked(true); // 중복 확인 완료
+                alert("사용 가능한 닉네임입니다!")
                 return true;
             } else if (response.data.message === "already_exist_nick") {
                 setNicknameError("중복된 닉네임입니다. 다른 닉네임을 사용해주세요.");
@@ -82,47 +83,43 @@ const NickSetting = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = new FormData(e.currentTarget);
-        const nickname = data.get("nickname").trim();
-
-
-        if (!nickname) {
-            if (!nickname) setNicknameError("닉네임을 작성해주세요.");
-            return;
-        }
 
         if (!nicknameChecked) {
-            if (!nicknameChecked) setNicknameError("닉네임 중복 확인을 해주세요.");
+            setNicknameError("닉네임 중복 확인을 해주세요.");
             return;
         }
 
-        const isNicknameAvailable = await nicknameCheck(nickname);
+        const joinData ={ nickname: nickname.trim() }
 
-        if (isNicknameAvailable) {
-            const joinData = {
-                nickname: nickname,
-            };
-            try {
-                await onhandlePost(joinData);
-                console.log("회원가입 성공");
-                navigate("/login");
-            } catch (err) {
-                console.error("회원가입 실패", err);
-                setNickSettingError("회원가입에 실패하였습니다. 다시 시도해주세요.");
-            }
-        } else {
-            setNickSettingError("닉네임 중복 확인이 필요합니다.");
+
+        try {
+            await onhandlePost(joinData);
+            console.log("등록되셨습니다!");
+            navigate("/home");
+        } catch (err) {
+            console.error("문제가 생겨 다시 한번 시도해주세요.", err);
+            setNickSettingError("문제가 발생했습니다. 다시 시도해주세요.");
         }
     };
 
     const onhandlePost = async (data) => {
         const { nickname } = data;
+        const token = localStorage.getItem("userToken")
 
-        try {
+        try { // 사용자 닉네임 DB등록
+            if (!token) {
+                alert("사용자 정보가 존재하지 않습니다. 로그인을 다시 진행해주세요.");
+                navigate('/login');
+            }
             const response = await axios.post("http://localhost:5001/auth/register", {
                 nickname,
+            }, {
+                headers: { // 검증용 토큰 보내기
+                    Authorization: `Bearer ${token}`,
+                }
             });
             console.log(response.data, "성공");
+            localStorage.setItem("userNickname", response.data.nickname);
 
             return true;
         } catch (err) {
@@ -130,6 +127,20 @@ const NickSetting = () => {
             throw err; //상위 컴포넌트에 에러 전달
         }
     };
+
+    // 뒤로 가기 시 토큰 삭제
+    useEffect(() => {
+        const handlePopState = (event) => {
+            localStorage.removeItem("userToken");
+        };
+
+        window.history.pushState(null, "", window.location.href);
+        window.addEventListener("popstate", handlePopState);
+
+        return () => {
+            window.removeEventListener("popstate", handlePopState);
+        };
+    }, []);
 
     return (
         <div className="screen">
@@ -178,7 +189,7 @@ const NickSetting = () => {
                                         onClick={() => nicknameCheck(nickname)}
                                         variant="contained"
                                         size="large"
-                                        disabled={nicknameChecked && nickname === prevNickname}
+                                        disabled={nicknameChecked && nickname !== prevNickname}
                                         sx={{
                                             bgcolor: nicknameChecked ? "grey.300" : "primary.main",
                                             width: "100px",
