@@ -69,9 +69,9 @@ function App() {
             <Route path="/editPost/:post_no" element={<EditPost />}></Route>
             <Route path="/notifications" element={<Notifications />}></Route>
             <Route path="/nickSetting" element={<NickSetting />}></Route>
-            {/* 모든 유효하지 않은 경로를 NotFoundPage로 리다이렉트 */}
+            {/* 모든 유효하지 않은 경로를 NotFoundPage로 리다이렉트
             <Route path="/404" element={<NotFoundPage />}></Route>
-            <Route path="*" element={<Navigate to="/404" replace />} />
+            <Route path="*" element={<Navigate to="/404" replace />} /> */}
           </Routes>
         </div>
       </BrowserRouter>

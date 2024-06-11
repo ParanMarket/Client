@@ -43,7 +43,7 @@ const MoreIcon = ({ post }) => {
   //postUserNick === userNickname
   // 본인 - 수정기능
   const handleEdit = () => {
-    navigate(`/edit/${post_no}`);
+    navigate(`/editPost/${post_no}`);
   };
 
   // 본인 - 삭제기능(테스트 완)

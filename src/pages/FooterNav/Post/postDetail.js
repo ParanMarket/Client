@@ -15,6 +15,8 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [grade, setGrade] = useState("");
   const [postImages, setPostImages] = useState([]);
+
+  // 나중에 서버랑 연결해야됨! (테스트용 userno 1)
   const postStatusTest = 1;
 
   useEffect(() => {
