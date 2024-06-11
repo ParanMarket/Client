@@ -20,7 +20,6 @@ const Postcard = ({ post }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  console.log("search", post);
 
   const handleCardClick = () => {
     navigate(`/post/${post.post_no}`);
