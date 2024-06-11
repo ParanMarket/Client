@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 //import Header from "./Header"; //공통헤더
 import Home from "./pages/FooterNav/home";
@@ -21,7 +21,7 @@ import ChatRoom from "./pages/FooterNav/Chat/chatRoom";
 import PostDetail from "./pages/FooterNav/Post/postDetail";
 import NickSetting from "./pages/User/nickSetting";
 import EditPost from "./pages/FooterNav/Post/editPost";
-
+import NotFoundPage from "./components/notFoundPage";
 function App() {
   //우클릭 방지
   useEffect(() => {
@@ -69,6 +69,9 @@ function App() {
             <Route path="/editPost/:post_no" element={<EditPost />}></Route>
             <Route path="/notifications" element={<Notifications />}></Route>
             <Route path="/nickSetting" element={<NickSetting />}></Route>
+            {/* 모든 유효하지 않은 경로를 NotFoundPage로 리다이렉트 */}
+            <Route path="/404" element={<NotFoundPage />}></Route>
+            <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>
         </div>
       </BrowserRouter>
