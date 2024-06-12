@@ -66,6 +66,9 @@ function ChatRoom() {
         author: myNickname, // 현재 보내는 사람 (나중에 백에서 nickname받아오면 세팅) / 번호로 세팅하기 user_no_2: user_no_2
         message: currentMessage, // 보내는 메시지
         time: formattedTime, // 보낸 시간
+        //user_no_2: user_no_2,  // 백에서 유저 번호 알려줘야 보낼 수 있음
+        userToken: myUserToken, // 유저번호
+        user_no_1: postUserNo, // 판매자 유저번호
       };
 
       try {
