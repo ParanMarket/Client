@@ -72,14 +72,18 @@ function Login() {
         token: credentialResponse.credential,
       });
 
-      if (response.data.userExists) {
-        // 사용자의 정보가 있는 경우
+      if (response.data.needsNickname) {
+        // 사용자의 정보가 없는 경우 닉네임 설정으로 이동, 닉네임이 null인 경우
+        localStorage.setItem("userToken", response.data.userToken);
+        navigate("/nickSetting"); // 닉네임 설정으로 이동
+      } else if (response.data.userToken) {
+        // 아님 그냥 로그인 됨
         alert("로그인 완료되었습니다.");
-        localStorage.setItem("userToken", response.data.token);
+        localStorage.setItem("userToken", response.data.userToken);
         navigate("/home");
       } else {
-        localStorage.setItem("userToken", response.data.token);
-        navigate("/nickSetting"); // 사용자의 정보가 없는 경우 닉네임 설정으로 이동
+        alert("문제가 생겼습니다! 다음에 다시 시도해주세요.");
+        navigate("/");
       }
     } catch (err) {
       console.error("서버 통신 에러:", err);

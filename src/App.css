@@ -1,6 +1,11 @@
 @charset "utf-8";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard-dynamic-subset.css");
 
+.app_center {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
 .App_chat {
   width: 100vw;
   height: 100vh;
@@ -16,55 +21,19 @@
 }
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,700");
 
-.joinChatContainer {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-
-.joinChatContainer h3 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-.joinChatContainer input {
-  width: 210px;
-  height: 40px;
-  margin: 7px;
-  border: 2px solid #43a047;
-  border-radius: 5px;
-  padding: 5px;
-  font-size: 16px;
-}
-
-.joinChatContainer button {
-  width: 225px;
-  height: 50px;
-  margin: 7px;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-  font-size: 16px;
-  background: #43a047;
-  color: #fff;
-  cursor: pointer;
-}
-
-.joinChatContainer button:hover {
-  background: #2e7d32;
-}
-
 .chat-window {
-  width: 300px;
-  height: 420px;
+  width: 100%;
+  max-width: 750px;
+  height: 100%;
 }
 
 .chat-window p {
   margin: 0;
 }
 .chat-window .chat-header {
-  height: 45px;
+  height: 50px;
   border-radius: 6px;
-  background: #263238;
+  background: #3f51b5;
   position: relative;
   cursor: pointer;
 }
@@ -77,17 +46,18 @@
 }
 
 .chat-window .chat-body {
-  height: calc(450px - (45px + 70px));
-  border: 1px solid #263238;
+  height: calc(830px - (45px + 70px));
+  border: 1px solid #7986cb;
   background: #fff;
-
   position: relative;
+  border-radius: 5px;
 }
 .chat-window .chat-body .message-container {
   width: 100%;
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+  border-radius: 10px;
 }
 
 .chat-window .chat-body .message-container::-webkit-scrollbar {
@@ -103,8 +73,8 @@
   width: auto;
   height: auto;
   min-height: 40px;
-  max-width: 120px;
-  background-color: #43a047;
+  max-width: 250px;
+  background-color: #9fa8da;
   border-radius: 5px;
   color: white;
   display: flex;
@@ -136,7 +106,7 @@
 
 #other .message-content {
   justify-content: flex-end;
-  background-color: cornflowerblue;
+  background-color: #5c6bc0;
 }
 
 #other .message-meta {
@@ -155,10 +125,11 @@
 }
 
 .chat-window .chat-footer {
-  height: 40px;
-  border: 1px solid #263238;
+  height: 50px;
+  border: 1px solid #7986cb;
   border-top: none;
   display: flex;
+  border-radius: 5px;
 }
 
 .chat-window .chat-footer input {
@@ -187,7 +158,7 @@
 }
 
 .chat-window .chat-footer button:hover {
-  color: #43a047;
+  color: #3f51b5;
 }
 .hide {
   opacity: 0 !important;

@@ -98,47 +98,49 @@ function ChatRoom() {
   }, [socket]);
 
   return (
-    <div className="chat-window">
-      <div className="chat-header">
-        <p>대화상대 {postUserNick}</p>
-      </div>
-      <div className="chat-body">
-        <ScrollToBottom className="message-container">
-          {messageList.map((messageConent, index) => {
-            // 메시지 하나씩 보이기
-            return (
-              <div
-                key={index}
-                className="message"
-                id={myNickname === messageConent.author ? "other" : "you"}
-              >
-                <div>
-                  <div className="message-content">
-                    <p>{messageConent.message}</p>
-                  </div>
-                  <div className="message-meta">
-                    <p id="time">{messageConent.time}</p>
-                    <p id="author">{messageConent.author}</p>
+    <div className="app_center">
+      <div className="chat-window">
+        <div className="chat-header">
+          <p>대화상대 {postUserNick}</p>
+        </div>
+        <div className="chat-body">
+          <ScrollToBottom className="message-container">
+            {messageList.map((messageConent, index) => {
+              // 메시지 하나씩 보이기
+              return (
+                <div
+                  key={index}
+                  className="message"
+                  id={myNickname === messageConent.author ? "other" : "you"}
+                >
+                  <div>
+                    <div className="message-content">
+                      <p>{messageConent.message}</p>
+                    </div>
+                    <div className="message-meta">
+                      <p id="time">{messageConent.time}</p>
+                      <p id="author">{messageConent.author}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </ScrollToBottom>
-      </div>
-      <div className="chat-footer">
-        <input
-          type="text"
-          placeholder="Heyy..."
-          value={currentMessage}
-          onChange={(event) => {
-            setCurrentMessage(event.target.value);
-          }}
-          onKeyPress={(event) => {
-            event.key === "Enter" && sendMessage();
-          }}
-        />
-        <button onClick={sendMessage}> &#9685;</button>
+              );
+            })}
+          </ScrollToBottom>
+        </div>
+        <div className="chat-footer">
+          <input
+            type="text"
+            placeholder="Heyy..."
+            value={currentMessage}
+            onChange={(event) => {
+              setCurrentMessage(event.target.value);
+            }}
+            onKeyPress={(event) => {
+              event.key === "Enter" && sendMessage();
+            }}
+          />
+          <button onClick={sendMessage}> &#9685;</button>
+        </div>
       </div>
     </div>
   );
