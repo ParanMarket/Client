@@ -25,7 +25,13 @@ const PostFooter = ({ post }) => {
   const navigate = useNavigate();
   //const [post, setPost] = useState("");
   //const userToken = useState(localStorage.getItem("userToken"));
-  const userToken = 1;
+  // 나중에 지울 데이터
+  localStorage.setItem("userToken", 1);
+  localStorage.setItem("userNickname", "채팅테스트User");
+  const userToken = useState(localStorage.getItem("useToken"));
+  const userNickname = useState(localStorage.getItem("userNickname"));
+  ///console.log("로컬스토리지 테스트 : ", userToken, userNickname);
+
   /* 사용자 찜 정보 가져오기
   useEffect(() => {
     const checkLikeStatus = async () => {
@@ -43,9 +49,7 @@ const PostFooter = ({ post }) => {
 
   const handleChatClick = async () => {
     if (post.status === 2) return; // 거래완료 시 채팅불가
-    const chatRoomNo = `chat-${post_no}`; // eg 아이디
-
-    navigate(`/chatRoom/${chatRoomNo}`, { state: { postNo: post_no } }); // 나중에 내 토큰(아이디) & 올린 사람 아이디 & 상품번호 넣어서 챗룸 만들기
+    navigate(`/chatRoom/${post_no}`, { state: { post } }); // post 정보 같이 보내기 // state로 post 객체 전달
     setChatCount((prev) => prev + 1);
   };
 

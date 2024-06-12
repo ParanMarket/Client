@@ -72,12 +72,13 @@ function Login() {
         token: credentialResponse.credential,
       });
 
-      if (response.data.userExists) { // 사용자의 정보가 있는 경우
+      if (response.data.userExists) {
+        // 사용자의 정보가 있는 경우
         alert("로그인 완료되었습니다.");
         localStorage.setItem("userToken", response.data.token);
-        localStorage.setItem("userNickname", response.data.nickname);
         navigate("/home");
       } else {
+        localStorage.setItem("userToken", response.data.token);
         navigate("/nickSetting"); // 사용자의 정보가 없는 경우 닉네임 설정으로 이동
       }
     } catch (err) {
