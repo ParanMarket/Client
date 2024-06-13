@@ -16,9 +16,6 @@ const PostDetail = () => {
   const [grade, setGrade] = useState("");
   const [postImages, setPostImages] = useState([]);
 
-  // 나중에 서버랑 연결해야됨! (테스트용 userno 1)
-  const postStatusTest = 1;
-
   useEffect(() => {
     const fetchPostData = async () => {
       try {
@@ -40,6 +37,7 @@ const PostDetail = () => {
 
         // 사진 설정
         setPostImages(postData.post_images);
+        // 초기 좋아요 설정
       } catch (err) {
         console.log("데이터를 가져오는데 실패하였습니다.");
       }

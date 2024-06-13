@@ -24,22 +24,12 @@ const PostFooter = ({ post }) => {
   const [chatCount, setChatCount] = useState(0);
   const navigate = useNavigate();
   //const [post, setPost] = useState("");
-  const userToken = useState(localStorage.getItem("useToken"));
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
-  /* 사용자 찜 정보 가져오기
   useEffect(() => {
-    const checkLikeStatus = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5001/status_like/${post_no}/${userToken}`,
-        );
-        setLikeStatus(response.data.liked);
-      } catch (err) {
-        console.error(" 좋아요 통신중 오류 발생", err);
-      }
-    };
-    checkLikeStatus();
-  }, [post_no, userToken]);*/
+    setLikeStatus(post.post_my_like);
+    console.log("초기 좋아요 기본 설정", post.post_my_like);
+  }, [post]);
 
   const handleChatClick = async () => {
     if (post.status === 2) return; // 거래완료 시 채팅불가
@@ -50,17 +40,27 @@ const PostFooter = ({ post }) => {
   const handleLikeClick = async () => {
     try {
       if (likeStatus) {
-        await axios.post(`http://localhost:5001/post/dislike_post/${post_no}`, {
-          user_no: userToken,
-        });
+        await axios.post(
+          `http://localhost:5001/post/dislike_post/${post_no}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          },
+        );
         setLikeStatus(false);
-        console.log("안좋아요");
       } else {
-        await axios.post(`http://localhost:5001/post/like_post/${post_no}`, {
-          user_no: userToken,
-        });
+        await axios.post(
+          `http://localhost:5001/post/like_post/${post_no}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          },
+        );
         setLikeStatus(true);
-        console.log("좋아요");
       }
     } catch (err) {
       console.log("좋아요 통신중 오류 발생", err);

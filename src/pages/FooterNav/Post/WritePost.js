@@ -45,6 +45,10 @@ const WritePost = () => {
   const [category, setCategory] = useState("");
   const [categoryError, setCategoryError] = useState("");
 
+  // if (!userToken) {
+  //   alret();
+  // }
+
   // 사진 업로드
   const handleFileChange = (e) => {
     const newFiles = Array.from(e.target.files);

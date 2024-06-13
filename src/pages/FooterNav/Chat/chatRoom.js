@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import ScrollToBottom from "react-scroll-to-bottom";
+import axios from "axios";
 
 function ChatRoom() {
   const location = useLocation(); // state 에서 post정보 가져오기
