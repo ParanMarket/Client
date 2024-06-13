@@ -28,7 +28,6 @@ const PostFooter = ({ post }) => {
 
   useEffect(() => {
     setLikeStatus(post.post_my_like);
-    console.log("초기 좋아요 기본 설정", post.post_my_like);
   }, [post]);
 
   const handleChatClick = async () => {
@@ -66,23 +65,6 @@ const PostFooter = ({ post }) => {
       console.log("좋아요 통신중 오류 발생", err);
     }
   };
-
-  /*
-  /*나중에 수정하기 완전 이상,, + 이미 채팅을 한 번 한 사람이면 채팅 수 증가 막기
-  const handleChatClick = async () => {
-    if (post.status === 2) return; // 거래완료 시 채팅불가
-    const chatRoomId = `chat-${no}-${userToken}`; // eg 아이디
-
-    navigate(`/chatRoom/${chatRoomId}`, { state: { userToken, postNo: no } }); // 나중에 내 토큰(아이디) & 올린 사람 아이디 & 상품번호 넣어서 챗룸 만들기
-    setChatCount((prev) => prev + 1);
-    /*
-    try {
-      console.log(chatCount);
-      await axios.post(`localhost:5000/post/${no}/chatNum`, { chatCount });
-    } catch (err) {
-      console.error("채팅방 수 db저장에 실패했습니다.", err);
-    }
-    */
 
   return (
     <footer>

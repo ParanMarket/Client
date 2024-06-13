@@ -22,7 +22,6 @@ const Home = () => {
       const response = await axios.get(
         `http://localhost:5001/post/post_list/${page}`,
       );
-      console.log("Fetching page:", page);
       if (response.data.length === 0) {
         setHasMore(false); // 데이터가 더이상 없으면 false
       } else {
@@ -30,8 +29,6 @@ const Home = () => {
           append ? [...prevPosts, ...response.data] : response.data,
         );
       }
-      console.log(response.data);
-      console.log(hasMore);
     } catch (err) {
       console.error("Error fetching posts", err);
     }

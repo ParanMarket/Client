@@ -30,30 +30,46 @@ function ChatRoom() {
     ":" +
     currentTime.getMinutes().toString().padStart(2, "0"); // 시간 표시 형식
 
-  // 방 정보 세팅 (판매자와 구매자 정보 세팅)
   useEffect(() => {
-    setChatNo(chat_no);
-    //setMyName(myNickname);
-    setPostNo(post.post_no);
-    setPostUserNo(post.post_user_no);
-    setPostUserNick(post.user_nick);
-  }, [chat_no, post]);
+    const initializeChatDetails = async () => {
+      setPostNo(post.post_no);
+      setPostUserNo(post.post_user_no);
+      setPostUserNick(post.user_nick);
+      console.log("data: ", post.post_no, post.post_user_no, post.user_nick);
 
-  // 한번만 socket.io의 id생성
-  useEffect(() => {
-    const newSocket = io.connect("http://localhost:5001");
-    setSocket(newSocket);
+      const fetchChatDetails = async () => {
+        try {
+          const response = await axios.post(
+            "http://localhost:5001/chat/get_chat_details",
+            {
+              post_no: post.post_no,
+              post_user_no: post.post_user_no,
+              user_nick: post.user_nick,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${myUserToken}`,
+              },
+            },
+          );
 
-    //테스트용 벙 만들기 (나중에 서버에서 chat_no 받아와서 채팅방 생성(고유값)
-    newSocket.on("connect", () => {
-      // 방에 참여하기
-      newSocket.emit("join_room", chat_no);
-    });
+          if (response.data) {
+            setChatNo(response.data.chat_no);
+            setMyNickname(response.data.user_no_2_nick);
+            console.log(chatNo, myNickname);
+          } else {
+            console.log("정보가 올바르지 않습니다.");
+          }
+        } catch (error) {
+          console.log("채팅 통신 오류", error);
+        }
+      };
 
-    return () => {
-      newSocket.disconnect();
+      fetchChatDetails();
     };
-  }, [chat_no]);
+
+    initializeChatDetails();
+  }, [post, myUserToken]);
 
   // 구매자(나)가 메시지 보내기 (백과 소통)
   const sendMessage = async () => {
