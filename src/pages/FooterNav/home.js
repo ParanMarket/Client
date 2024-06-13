@@ -41,7 +41,6 @@ const Home = () => {
         `http://localhost:5001/post/post_cate_list/${cate}`,
       );
       setPosts(response.data);
-      console.log(response.data);
     } catch (err) {
       console.error("데이터를 불러오는데 오류가 발생했습니다.", err);
     }

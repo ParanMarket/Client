@@ -40,39 +40,37 @@ function ChatRoom() {
       setPostUserNick(post.user_nick);
       console.log("data: ", post.post_no, post.post_user_no, post.user_nick);
 
-      const fetchChatDetails = async () => {
-        try {
-          const response = await axios.post(
-            "http://localhost:5001/chat/get_chat_details",
-            {
-              post_no: post.post_no, // 물품 번호
-              post_user_no: post.post_user_no, // 등록자 번호
-              user_nick: post.user_nick, // 등록자 유저 닉네임
+      try {
+        const response = await axios.post(
+          "http://localhost:5001/chat/get_chat_details",
+          {
+            post_no: post.post_no, // 물품 번호
+            post_user_no: post.post_user_no, // 등록자 번호
+            user_nick: post.user_nick, // 등록자 유저 닉네임
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${myUserToken}`,
             },
-            {
-              headers: {
-                Authorization: `Bearer ${myUserToken}`,
-              },
-            },
-          );
+          },
+        );
 
-          if (response.data) {
-            setChatNo(response.data.chat_no);
-            setMyNickname(response.data.user_nick);
-            console.log(chatNo, myNickname);
-          } else {
-            console.log("정보가 올바르지 않습니다.");
-          }
-        } catch (error) {
-          console.log("채팅 통신 오류", error);
+        if (response.data) {
+          setChatNo(response.data.chat_no);
+          setMyNickname(response.data.user_nick);
+          console.log(chatNo, myNickname);
+        } else {
+          console.log("정보가 올바르지 않습니다.");
         }
-      };
-
-      fetchChatDetails();
+      } catch (error) {
+        console.log("채팅 통신 오류", error);
+      }
     };
 
     initializeChatDetails();
+  }, [post, myUserToken, chatNo]);
 
+  useEffect(() => {
     if (chatNo) {
       const newSocket = io.connect("http://localhost:5001");
       setSocket(newSocket);
@@ -83,7 +81,7 @@ function ChatRoom() {
         newSocket.disconnect();
       };
     }
-  }, [post, myUserToken, chatNo]);
+  }, [chatNo]);
 
   // 구매자(나)가 메시지 보내기 (백과 소통)
   const sendMessage = async () => {
