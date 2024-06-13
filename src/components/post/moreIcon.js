@@ -23,7 +23,7 @@ const MoreIcon = ({ post }) => {
       try {
         const response = await axios.post(
           "http://localhost:5001/auth/verify_user",
-          { post_user_no: postOwner },
+          { post_user_no: post.post_user_no },
           {
             headers: {
               Authorization: `Bearer ${userToken}`,
@@ -43,6 +43,7 @@ const MoreIcon = ({ post }) => {
     };
     verifyUser();
   }, [post, userToken]);
+  console.log(checkUser);
 
   const handleMenuClick = async (event) => {
     setAnchorEl(event.currentTarget);
