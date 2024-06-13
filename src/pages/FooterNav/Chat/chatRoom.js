@@ -6,6 +6,7 @@ import axios from "axios";
 import ChatRoomCard from "../../../components/chatRoomCard";
 import { IconButton } from "@mui/material";
 import { SendRounded } from "@mui/icons-material";
+import { jwtDecode } from "jwt-decode";
 
 function ChatRoom() {
   const location = useLocation(); // state 에서 post정보 가져오기
@@ -31,6 +32,8 @@ function ChatRoom() {
     currentTime.getHours().toString().padStart(2, "0") +
     ":" +
     currentTime.getMinutes().toString().padStart(2, "0"); // 시간 표시 형식
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const user_no = jwtDecode(userToken).no;
 
   useEffect(() => {
     const initializeChatDetails = async () => {
@@ -63,6 +66,8 @@ function ChatRoom() {
         console.log("채팅 통신 오류", error);
       }
     };
+    console.log(user_no);
+    console.log(postUserNo);
 
     initializeChatDetails();
   }, [post, myUserToken, chatNo]);
@@ -73,6 +78,7 @@ function ChatRoom() {
       setSocket(newSocket);
 
       newSocket.emit("join_room", chatNo);
+      console.log(newSocket);
 
       return () => {
         newSocket.disconnect();
@@ -85,7 +91,7 @@ function ChatRoom() {
     if (currentMessage !== "") {
       const messageData = {
         // 보내는 메시지 정보
-        chat_no: chat_no, // 채팅방 번호 <- 나중에 지우기 (백에서 받아올것임) 현재는 post_no로 설정됨
+        chat_no: chatNo, // 채팅방 번호 <- 나중에 지우기 (백에서 받아올것임) 현재는 post_no로 설정됨
         //author: myNickname, // 현재 보내는 사람 (나중에 백에서 nickname받아오면 세팅) / 번호로 세팅하기 user_no_2: user_no_2
         message: currentMessage, // 보내는 메시지
         time: formattedTime, // 보낸 시간
@@ -98,26 +104,28 @@ function ChatRoom() {
       try {
         await socket.emit("send_message", messageData);
         setMessageList((list) => [...list, messageData]); // 내가 보낸 메시지도 이력 남게
+        console.log(messageList);
         setCurrentMessage(""); // 메시지 전송 후 입력 필드를 클리어
       } catch (err) {
         console.error("통신 연결 오류", err);
       }
     }
-    console.log(messageList);
   };
 
   // 판매자(상대방)이 메시지 보내기 (백과 소통)
   useEffect(() => {
+    console.log(socket);
     if (socket) {
       const messageListener = (data) => {
-        console.log("Received message:", data);
         setMessageList((list) => [...list, data]); //이력 남게 만듬 (전에 메시지 + 지금 받은 메시지)
+        console.log(messageList);
       };
 
       socket.on("receive_message", messageListener);
+      console.log("Received message:", messageList);
 
       return () => {
-        socket.off("receive_message", messageListener);
+        socket.off("receive_message", messageList);
       };
     }
   }, [socket]);
