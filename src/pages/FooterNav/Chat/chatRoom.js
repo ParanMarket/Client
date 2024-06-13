@@ -12,7 +12,6 @@ function ChatRoom() {
   const post = location.state.post;
   const { chat_no } = useParams(); // URL에서 채팅방 ID 추출
   const [chatNo, setChatNo] = useState("");
-  const [room, setRoom] = useState("");
   const [socket, setSocket] = useState(null);
   const [myUserToken, setMyUserToken] = useState(
     localStorage.getItem("userToken"),
@@ -129,7 +128,7 @@ function ChatRoom() {
         <div className="chat-header">
           <p>대화상대 {otherNick}</p>
         </div>
-        <ChatRoomCard post={post} />
+        {/*<ChatRoomCard post={post} />*/}
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageConent, index) => {

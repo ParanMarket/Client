@@ -65,7 +65,10 @@ function App() {
             <Route path="/sell" element={<Sell />}></Route>
             <Route path="/post/:post_no" element={<PostDetail />}></Route>
             <Route path="/report/:post_no" element={<Report />}></Route>
-            <Route path="/chatRoom/:chat_no" element={<ChatRoom />}></Route>
+            <Route
+              path="/chat/chatRoom/:chat_no"
+              element={<ChatRoom />}
+            ></Route>
             <Route path="/editPost/:post_no" element={<EditPost />}></Route>
             <Route path="/notifications" element={<Notifications />}></Route>
             <Route path="/nickSetting" element={<NickSetting />}></Route>

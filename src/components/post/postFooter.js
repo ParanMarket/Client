@@ -36,7 +36,7 @@ const PostFooter = ({ post }) => {
     if (post.status === 2 || post.post_user_no === user_no) return; // 거래완료 시 채팅불가
 
     const chat_no = post.post_no * 100000 + post.post_user_no * 1000 + user_no;
-    navigate(`/chatRoom/${chat_no}`, { state: { post } }); // post 정보 같이 보내기 // state로 post 객체 전달
+    navigate(`/chat/chatRoom/${chat_no}`, { state: { post } }); // post 정보 같이 보내기 // state로 post 객체 전달
     setChatCount((prev) => prev + 1);
   };
 

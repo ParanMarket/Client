@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -12,6 +12,7 @@ import {
 import { styled } from "@mui/system";
 import { indigo } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // 안읽음 표시
 // const UnreadBadge = styled(Badge)(({ theme }) => ({
@@ -25,9 +26,27 @@ import { useNavigate } from "react-router-dom";
 // 더미데이터 페이징
 const ChatCard = ({ chat }) => {
   const navigate = useNavigate();
+  const [post, setPost] = useState("");
+  //console.log("chatcard", chat);
+  const post_no = chat.post_no;
+
+  useEffect(() => {
+    const fetchPostData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/post/get_post/${post_no}`,
+        );
+        const postData = response.data[0];
+        setPost(postData);
+      } catch (err) {
+        console.log("데이터를 가져오는데 실패하였습니다.");
+      }
+    };
+    fetchPostData();
+  }, [post_no]);
 
   const handleCardClick = () => {
-    //navigate(`chatRoom/${chat.chat_no}`); // 각 채팅방으로 이동하기
+    navigate(`chatRoom/${chat.chat_no}`, { state: { post } }); // 각 채팅방으로 이동하기
   };
 
   return (
