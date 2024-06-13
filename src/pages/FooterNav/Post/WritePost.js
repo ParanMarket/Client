@@ -49,7 +49,7 @@ const WritePost = () => {
   const handleFileChange = (e) => {
     const newFiles = Array.from(e.target.files);
     const existingFileData = files.map(
-      (file) => file.file.name + file.file.size
+      (file) => file.file.name + file.file.size,
     ); // 파일들 배열
     const filteredNewFiles = newFiles.filter((newFile) => {
       const newFileData = newFile.name + newFile.size;
@@ -87,7 +87,7 @@ const WritePost = () => {
   const handleRemoveFile = (fileToRemove) => {
     setFiles((prev) => {
       const filteredFiles = prev.filter(
-        (file) => file.preview !== fileToRemove.preview
+        (file) => file.preview !== fileToRemove.preview,
       );
       URL.revokeObjectURL(fileToRemove.preview);
       setCount(filteredFiles.length); // 파일 목록 업데이트 후 개수를 설정
@@ -138,7 +138,7 @@ const WritePost = () => {
           headers: {
             Authorization: `Bearer ${userToken}`, // Authorization 헤더에 토큰 포함
           },
-        }
+        },
       );
       if (response.data.message === "success") {
         console.log(response.data, "성공");

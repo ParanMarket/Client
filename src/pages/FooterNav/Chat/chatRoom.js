@@ -13,9 +13,7 @@ function ChatRoom() {
   const [myUserToken, setMyUserToken] = useState(
     localStorage.getItem("userToken"),
   );
-  const [myNickname, setMyNickname] = useState(
-    localStorage.getItem("userNickname"),
-  );
+  const [myNickname, setMyNickname] = useState("");
 
   const [postNo, setPostNo] = useState("");
   const [postUserNo, setPostUserNo] = useState("");
@@ -35,7 +33,6 @@ function ChatRoom() {
   useEffect(() => {
     setChatNo(chat_no);
     //setMyName(myNickname);
-    //setMyToken(myUserToken);
     setPostNo(post.post_no);
     setPostUserNo(post.post_user_no);
     setPostUserNick(post.user_nick);

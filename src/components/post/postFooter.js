@@ -24,13 +24,7 @@ const PostFooter = ({ post }) => {
   const [chatCount, setChatCount] = useState(0);
   const navigate = useNavigate();
   //const [post, setPost] = useState("");
-  //const userToken = useState(localStorage.getItem("userToken"));
-  // 나중에 지울 데이터
-  localStorage.setItem("userToken", 1);
-  localStorage.setItem("userNickname", "채팅테스트User");
   const userToken = useState(localStorage.getItem("useToken"));
-  const userNickname = useState(localStorage.getItem("userNickname"));
-  ///console.log("로컬스토리지 테스트 : ", userToken, userNickname);
 
   /* 사용자 찜 정보 가져오기
   useEffect(() => {

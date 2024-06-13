@@ -10,24 +10,41 @@ const MoreIcon = ({ post }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [postOwner, setPostOwner] = useState(null);
-  const userNickname = localStorage.getItem("userNickname");
-  const userToken = localStorage.getItem("userToken");
+  const [postOwner, setPostOwner] = useState("");
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
   const [changeStatus, setChangeStatus] = useState("");
-
-  // 나중에 삭제할거 임시 데이터
-  /*console.log(postUserNick);*/
-  const checkUser = true;
-  //console.log(post);
-
+  const [checkUser, setCheckUser] = useState(false);
   // 게시글 상태 확인
   useEffect(() => {
     setChangeStatus(post.post_status === 0 ? 1 : 0);
-  }, [post]);
-  console.log("post.post_status", post.post_status);
-  console.log("changeStatus", changeStatus);
+    setPostOwner(post.post_user_no);
 
-  const handleMenuClick = (event) => {
+    const verifyUser = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:5001/auth/verify_user",
+          { post_user_no: postOwner },
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          },
+        );
+
+        if (response.data.verified) {
+          setCheckUser(true);
+        } else {
+          setCheckUser(false);
+        }
+      } catch (error) {
+        console.error("통신 오류 사용자 인증 실패", error);
+        setCheckUser(false);
+      }
+    };
+    verifyUser();
+  }, [post, userToken]);
+
+  const handleMenuClick = async (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -36,11 +53,16 @@ const MoreIcon = ({ post }) => {
   };
 
   // 본인 제외 - 신고기능
+  const report_post = {
+    post_title: post.post_title,
+    post_user_nick: post.user_nick,
+  };
   const handleReport = () => {
-    navigate(`/report/${post_no}`);
+    navigate(`/report/${post_no}`, {
+      state: JSON.stringify(report_post),
+    });
   };
 
-  //postUserNick === userNickname
   // 본인 - 수정기능
   const handleEdit = () => {
     navigate(`/editPost/${post_no}`);
@@ -61,6 +83,7 @@ const MoreIcon = ({ post }) => {
 
       if (response.data.message === "success") {
         console.log("게시물 삭제 완료");
+        alert("게시글 삭제를 완료했습니다!");
         navigate("/home");
       } else {
         console.error("게시물 삭제 실패", response.data);
@@ -108,7 +131,7 @@ const MoreIcon = ({ post }) => {
 
     //사용자 확인 후 거래 상태 변경하기
     try {
-      console.log("xmfrl", post_no, changeStatus);
+      console.log("상태변경", post_no, changeStatus);
       const response = await axios.post(
         `http://localhost:5001/post/post_update_status/`,
         { post_no, post_status: changeStatus },

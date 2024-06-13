@@ -35,8 +35,6 @@ const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [user, setUser] = useState({ nickname: "", img: "" });
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
-  const [userNickname, setUserNickname] = useState(localStorage.getItem("userNickname"));
-
   // useEffect(() => {
   //   // userToken이 있을 때만 (프로필, 이름) 표시 아니면 로그인 표시
   //   if (userToken) {
@@ -108,7 +106,7 @@ const Header = () => {
               sx={{ width: 64, height: 64, marginBottom: 2 }}
             />
             <Typography variant="h6">
-              {userNickname} {userNickname ? "님" : "로그인을 해주세요."}
+              {userToken ? "" : "로그인을 해주세요."}
             </Typography>
             <List sx={{ marginTop: 5 }}>
               <ListItem onClick={() => navigate("/favorite")}>
