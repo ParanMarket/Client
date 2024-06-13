@@ -10,7 +10,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/main/footer";
 import Postcard from "../../components/post/postcard";
-//import Posts from "../../data"; 임시데이터
 import { ArrowBackIosNewRounded, Cancel } from "@mui/icons-material";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";

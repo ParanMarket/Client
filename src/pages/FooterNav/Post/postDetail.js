@@ -9,6 +9,10 @@ import moment from "moment"; // 시간 계산
 import "slick-carousel/slick/slick.css"; // 이미지 여러개 일 때 슬라이드
 import "slick-carousel/slick/slick-theme.css";
 import blurImg from "../../../css/blurImg";
+import {
+  ArrowBackIosRounded,
+  ArrowForwardIosRounded,
+} from "@mui/icons-material";
 
 const PostDetail = () => {
   const { post_no } = useParams();
@@ -24,7 +28,7 @@ const PostDetail = () => {
         );
         const postData = response.data[0];
         setPost(postData);
-        //console.log(postData);
+        console.log(postData);
 
         // 등급 설정
         if (postData.user_grade === 0) {
@@ -34,9 +38,6 @@ const PostDetail = () => {
         } else {
           setGrade("만년설");
         }
-
-        // 사진 설정
-        setPostImages(postData.post_images);
         // 초기 좋아요 설정
       } catch (err) {
         console.log("데이터를 가져오는데 실패하였습니다.");
@@ -45,17 +46,34 @@ const PostDetail = () => {
     fetchPostData();
   }, [post_no]);
 
+  useEffect(() => {
+    const fetchImageData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/post/get_post_img/${post_no}`,
+        );
+        const postImageData = response.data;
+        setPostImages(postImageData);
+        console.log(postImages);
+
+        // 초기 좋아요 설정
+      } catch (err) {
+        console.log("데이터를 가져오는데 실패하였습니다.");
+      }
+    };
+    fetchImageData();
+  }, [post_no]);
+
   if (!post) return <div>Loading...</div>; //없으면 로딩임
 
-  // // 이미지 슬라이더 세팅
-  // const slider_setting = {
-  //     dots: post.post_img.length > 1,
-  //     infinite: post.post_img.length > 1,
-  //     speed: 500,
-  //     slidesToShow: 1,
-  //     slidesToScroll: 1,
-  //     arrows: false,
-  // };
+  // 이미지 슬라이더 세팅
+  const slider_setting = {
+    dots: postImages.length > 1,
+    infinite: postImages.length > 1,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   // 업로드 시간 계산 (현재시간으로부터 ~)
   const uploadedTime = moment(post.post_sdd).fromNow();
@@ -68,23 +86,24 @@ const PostDetail = () => {
         sx={{
           position: "relative",
           width: "100%",
-          maxWidth: "600px",
+          maxWidth: "350px",
+          maxHeight: "350px",
           margin: "0 auto",
           overflow: "show",
         }}
       >
-        {/*    /!* 이미지 슬라이더 *!/*/}
-        {/*    <Slider {...slider_setting}>*/}
-        {/*    {postImages.map((imageUrl, index) => (*/}
-        {/*        <div key={index}>*/}
-        {/*            <img*/}
-        {/*                src={imageUrl}*/}
-        {/*                alt={`Post image ${index + 1}`}*/}
-        {/*                style={{ width: "100%", display: "block" }}*/}
-        {/*            />*/}
-        {/*        </div>*/}
-        {/*    ))}*/}
-        {/*</Slider>*/}
+        {/* 이미지 슬라이더 */}
+        <Slider {...slider_setting}>
+          {postImages.map((image, index) => (
+            <div key={index}>
+              <img
+                src={image.post_img}
+                alt={`Post image ${index + 1}`}
+                style={{ width: "100%", display: "block" }}
+              />
+            </div>
+          ))}
+        </Slider>
         {post.post_status === 2 && (
           <Box sx={blurImg}>
             <Typography variant="h6" component="div" sx={{ color: "white" }}>
