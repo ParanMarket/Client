@@ -3,49 +3,38 @@ import { Container, Typography, Grid } from "@mui/material";
 import FooterNav from "../../../components/main/footer";
 import Header from "../../../components/main/header";
 import ChatCard from "../../../components/chatCard";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Chat = () => {
   const [chats, setChats] = useState([]);
+  const navigate = useNavigate();
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
+  //채팅방 정보 불러오기
   useEffect(() => {
-    // 여기서 실제 데이터 로드 로직을 수행할 수 있습니다.
-    // 예제 데이터를 사용합니다.
-    const exampleChats = [
-      {
-        // 대표 이미지 (상품 사진 추가)
-        post_title: "상품 1", // post_title
-        user_nick: "사용자 1", // 판매자 이름 user_nick/no
-        lastMessage: "안녕하세요, 상품 아직 있나요?",
-        unread: true,
-        lastMessageTime: "2023-06-12T14:48:00.000Z",
-        itemImage: "https://via.placeholder.com/140", // 상품 이미지 URL
-      },
-      {
-        post_title: "상품 2",
-        user_nick: "사용자 2",
-        lastMessage: "네, 아직 있습니다.",
-        unread: false,
-        lastMessageTime: "2023-06-10T10:15:00.000Z",
-        itemImage: "https://via.placeholder.com/140", // 상품 이미지 URL
-      },
-      {
-        post_title: "상품 2",
-        user_nick: "사용자 2",
-        lastMessage: "네, 아직 있습니다.",
-        unread: false,
-        lastMessageTime: "2023-06-10T10:15:00.000Z",
-        itemImage: "https://via.placeholder.com/140", // 상품 이미지 URL
-      },
-      // 추가 채팅 데이터...
-    ];
+    const fetchChats = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:5001/chat/chatlist",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          },
+        );
 
-    setChats(exampleChats);
-  }, []);
-
-  const handleCardClick = (chat) => {
-    // 카드 클릭 핸들러 로직 추가
-    console.log("Chat clicked:", chat);
-  };
+        setChats(response.data);
+        console.log(response.data);
+      } catch (err) {
+        console.error("데이터를 불러오는데 오류가 발생했습니다.", err);
+      }
+    };
+    if (userToken) {
+      fetchChats();
+    }
+  }, [userToken]);
 
   return (
     <div style={{ paddingTop: 80, paddingBottom: 50 }}>
@@ -54,10 +43,7 @@ const Chat = () => {
         <Grid container spacing={2}>
           {chats.map((chat, index) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <ChatCard
-                chat={chat}
-                handleCardClick={() => handleCardClick(chat)}
-              />
+              <ChatCard chat={chat} />
             </Grid>
           ))}
         </Grid>

@@ -11,24 +11,24 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { indigo } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
 
-const UnreadBadge = styled(Badge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    backgroundColor: indigo[100],
-    color: indigo[100],
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-  },
-}));
+// 안읽음 표시
+// const UnreadBadge = styled(Badge)(({ theme }) => ({
+//   "& .MuiBadge-badge": {
+//     backgroundColor: indigo[100],
+//     color: indigo[100],
+//     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+//   },
+// }));
 
-const ChatCard = ({ chat, handleCardClick }) => {
-  const {
-    post_title,
-    user_nick,
-    lastMessage,
-    unread,
-    lastMessageTime,
-    itemImage,
-  } = chat;
+// 더미데이터 페이징
+const ChatCard = ({ chat }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    //navigate(`chatRoom/${chat.chat_no}`); // 각 채팅방으로 이동하기
+  };
 
   return (
     <Card
@@ -51,8 +51,8 @@ const ChatCard = ({ chat, handleCardClick }) => {
           <CardMedia
             component="img"
             sx={{ width: "100%", height: "100%", borderRadius: 2 }}
-            image={itemImage || "https://via.placeholder.com/140"}
-            alt={post_title}
+            image={chat.post_img || "https://via.placeholder.com/140"}
+            alt={chat.post_title}
           />
         </Box>
         <CardContent sx={{ flexGrow: 1, overflow: "hidden", pr: 3 }}>
@@ -69,18 +69,18 @@ const ChatCard = ({ chat, handleCardClick }) => {
               alignItems="center"
             >
               <Typography variant="h6" component="div">
-                {user_nick}
+                {chat.chat_sender_nick}
               </Typography>
               <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                {new Date(lastMessageTime).toLocaleDateString()}
+                {new Date(chat.chat_time).toLocaleDateString()}
               </Typography>
             </Grid>
             <Grid item>
               <Typography variant="subtitle1" color="textSecondary">
-                {lastMessage}
+                {chat.chat_content}
               </Typography>
               <Typography variant="subtitle2" component="div" noWrap>
-                {post_title}
+                {chat.post_title}
               </Typography>
             </Grid>
           </Grid>

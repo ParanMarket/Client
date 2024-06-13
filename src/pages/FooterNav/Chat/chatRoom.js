@@ -55,12 +55,10 @@ function ChatRoom() {
           },
         );
 
-        if (response.data) {
+        if (response.data && !chatNo) {
           setChatNo(response.data.chat_no);
           setOtherNick(response.data.user_nick);
           console.log(response.data);
-        } else {
-          console.log("정보가 올바르지 않습니다.");
         }
       } catch (error) {
         console.log("채팅 통신 오류", error);
