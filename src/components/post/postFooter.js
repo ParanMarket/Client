@@ -15,6 +15,7 @@ import { ChatBubbleRounded, FavoriteRounded } from "@mui/icons-material";
 
 //확인용 나중에 지우기
 import Posts from "../../data";
+import { jwtDecode } from "jwt-decode";
 
 const PostFooter = ({ post }) => {
   //console.log("footer recived: ", postProp);
@@ -25,14 +26,17 @@ const PostFooter = ({ post }) => {
   const navigate = useNavigate();
   //const [post, setPost] = useState("");
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const user_no = jwtDecode(userToken).no;
 
   useEffect(() => {
     setLikeStatus(post.post_my_like);
   }, [post]);
 
   const handleChatClick = async () => {
-    if (post.status === 2) return; // 거래완료 시 채팅불가
-    navigate(`/chatRoom/${post_no}`, { state: { post } }); // post 정보 같이 보내기 // state로 post 객체 전달
+    if (post.status === 2 || post.post_user_no === user_no) return; // 거래완료 시 채팅불가
+
+    const chat_no = post.post_no * 100000 + post.post_user_no * 1000 + user_no;
+    navigate(`/chatRoom/${chat_no}`, { state: { post } }); // post 정보 같이 보내기 // state로 post 객체 전달
     setChatCount((prev) => prev + 1);
   };
 
@@ -102,16 +106,20 @@ const PostFooter = ({ post }) => {
               {post.post_price}원
             </Typography>
           </Grid>
-          <Grid item sx={{ p: 3 }}>
-            <Button
-              startIcon={<ChatBubbleRounded color="secondary.light" />}
-              onClick={handleChatClick}
-              variant="contained"
-              disabled={post.post_status === 2}
-            >
-              채팅하기
-            </Button>
-          </Grid>
+          {post.post_user_no === user_no ? (
+            ""
+          ) : (
+            <Grid item sx={{ p: 3 }}>
+              <Button
+                startIcon={<ChatBubbleRounded color="secondary.light" />}
+                onClick={handleChatClick}
+                variant="contained"
+                disabled={post.status === 2}
+              >
+                채팅하기
+              </Button>
+            </Grid>
+          )}
         </Grid>
       </Toolbar>
     </footer>

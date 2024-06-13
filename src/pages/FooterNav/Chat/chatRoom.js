@@ -17,7 +17,7 @@ function ChatRoom() {
   const [myUserToken, setMyUserToken] = useState(
     localStorage.getItem("userToken"),
   );
-  const [myNickname, setMyNickname] = useState("");
+  const [otherNick, setOtherNick] = useState("");
 
   const [postNo, setPostNo] = useState("");
   const [postUserNo, setPostUserNo] = useState("");
@@ -46,7 +46,7 @@ function ChatRoom() {
           {
             post_no: post.post_no, // 물품 번호
             post_user_no: post.post_user_no, // 등록자 번호
-            user_nick: post.user_nick, // 등록자 유저 닉네임
+            post_user_nick: post.user_nick, // 등록자 유저 닉네임
           },
           {
             headers: {
@@ -57,8 +57,8 @@ function ChatRoom() {
 
         if (response.data) {
           setChatNo(response.data.chat_no);
-          setMyNickname(response.data.user_nick);
-          console.log(chatNo, myNickname);
+          setOtherNick(response.data.user_nick);
+          console.log(response.data);
         } else {
           console.log("정보가 올바르지 않습니다.");
         }
@@ -89,7 +89,7 @@ function ChatRoom() {
       const messageData = {
         // 보내는 메시지 정보
         chat_no: chat_no, // 채팅방 번호 <- 나중에 지우기 (백에서 받아올것임) 현재는 post_no로 설정됨
-        author: myNickname, // 현재 보내는 사람 (나중에 백에서 nickname받아오면 세팅) / 번호로 세팅하기 user_no_2: user_no_2
+        //author: myNickname, // 현재 보내는 사람 (나중에 백에서 nickname받아오면 세팅) / 번호로 세팅하기 user_no_2: user_no_2
         message: currentMessage, // 보내는 메시지
         time: formattedTime, // 보낸 시간
         //user_no_2: user_no_2,  // 백에서 유저 번호 알려줘야 보낼 수 있음
@@ -106,6 +106,7 @@ function ChatRoom() {
         console.error("통신 연결 오류", err);
       }
     }
+    console.log(messageList);
   };
 
   // 판매자(상대방)이 메시지 보내기 (백과 소통)
@@ -128,7 +129,7 @@ function ChatRoom() {
     <div className="app_center">
       <div className="chat-window">
         <div className="chat-header">
-          <p>대화상대 {myNickname}</p>
+          <p>대화상대 {otherNick}</p>
         </div>
         <ChatRoomCard post={post} />
         <div className="chat-body">
@@ -139,7 +140,7 @@ function ChatRoom() {
                 <div
                   key={index}
                   className="message"
-                  id={myNickname === messageConent.author ? "other" : "you"}
+                  id={myUserToken === messageConent.userToken ? "other" : "you"}
                 >
                   <div>
                     <div className="message-content">

@@ -96,7 +96,7 @@ const ChatRoomcard = ({ post }) => {
             image={post.post_img || "https://via.placeholder.com/140"}
             alt={post.post_title}
           />
-          {(statusEnd || post.post_status == 2) && (
+          {(statusEnd || post.post_status === 2) && (
             <Box sx={blurBox}>
               <Typography
                 variant="subtitle1"
@@ -146,7 +146,7 @@ const ChatRoomcard = ({ post }) => {
           <GppMaybeRounded sx={{ mr: 1 }} />
           <Typography variant="body2">사기조회</Typography>
         </Button>
-        {postOwner && (
+        {checkUser && (
           <Button
             variant="contained"
             color="primary"
