@@ -18,7 +18,7 @@ import { indigo } from "@mui/material/colors";
 import blurBox from "../css/blurBox";
 import axios from "axios";
 
-const ChatRoomcard = ({ post }) => {
+const ChatRoomcard = ({ post, chat }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -26,6 +26,7 @@ const ChatRoomcard = ({ post }) => {
   const [checkUser, setCheckUser] = useState(false);
   const [postOwner, setPostOwner] = useState("");
   const [statusEnd, setStatusEnd] = useState(false);
+  console.log(chat);
 
   useEffect(() => {
     setPostOwner(post.post_user_no);

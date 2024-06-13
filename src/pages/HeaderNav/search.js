@@ -71,7 +71,7 @@ const Search = () => {
       setSearchResults([]);
     }
   };
-
+  console.log(searchResults);
   // 전체 / 구매 / 판매 필터 선택
   const handleFilterChange = (newType) => {
     setType(newType);

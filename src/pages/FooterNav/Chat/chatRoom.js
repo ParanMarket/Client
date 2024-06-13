@@ -7,6 +7,7 @@ import ChatRoomCard from "../../../components/chatRoomCard";
 import { IconButton } from "@mui/material";
 import { SendRounded } from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";
+import Header from "../../../components/myPage/myPageHeader";
 
 function ChatRoom() {
   const location = useLocation(); // state 에서 post정보 가져오기
@@ -156,10 +157,11 @@ function ChatRoom() {
   return (
     <div className="app_center">
       <div className="chat-window">
-        <div className="chat-header">
-          <p>대화상대 {otherNick}</p>
-        </div>
-        {/*<ChatRoomCard post={post} />*/}
+        <Header title={otherNick} />
+        {/*<div className="chat-header">*/}
+        {/*  <p>{otherNick}</p>*/}
+        {/*</div>*/}
+        <ChatRoomCard post={post} />
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageConent, index) => {

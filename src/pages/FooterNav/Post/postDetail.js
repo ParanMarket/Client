@@ -4,7 +4,14 @@ import Slider from "react-slick";
 import axios from "axios";
 import PostFooter from "../../../components/post/postFooter";
 import PostHeader from "../../../components/post/postHeader";
-import { Box, Typography, Divider, Avatar, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Divider,
+  Avatar,
+  IconButton,
+  Grid,
+} from "@mui/material";
 import moment from "moment"; // 시간 계산
 import "slick-carousel/slick/slick.css"; // 이미지 여러개 일 때 슬라이드
 import "slick-carousel/slick/slick-theme.css";
@@ -83,41 +90,62 @@ const PostDetail = () => {
     <div style={{ paddingBottom: 100 }}>
       <PostHeader post={post} />
       <Box
-        sx={{
-          position: "relative",
-          width: "100%",
-          maxWidth: "350px",
-          maxHeight: "350px",
-          margin: "0 auto",
-          overflow: "show",
-        }}
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
-        {/* 이미지 슬라이더 */}
-        <Slider {...slider_setting}>
-          {postImages.map((image, index) => (
-            <div key={index}>
-              <img
-                src={image.post_img}
-                alt={`Post image ${index + 1}`}
-                style={{ width: "100%", display: "block" }}
-              />
-            </div>
-          ))}
-        </Slider>
-        {post.post_status === 2 && (
-          <Box sx={blurImg}>
-            <Typography variant="h6" component="div" sx={{ color: "white" }}>
-              거래완료
-            </Typography>
+        <Box
+          sx={{
+            position: "relative",
+            width: "100%",
+            maxWidth: "400px",
+            maxHeight: "400px",
+            margin: "0 auto",
+            overflow: "show",
+          }}
+        >
+          {/* 이미지 슬라이더 */}
+          <Box>
+            <Slider {...slider_setting}>
+              {postImages.map((image, index) => (
+                <div key={index}>
+                  <img
+                    src={image.post_img}
+                    alt={`Post image ${index + 1}`}
+                    style={{
+                      width: "90%",
+                      display: "block",
+                      maxHeight: "380px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              ))}
+            </Slider>
           </Box>
-        )}
+          {post.post_status === 2 && (
+            <Box sx={blurImg}>
+              <Typography variant="h6" component="div" sx={{ color: "white" }}>
+                거래완료
+              </Typography>
+            </Box>
+          )}
+        </Box>
       </Box>
       <Box sx={{ p: 2 }}>
         {/* 사용자 정보 => 사용자 개인 프로필 볼 수 있도록 나중에 설정하기*/}
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          backgroundColor="white"
+          border="outlined"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            backgroundColor: "white",
+          }}
+        >
           <Avatar src={post.user_img} alt={post.user_nick} />
-          <Box sx={{ ml: 1 }}>
-            <Typography variant="subtitle1">{post.user_nick}</Typography>
+          <Box sx={{ backgroundColor: "white", ml: 3 }}>
+            <Typography variant="subtitle1" color="black">
+              {post.user_nick}
+            </Typography>
             <Typography variant="body2" color="textSecondary">
               {grade}
             </Typography>

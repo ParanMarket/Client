@@ -114,7 +114,7 @@ const Postcard = ({ post }) => {
         >
           <Chat sx={{ width: "50%" }} />
           <Typography variant="body2" sx={{ ml: 0.5 }}>
-            {post.post_chat_cnt === null ? 0 : post.post_chat_cnt}
+            {post.post_cmt_cnt === null ? 0 : post.post_cmt_cnt}
           </Typography>
         </IconButton>
       </CardActions>

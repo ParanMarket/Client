@@ -27,7 +27,7 @@ import axios from "axios";
 const ChatCard = ({ chat }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState("");
-  //console.log("chatcard", chat);
+  console.log("chatcard", chat);
   const post_no = chat.post_no;
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const ChatCard = ({ chat }) => {
               alignItems="center"
             >
               <Typography variant="h6" component="div">
-                {chat.chat_sender_nick}
+                {chat.post_title}
               </Typography>
               <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
                 {new Date(chat.chat_time).toLocaleDateString()}
@@ -99,7 +99,7 @@ const ChatCard = ({ chat }) => {
                 {chat.chat_content}
               </Typography>
               <Typography variant="subtitle2" component="div" noWrap>
-                {chat.post_title}
+                {chat.chat_sender_nick}
               </Typography>
             </Grid>
           </Grid>
