@@ -12,9 +12,6 @@ import {
   Toolbar,
 } from "@mui/material";
 import { ChatBubbleRounded, FavoriteRounded } from "@mui/icons-material";
-
-//확인용 나중에 지우기
-import Posts from "../../data";
 import { jwtDecode } from "jwt-decode";
 
 const PostFooter = ({ post }) => {

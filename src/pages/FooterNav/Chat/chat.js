@@ -5,11 +5,13 @@ import Header from "../../../components/main/header";
 import ChatCard from "../../../components/chatCard";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const Chat = () => {
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const user_no = jwtDecode(userToken).no;
 
   //채팅방 정보 불러오기
   useEffect(() => {
@@ -26,7 +28,7 @@ const Chat = () => {
         );
 
         setChats(response.data);
-        //console.log(response.data);
+        console.log(response.data);
       } catch (err) {
         console.error("데이터를 불러오는데 오류가 발생했습니다.", err);
       }

@@ -28,19 +28,15 @@ function ChatRoom() {
   const [messageList, setMessageList] = useState([]); // 메시지 보여지게 쌓는 리스트
 
   const currentTime = new Date(); // 시간 세팅
-  const formattedTime =
-    currentTime.getHours().toString().padStart(2, "0") +
-    ":" +
-    currentTime.getMinutes().toString().padStart(2, "0"); // 시간 표시 형식
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
   const user_no = jwtDecode(userToken).no;
 
+  // 채팅방 정보 구성
   useEffect(() => {
     const initializeChatDetails = async () => {
       setPostNo(post.post_no);
       setPostUserNo(post.post_user_no);
       setPostUserNick(post.user_nick);
-      console.log("data: ", post.post_no, post.post_user_no, post.user_nick);
 
       try {
         const response = await axios.post(
@@ -60,20 +56,39 @@ function ChatRoom() {
         if (response.data && !chatNo) {
           setChatNo(response.data.chat_no);
           setOtherNick(response.data.user_nick);
-          console.log(response.data);
         }
       } catch (error) {
         console.log("채팅 통신 오류", error);
       }
     };
-    console.log(user_no);
-    console.log(postUserNo);
 
     initializeChatDetails();
   }, [post, myUserToken, chatNo]);
 
+  // 채팅방 연결
   useEffect(() => {
     if (chatNo) {
+      // 히스토리 가져오기
+      const fetchChatHistory = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:5001/chat/get_chat_history/${chatNo}`,
+            {
+              headers: {
+                Authorization: `Bearer ${myUserToken}`,
+              },
+            },
+          );
+          if (response.data) {
+            setMessageList(response.data);
+          }
+        } catch (error) {
+          console.log("채팅 기록 불러오기 오류", error);
+        }
+      };
+
+      fetchChatHistory();
+
       const newSocket = io.connect("http://localhost:5001");
       setSocket(newSocket);
 
@@ -84,7 +99,7 @@ function ChatRoom() {
         newSocket.disconnect();
       };
     }
-  }, [chatNo]);
+  }, [chatNo, myUserToken]);
 
   // 구매자(나)가 메시지 보내기 (백과 소통)
   const sendMessage = async () => {
@@ -94,11 +109,12 @@ function ChatRoom() {
         chat_no: chatNo, // 채팅방 번호 <- 나중에 지우기 (백에서 받아올것임) 현재는 post_no로 설정됨
         //author: myNickname, // 현재 보내는 사람 (나중에 백에서 nickname받아오면 세팅) / 번호로 세팅하기 user_no_2: user_no_2
         message: currentMessage, // 보내는 메시지
-        time: formattedTime, // 보낸 시간
+        time: currentTime, // 보낸 시간
         //user_no_2: user_no_2,  // 백에서 유저 번호 알려줘야 보낼 수 있음
         userToken: myUserToken, // 유저번호
         user_no_1: postUserNo, // 판매자 유저번호
         post_no: postNo,
+        author: user_no,
       };
 
       try {
@@ -130,6 +146,13 @@ function ChatRoom() {
     }
   }, [socket]);
 
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
   return (
     <div className="app_center">
       <div className="chat-window">
@@ -145,15 +168,15 @@ function ChatRoom() {
                 <div
                   key={index}
                   className="message"
-                  id={myUserToken === messageConent.userToken ? "other" : "you"}
+                  id={user_no === messageConent.author ? "other" : "you"}
                 >
                   <div>
                     <div className="message-content">
                       <p>{messageConent.message}</p>
                     </div>
                     <div className="message-meta">
-                      <p id="time">{messageConent.time}</p>
-                      <p id="author">{messageConent.author}</p>
+                      <p id="time">{formatTime(messageConent.time)}</p>
+                      {/*<p id="author">{messageConent.author}</p>*/}
                     </div>
                   </div>
                 </div>
