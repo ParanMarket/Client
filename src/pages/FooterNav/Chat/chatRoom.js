@@ -3,6 +3,9 @@ import { useLocation, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import ScrollToBottom from "react-scroll-to-bottom";
 import axios from "axios";
+import ChatRoomCard from "../../../components/chatRoomCard";
+import { IconButton } from "@mui/material";
+import { SendRounded } from "@mui/icons-material";
 
 function ChatRoom() {
   const location = useLocation(); // state 에서 post정보 가져오기
@@ -42,9 +45,9 @@ function ChatRoom() {
           const response = await axios.post(
             "http://localhost:5001/chat/get_chat_details",
             {
-              post_no: post.post_no,
-              post_user_no: post.post_user_no,
-              user_nick: post.user_nick,
+              post_no: post.post_no, // 물품 번호
+              post_user_no: post.post_user_no, // 등록자 번호
+              user_nick: post.user_nick, // 등록자 유저 닉네임
             },
             {
               headers: {
@@ -55,7 +58,7 @@ function ChatRoom() {
 
           if (response.data) {
             setChatNo(response.data.chat_no);
-            setMyNickname(response.data.user_no_2_nick);
+            setMyNickname(response.data.user_nick);
             console.log(chatNo, myNickname);
           } else {
             console.log("정보가 올바르지 않습니다.");
@@ -69,7 +72,18 @@ function ChatRoom() {
     };
 
     initializeChatDetails();
-  }, [post, myUserToken]);
+
+    if (chatNo) {
+      const newSocket = io.connect("http://localhost:5001");
+      setSocket(newSocket);
+
+      newSocket.emit("join_room", chatNo);
+
+      return () => {
+        newSocket.disconnect();
+      };
+    }
+  }, [post, myUserToken, chatNo]);
 
   // 구매자(나)가 메시지 보내기 (백과 소통)
   const sendMessage = async () => {
@@ -83,6 +97,7 @@ function ChatRoom() {
         //user_no_2: user_no_2,  // 백에서 유저 번호 알려줘야 보낼 수 있음
         userToken: myUserToken, // 유저번호
         user_no_1: postUserNo, // 판매자 유저번호
+        post_no: postNo,
       };
 
       try {
@@ -115,8 +130,9 @@ function ChatRoom() {
     <div className="app_center">
       <div className="chat-window">
         <div className="chat-header">
-          <p>대화상대 {postUserNick}</p>
+          <p>대화상대 {myNickname}</p>
         </div>
+        <ChatRoomCard post={post} />
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageConent, index) => {
@@ -144,7 +160,7 @@ function ChatRoom() {
         <div className="chat-footer">
           <input
             type="text"
-            placeholder="Heyy..."
+            placeholder="내용을 작성해주세요."
             value={currentMessage}
             onChange={(event) => {
               setCurrentMessage(event.target.value);
@@ -153,7 +169,9 @@ function ChatRoom() {
               event.key === "Enter" && sendMessage();
             }}
           />
-          <button onClick={sendMessage}> &#9685;</button>
+          <IconButton onClick={sendMessage}>
+            <SendRounded />
+          </IconButton>
         </div>
       </div>
     </div>
