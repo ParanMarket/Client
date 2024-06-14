@@ -17,6 +17,7 @@ import moment from "moment";
 const Mypage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const userToken = localStorage.getItem("userToken");
+  const [userGrade, setUserGrade] = useState("");
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -39,6 +40,18 @@ const Mypage = () => {
 
     fetchUserInfo();
   }, [userToken]);
+
+  useEffect(() => {
+    if (userInfo) {
+      if (userInfo.user_grade === 0) {
+        setUserGrade("첫눈");
+      } else if (userInfo.user_grade === 1) {
+        setUserGrade("함박눈");
+      } else {
+        setUserGrade("만년설");
+      }
+    }
+  }, [userInfo]);
 
   if (!userInfo) {
     return (
@@ -91,7 +104,7 @@ const Mypage = () => {
                     우리가 함께한 날들: {sdd_time}일
                   </Typography>
                   <Typography variant="body1" gutterBottom>
-                    나의 등급: {userInfo.user_grade}
+                    나의 등급: {userGrade}
                   </Typography>
                   {/* 다른 사용자 정보 필드도 필요한 만큼 추가 */}
                 </Grid>
