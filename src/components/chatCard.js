@@ -54,6 +54,7 @@ const ChatCard = ({ chat }) => {
       sx={{
         display: "flex",
         height: 140,
+        maxWidth: "1000px",
         position: "relative",
         "&:hover": {
           backgroundColor: indigo[50],
@@ -69,7 +70,7 @@ const ChatCard = ({ chat }) => {
         >
           <CardMedia
             component="img"
-            sx={{ width: "100%", height: "100%", borderRadius: 2 }}
+            sx={{ width: "120px", height: "120px", borderRadius: 2 }}
             image={chat.post_img || "https://via.placeholder.com/140"}
             alt={chat.post_title}
           />

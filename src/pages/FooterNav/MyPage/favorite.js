@@ -16,11 +16,14 @@ const Favorite = () => {
   useEffect(() => {
     const fetchLikedPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/user/liked", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        const response = await axios.get(
+          "http://localhost:5000//like_post/:post_no",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+            },
           },
-        });
+        );
         setPosts(response.data);
         setLoading(false);
       } catch (err) {

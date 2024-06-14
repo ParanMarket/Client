@@ -18,7 +18,7 @@ import { indigo } from "@mui/material/colors";
 import blurBox from "../css/blurBox";
 import axios from "axios";
 
-const ChatRoomcard = ({ post, chat }) => {
+const ChatRoomcard = ({ post }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -26,7 +26,6 @@ const ChatRoomcard = ({ post, chat }) => {
   const [checkUser, setCheckUser] = useState(false);
   const [postOwner, setPostOwner] = useState("");
   const [statusEnd, setStatusEnd] = useState(false);
-  console.log(chat);
 
   useEffect(() => {
     setPostOwner(post.post_user_no);
@@ -35,7 +34,7 @@ const ChatRoomcard = ({ post, chat }) => {
       try {
         const response = await axios.post(
           "http://localhost:5001/auth/verify_user",
-          { post_user_no: postOwner },
+          { post_user_no: post.post_user_no },
           {
             headers: {
               Authorization: `Bearer ${userToken}`,
@@ -57,8 +56,38 @@ const ChatRoomcard = ({ post, chat }) => {
   }, [post, userToken]);
 
   // 거래완료 버튼
-  const handleCompleteTransaction = () => {
-    alert("거래 완료 처리를 하시겠습니까?");
+  const handleCompleteTransaction = async () => {
+    const confirmDelete = window.confirm("거래 완료 처리를 하시겠습니까?");
+    if (!confirmDelete) {
+      return;
+    }
+    const post_no = post.post_no;
+    console.log("chatroomcard", post_no);
+    console.log(userToken);
+
+    //사용자 확인 후 삭제 로직
+    try {
+      const response = await axios.post(
+        `http://localhost:5001/post/post_update_finish`,
+        { post_no: post_no },
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        },
+      );
+
+      if (response.data.message === "success") {
+        console.log("거래완료 처리했습니다.");
+        alert("거래 완료 처라 되었습니다!");
+        navigate("/home");
+      } else {
+        console.error("게시물 상태 변경 실패", response.data);
+      }
+    } catch (err) {
+      console.error("게시글 상태 변경 중 통신 오류", err);
+    }
+
     setStatusEnd(true);
     console.log("거래 완료 처리");
   };

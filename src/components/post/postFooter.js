@@ -87,7 +87,7 @@ const PostFooter = ({ post }) => {
           >
             <IconButton
               onClick={handleLikeClick}
-              disabled={post.post_status === 2}
+              disabled={post.post_status === 2 || post.post_user_no === user_no}
             >
               <FavoriteRounded
                 color={likeStatus ? "error" : "inherit"}
@@ -112,7 +112,7 @@ const PostFooter = ({ post }) => {
                 startIcon={<ChatBubbleRounded color="secondary.light" />}
                 onClick={handleChatClick}
                 variant="contained"
-                disabled={post.status === 2}
+                disabled={post.post_status === 2}
               >
                 채팅하기
               </Button>

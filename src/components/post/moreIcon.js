@@ -99,22 +99,20 @@ const MoreIcon = ({ post }) => {
     const confirmUpdate = window.confirm(
       "끌올 하시겠습니까? \n하루에 한번만 가능합니다!",
     );
+    console.log("post", post.post_no);
+    const post_no = post.post_no;
     if (confirmUpdate) {
       try {
-        const response = await axios.post(
-          `http://localhost:5001/post/post_update_bump/${post_no}`,
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          },
+        const response = await axios.get(
+          `http://localhost:5001/post/post_bump/${post_no}`,
         );
 
         if (response.data.message === "success") {
           console.log("게시물 끌올 완료");
           alert("성공적으로 끌올되었습니다!");
+          navigate("/home");
         } else {
-          console.error("끌올이 실배되었습니다.", response.data);
+          console.error("끌올이 실패되었습니다.", response.data);
           alert("오늘 더이상 끌올을 할 수 없습니다!");
         }
       } catch (err) {
@@ -134,7 +132,7 @@ const MoreIcon = ({ post }) => {
     try {
       console.log("상태변경", post_no, changeStatus);
       const response = await axios.post(
-        `http://localhost:5001/post/post_update_status/`,
+        `http://localhost:5001/post/post_update_status_no/`,
         { post_no, post_status: changeStatus },
       );
 

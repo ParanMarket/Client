@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import ScrollToBottom from "react-scroll-to-bottom";
 import axios from "axios";
@@ -31,6 +31,7 @@ function ChatRoom() {
   const currentTime = new Date(); // 시간 세팅
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
   const user_no = jwtDecode(userToken).no;
+  const navigate = useNavigate();
 
   // 채팅방 정보 구성
   useEffect(() => {
@@ -60,6 +61,8 @@ function ChatRoom() {
         }
       } catch (error) {
         console.log("채팅 통신 오류", error);
+        alert("게시자가 물품을 삭제했습니다!");
+        navigate("/home");
       }
     };
 
@@ -125,6 +128,8 @@ function ChatRoom() {
         setCurrentMessage(""); // 메시지 전송 후 입력 필드를 클리어
       } catch (err) {
         console.error("통신 연결 오류", err);
+        alert("게시자가 물품을 삭제했습니다!");
+        navigate("/home");
       }
     }
   };
