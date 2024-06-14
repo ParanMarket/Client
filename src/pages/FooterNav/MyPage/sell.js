@@ -15,7 +15,7 @@ const Sell = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5001/mypage/get_user_join_post",
+          "http://localhost:5001/mypage/get_user_post",
           {},
           {
             headers: {
