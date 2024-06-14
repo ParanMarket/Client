@@ -150,12 +150,15 @@ const WritePost = () => {
         console.log("홈 페이지로 이동합니다.");
         navigate("/home");
       } else {
-        console.log(response.data.message + "서버 오류");
+        alert(
+          "입력 파일이나 입력란에 오류가 있습니다. 다시 한번 시도해주세요!",
+        );
+        navigate("/home");
       }
-      navigate("/home");
     } catch (error) {
       console.error(error);
-      setPostError("등록에 실패하였습니다.");
+      alert("등록에 실패하였습니다. 다시 시도해주세요.");
+      navigate("/home");
     }
   };
 
