@@ -1,62 +1,91 @@
 import React, { useState, useEffect } from "react";
-import { Container, Grid, CircularProgress } from "@mui/material";
+import { Container, Grid, Button, ButtonGroup } from "@mui/material";
 import axios from "axios";
 import Footer from "../../../components/main/footer";
 import Header from "../../../components/myPage/myPageHeader";
 import Postcard from "../../../components/post/postcard";
 
-//테스트용 임시 데이터
-import Posts from "../../../data";
-
 const Buy = () => {
-  const [posts, setPosts] = useState([]); // 샘플 데이터로 초기화
-  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
-  const [loading, setLoading] = useState(true);
+  const [allPosts, setAllPosts] = useState([]); // 모든 데이터를 저장할 상태
+  const [posts, setPosts] = useState([]); // 필터링된 데이터를 저장할 상태
+  const [filter, setFilter] = useState("all"); // 상태 카테고리
+  const userToken = localStorage.getItem("userToken"); // useState 불필요
 
-  //사용자의 구매 내역 가져오기
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5001/buy", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        const response = await axios.post(
+          "http://localhost:5001/mypage/get_user_join_post",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
           },
-        });
-        setPosts(data);
-      } catch (err) {
-        console.error("구매내역을 불러오는데 실패했습니다.");
-        //임시데이터 불러오기
-        setPosts(Posts);
+        );
+        setAllPosts(response.data);
+        setPosts(response.data);
+      } catch (error) {
+        console.log("데이터 송신중 오류 발생", error);
       }
-      setLoading(false);
     };
     fetchPosts();
-  }, []);
+  }, [userToken]);
+
+  // 필터 상태 변경 반영하기
+  useEffect(() => {
+    if (filter === "all") {
+      setPosts(allPosts);
+    } else {
+      const filteredPosts = allPosts.filter((post) => {
+        if (filter === "sell") {
+          return post.post_type === 0;
+        } else if (filter === "buy") {
+          return post.post_type === 1;
+        }
+        return false; // 필터 조건 외의 경우 false 반환
+      });
+      setPosts(filteredPosts);
+    }
+  }, [filter, allPosts]); // allPosts가 변경될 때마다 필터링 수행
+
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+  };
 
   return (
     <div>
-      <Header title="구매내역" />
-      {loading ? (
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          sx={{ height: "30vh" }}
+      <Header title="내가 올린 게시글" />
+      <ButtonGroup fullWidth sx={{ mt: 1 }}>
+        <Button
+          variant={filter === "all" ? "contained" : "outlined"}
+          onClick={() => handleFilterChange("all")}
         >
-          <CircularProgress />
-        </Grid>
-      ) : (
-        <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
-          <Grid container spacing={2}>
-            {posts.map((post) => (
-              <Grid item key={post.id} xs={12} sm={6} md={4}>
-                <Postcard post={post} />
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      )}
+          전체
+        </Button>
+        <Button
+          variant={filter === "sell" ? "contained" : "outlined"}
+          onClick={() => handleFilterChange("sell")}
+        >
+          판매
+        </Button>
+        <Button
+          variant={filter === "buy" ? "contained" : "outlined"}
+          onClick={() => handleFilterChange("buy")}
+        >
+          구매
+        </Button>
+      </ButtonGroup>
 
+      <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
+        <Grid container spacing={2}>
+          {posts.map((post) => (
+            <Grid item key={post.id} xs={12} sm={6} md={4}>
+              <Postcard post={post} />
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
       <Footer />
     </div>
   );
