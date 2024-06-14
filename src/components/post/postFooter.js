@@ -25,6 +25,7 @@ const PostFooter = ({ post }) => {
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
   const user_no = jwtDecode(userToken).no;
 
+  console.log(userToken);
   useEffect(() => {
     setLikeStatus(post.post_my_like);
   }, [post]);
@@ -56,7 +57,7 @@ const PostFooter = ({ post }) => {
           {},
           {
             headers: {
-              Authorization: `Bearer ${userToken}`,
+              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
             },
           },
         );
@@ -87,7 +88,7 @@ const PostFooter = ({ post }) => {
           >
             <IconButton
               onClick={handleLikeClick}
-              disabled={post.post_status === 2 || post.post_user_no === user_no}
+              disabled={post.post_status === 2}
             >
               <FavoriteRounded
                 color={likeStatus ? "error" : "inherit"}

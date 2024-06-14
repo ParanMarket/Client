@@ -26,12 +26,20 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [grade, setGrade] = useState("");
   const [postImages, setPostImages] = useState([]);
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
   useEffect(() => {
     const fetchPostData = async () => {
       try {
+        console.log(post_no);
         const response = await axios.get(
           `http://localhost:5001/post/get_post/${post_no}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          },
         );
         const postData = response.data[0];
         setPost(postData);
@@ -45,7 +53,7 @@ const PostDetail = () => {
         } else {
           setGrade("만년설");
         }
-        // 초기 좋아요 설정
+        // 초기 설정
       } catch (err) {
         console.log("데이터를 가져오는데 실패하였습니다.");
       }
@@ -58,14 +66,18 @@ const PostDetail = () => {
       try {
         const response = await axios.get(
           `http://localhost:5001/post/get_post_img/${post_no}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          },
         );
         const postImageData = response.data;
         setPostImages(postImageData);
         console.log(postImages);
-
-        // 초기 좋아요 설정
       } catch (err) {
-        console.log("데이터를 가져오는데 실패하였습니다.");
+        console.log("데이터를 가져오는데 실패하였습니다.", err);
       }
     };
     fetchImageData();

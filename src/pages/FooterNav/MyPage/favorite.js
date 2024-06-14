@@ -11,16 +11,19 @@ import Posts from "../../../data";
 const Favorite = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
   // 사용자 좋아요 정보 가져오기
   useEffect(() => {
     const fetchLikedPosts = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000//like_post/:post_no",
+        console.log(userToken);
+        const response = await axios.post(
+          "http://localhost:5001/mypage/get_like_list",
+          {},
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+              Authorization: `Bearer ${userToken}`,
             },
           },
         );
@@ -29,10 +32,6 @@ const Favorite = () => {
       } catch (err) {
         console.error("좋아요 정보를 가져오는데 실패했습니다.", err);
         /* 나중에 주석 지우기 setLoading(true);*/
-        //나중에 지우기 임시데이터
-        const likedPosts = Posts.filter((post) => post.liked);
-        setLoading(false);
-        setPosts(likedPosts);
       }
     };
     fetchLikedPosts();
@@ -51,26 +50,25 @@ const Favorite = () => {
     );
   }
 
-  if (!posts.length) {
-    return (
-      <Typography variant="h5" align="center">
-        좋아요를 한 게시물이 없습니다.
-      </Typography>
-    );
-  }
   return (
     <div>
       <Header title="찜목록" />
+      {posts.length === 0 ? (
+        <Typography variant="h5" align="center">
+          좋아요를 한 게시물이 없습니다.
+        </Typography>
+      ) : (
+        <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
+          <Grid container spacing={2}>
+            {posts.map((post, index) => (
+              <Grid item key={post.id} xs={12} sm={6} md={4} key={index}>
+                <Postcard post={post} />
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      )}
 
-      <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
-        <Grid container spacing={2}>
-          {posts.map((post) => (
-            <Grid item key={post.id} xs={12} sm={6} md={4}>
-              <Postcard post={post} />
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
       <Footer />
     </div>
   );
