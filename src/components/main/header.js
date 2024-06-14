@@ -119,13 +119,13 @@ const Header = () => {
                 <ListItemIcon>
                   <Receipt />
                 </ListItemIcon>
-                <ListItemText primary="판매 내역" />
+                <ListItemText primary="내가 올린 게시글" />
               </ListItem>
               <ListItem onClick={() => navigate("/buy")}>
                 <ListItemIcon>
                   <LocalMall />
                 </ListItemIcon>
-                <ListItemText primary="구매 내역" />
+                <ListItemText primary="내가 참여한 게시글" />
               </ListItem>
               {userToken ? (
                 <>

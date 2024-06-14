@@ -1,46 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { Container, Grid, Box, Button, ButtonGroup } from "@mui/material";
+import { Container, Grid, Button, ButtonGroup } from "@mui/material";
 import axios from "axios";
 import Footer from "../../../components/main/footer";
 import Header from "../../../components/myPage/myPageHeader";
 import Postcard from "../../../components/post/postcard";
 
-//테스트용 임시 데이터
-import Posts from "../../../data";
-
 const Sell = () => {
-  const [posts, setPosts] = useState(Posts); // 샘플 데이터로 초기화 데이터 백에서 받아올때 useState([])
+  const [allPosts, setAllPosts] = useState([]); // 모든 데이터를 저장할 상태
+  const [posts, setPosts] = useState([]); // 필터링된 데이터를 저장할 상태
   const [filter, setFilter] = useState("all"); // 상태 카테고리
-  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const userToken = localStorage.getItem("userToken"); // useState 불필요
 
-  /* 사용자의 판매 내역 불러오기
   useEffect(() => {
     const fetchPosts = async () => {
-      const { data } = await axios.get("http://localhost:5001/my-posts", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
-      });
-      setPosts(data);
+      try {
+        const response = await axios.post(
+          "http://localhost:5001/mypage/get_user_post",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          },
+        );
+        setAllPosts(response.data);
+        setPosts(response.data);
+      } catch (error) {
+        console.log("데이터 송신중 오류 발생", error);
+      }
     };
     fetchPosts();
-  }, []); */
+  }, [userToken]);
 
   // 필터 상태 변경 반영하기
   useEffect(() => {
     if (filter === "all") {
-      setPosts(Posts);
+      setPosts(allPosts);
     } else {
-      const filteredPosts = Posts.filter((post) => {
-        if (filter === "active") {
-          return post.status === 0 || post.status === 1;
-        } else if (filter === "completed") {
-          return post.status === 2;
+      const filteredPosts = allPosts.filter((post) => {
+        if (filter === "sell") {
+          return post.post_type === 0;
+        } else if (filter === "buy") {
+          return post.post_type === 1;
         }
+        return false; // 필터 조건 외의 경우 false 반환
       });
       setPosts(filteredPosts);
     }
-  }, [filter]);
+  }, [filter, allPosts]); // allPosts가 변경될 때마다 필터링 수행
 
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
@@ -48,7 +55,7 @@ const Sell = () => {
 
   return (
     <div>
-      <Header title="판매내역" />
+      <Header title="내가 올린 게시글" />
       <ButtonGroup fullWidth sx={{ mt: 1 }}>
         <Button
           variant={filter === "all" ? "contained" : "outlined"}
@@ -57,16 +64,16 @@ const Sell = () => {
           전체
         </Button>
         <Button
-          variant={filter === "active" ? "contained" : "outlined"}
-          onClick={() => handleFilterChange("active")}
+          variant={filter === "sell" ? "contained" : "outlined"}
+          onClick={() => handleFilterChange("sell")}
         >
-          판매중
+          판매
         </Button>
         <Button
-          variant={filter === "completed" ? "contained" : "outlined"}
-          onClick={() => handleFilterChange("completed")}
+          variant={filter === "buy" ? "contained" : "outlined"}
+          onClick={() => handleFilterChange("buy")}
         >
-          거래완료
+          구매
         </Button>
       </ButtonGroup>
 
