@@ -55,7 +55,7 @@ const Buy = () => {
 
   return (
     <div>
-      <Header title="내가 올린 게시글" />
+      <Header title="내가 참여한 게시글" />
       <ButtonGroup fullWidth sx={{ mt: 1 }}>
         <Button
           variant={filter === "all" ? "contained" : "outlined"}
