@@ -93,7 +93,7 @@ const Home = () => {
   return (
     <div style={{ paddingTop: 50 }}>
       <Header />
-      <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
+      <Container style={{ paddingTop: "1%", paddingBottom: "20%" }}>
         <Container
           style={{
             overflow: "auto",

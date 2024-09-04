@@ -42,7 +42,7 @@ const Postcard = ({ post }) => {
     <Card
       sx={{
         display: "flex",
-        height: 140,
+        height: 160,
         position: "relative",
         "&:hover": {
           backgroundColor: indigo[50],
@@ -54,7 +54,7 @@ const Postcard = ({ post }) => {
         sx={{ display: "flex", width: "100%" }}
       >
         <Box
-          sx={{ position: "relative", width: 120, height: 120, margin: "3%" }}
+          sx={{ position: "relative", width: 120, height: 120, margin: "1%" }}
         >
           <CardMedia
             component="img"

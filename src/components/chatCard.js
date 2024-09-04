@@ -75,28 +75,30 @@ const ChatCard = ({ chat }) => {
             alt={chat.post_title}
           />
         </Box>
-        <CardContent sx={{ flexGrow: 1, overflow: "hidden", pr: 3 }}>
+        <CardContent
+          sx={{ flexGrow: 1, overflow: "hidden", pr: 3, maxWidth: "65%" }}
+        >
           <Grid
             container
             direction="column"
             justifyContent="space-between"
             height="100%"
           >
-            <Grid
-              item
-              container
-              justifyContent="space-between"
-              alignItems="center"
-            >
+            <Grid item container flexDirection="column">
               <Typography variant="h6" component="div">
                 {chat.post_title}
               </Typography>
               <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
                 {new Date(chat.chat_time).toLocaleDateString()}
               </Typography>
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle1" color="textSecondary">
+              <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                overflow="hidden"
+                maxWidth="100%"
+              >
                 {chat.chat_content}
               </Typography>
               <Typography variant="subtitle2" component="div" noWrap>

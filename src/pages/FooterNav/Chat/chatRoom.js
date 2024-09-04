@@ -192,8 +192,7 @@ function ChatRoom() {
           </ScrollToBottom>
         </div>
         <div className="chat-footer">
-          <input
-            type="text"
+          <textarea
             placeholder="내용을 작성해주세요."
             value={currentMessage}
             onChange={(event) => {

@@ -65,7 +65,7 @@ const ChatRoomcard = ({ post }) => {
     console.log("chatroomcard", post_no);
     console.log(userToken);
 
-    //사용자 확인 후 삭제 로직
+    //사용자 확인 후 거래완료 처리
     try {
       const response = await axios.post(
         `http://localhost:5001/post/post_update_finish`,
@@ -183,6 +183,7 @@ const ChatRoomcard = ({ post }) => {
             size="medium"
             onClick={handleCompleteTransaction}
             sx={{ mt: 1, width: "130px", height: "50px" }}
+            disabled={post.post_status === 2}
           >
             거래 완료
           </Button>

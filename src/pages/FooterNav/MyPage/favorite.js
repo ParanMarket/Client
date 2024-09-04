@@ -5,9 +5,6 @@ import Footer from "../../../components/main/footer";
 import Header from "../../../components/myPage/myPageHeader";
 import Postcard from "../../../components/post/postcard";
 
-//테스트용 임시 데이터
-import Posts from "../../../data";
-
 const Favorite = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +27,7 @@ const Favorite = () => {
         setPosts(response.data);
         setLoading(false);
       } catch (err) {
-        console.error("좋아요 정보를 가져오는데 실패했습니다.", err);
+        console.error("찜 정보를 가져오는데 실패했습니다.", err);
         /* 나중에 주석 지우기 setLoading(true);*/
       }
     };
@@ -54,8 +51,8 @@ const Favorite = () => {
     <div>
       <Header title="찜목록" />
       {posts.length === 0 ? (
-        <Typography variant="h5" align="center">
-          좋아요를 한 게시물이 없습니다.
+        <Typography variant="h5" align="center" mt="30vh">
+          찜한 게시물이 없습니다.
         </Typography>
       ) : (
         <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
