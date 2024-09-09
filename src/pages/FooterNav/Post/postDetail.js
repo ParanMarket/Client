@@ -98,6 +98,11 @@ const PostDetail = () => {
   const uploadedTime = moment(post.post_sdd).fromNow();
   //console.log(uploadedTime);
 
+  // 닉네임의 첫 글자 추출
+  const getInitial = (name) => {
+    return name ? name.charAt(0).toUpperCase() : "";
+  };
+
   return (
     <div style={{ paddingBottom: 100 }}>
       <PostHeader post={post} />
@@ -153,7 +158,9 @@ const PostDetail = () => {
             backgroundColor: "white",
           }}
         >
-          <Avatar src={post.user_img} alt={post.user_nick} />
+          <Avatar src={post.user_img} alt={post.user_nick}>
+            {!post.user_avatar && getInitial(post.user_nick)}
+          </Avatar>
           <Box sx={{ backgroundColor: "white", ml: 3 }}>
             <Typography variant="subtitle1" color="black">
               {post.user_nick}

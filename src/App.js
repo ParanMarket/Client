@@ -74,6 +74,10 @@ function App() {
             <Route path="/editPost/:post_no" element={<EditPost />}></Route>
             <Route path="/notifications" element={<Notifications />}></Route>
             <Route path="/nickSetting" element={<NickSetting />}></Route>
+            <Route
+              path="/nickReset"
+              element={<NickSetting isReset={true} />}
+            ></Route>
             <Route path="/404" element={<NotFoundPage />}></Route>
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>

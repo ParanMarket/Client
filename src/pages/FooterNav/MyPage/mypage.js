@@ -8,17 +8,26 @@ import {
   Typography,
   Grid,
   Avatar,
+  Button,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  DialogTitle,
 } from "@mui/material";
 import FooterNav from "../../../components/main/footer";
 import Header from "../../../components/main/header";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import LogoutButton from "../../../components/main/logoutButton";
 
 const Mypage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const userToken = localStorage.getItem("userToken");
   const [userGrade, setUserGrade] = useState("");
-
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -72,6 +81,47 @@ const Mypage = () => {
 
   const sdd_time = moment().diff(moment(userInfo.user_sdd), "days"); // 가입한 날부터 현재까지의 일수 계산
 
+  // 닉네임의 첫 글자 추출
+  const getInitial = (name) => {
+    return name ? name.charAt(0).toUpperCase() : "";
+  };
+
+  // 닉네임 재설정 페이지로 이동
+  const handleNicknameReset = () => {
+    navigate("/nickReset");
+  };
+
+  // 탈퇴하기 버튼용 다이얼로그
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleDeleteAccount = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5001/auth/deleteaccount",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        },
+      );
+      // 탈퇴 처리 후 로그아웃 로직과 동일하게 작동
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("userNickname");
+      localStorage.removeItem("recentSearchItem");
+      alert("계정이 성공적으로 탈퇴되었습니다!");
+      navigate("/");
+    } catch (error) {
+      console.log("탈퇴 처리 중 서버 오류 : ", error);
+      alert("탈퇴 처리 중 오류가 발생했습니다. 다시 한번 시도해주세요!");
+    } finally {
+      setOpen(false); // 다이얼로그 닫기
+    }
+  };
   return (
     <div style={{ paddingTop: 50, paddingBottom: 50 }}>
       <Header />
@@ -91,12 +141,23 @@ const Mypage = () => {
                     alt={userInfo.user_nick}
                     src={userInfo.user_avatar}
                     sx={{ width: 120, height: 120 }}
-                  />
+                  >
+                    {!userInfo.user_avatar && getInitial(userInfo.user_nick)}
+                  </Avatar>
                 </Grid>
                 <Grid item xs={12} md={8}>
-                  <Typography variant="h4" gutterBottom>
-                    {userInfo.user_nick}
-                  </Typography>
+                  <Grid display="flex" justifyContent="space-between">
+                    <Typography variant="h4" gutterBottom>
+                      {userInfo.user_nick}
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={handleNicknameReset}
+                    >
+                      닉네임 재설정
+                    </Button>
+                  </Grid>
                   <Typography variant="body1" gutterBottom>
                     이메일: {userInfo.user_email}
                   </Typography>
@@ -106,13 +167,43 @@ const Mypage = () => {
                   <Typography variant="body1" gutterBottom>
                     나의 등급: {userGrade}
                   </Typography>
-                  {/* 다른 사용자 정보 필드도 필요한 만큼 추가 */}
                 </Grid>
               </Grid>
             </CardContent>
           </Card>
         </Box>
+        {/* 로그아웃 버튼 */}
+        <LogoutButton />
+
+        {/* 탈퇴하기 버튼 */}
+        <Button
+          fullWidth
+          variant="contained"
+          color="secondary"
+          onClick={handleOpen}
+          style={{ marginTop: "40px" }}
+        >
+          탈퇴하기
+        </Button>
+        {/* 탈퇴 확인 다이얼로그 */}
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>정말 탈퇴하시겠습니까?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              계정을 탈퇴하면 복구할 수 없습니다. 정말 탈퇴하시겠습니까?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              유지하기
+            </Button>
+            <Button onClick={handleDeleteAccount} color="secondary" autoFocus>
+              탈퇴하기
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
+
       <FooterNav />
     </div>
   );

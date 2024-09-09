@@ -26,7 +26,8 @@ const Boxs = styled(Box)`
   padding-bottom: 40px !important;
 `;
 
-const NickSetting = () => {
+const NickSetting = ({ isReset }) => {
+  // isReset을 통해 닉네임 재설정 여부 결정
   const [nickname, setNickname] = useState("");
   const [nicknameChecked, setNicknameChecked] = useState(false);
   const [nicknameError, setNicknameError] = useState("");
@@ -69,8 +70,12 @@ const NickSetting = () => {
     }
 
     try {
+      // 회원가입 중 닉네임 설정 vs 닉네임 재설정 구분
+      const apiEndpoint = isReset
+        ? `http://localhost:5001/auth/nick_update` // 닉네임 업데이트 api
+        : `http://localhost:5001/auth/nick_check`; // 첫 닉네임 설정 api
       const response = await axios.post(
-        `http://localhost:5001/auth/nick_check`,
+        apiEndpoint,
         { nickname },
         {
           headers: {
@@ -82,11 +87,18 @@ const NickSetting = () => {
       if (response.data.message === "success") {
         setNicknameError("");
         setNicknameChecked(true); // 중복 확인 완료
-        const userNick = response.data.nickname;
-        alert(
-          userNick + "님 가입을 축하드립니다! 로그인을 한번 더 진행해주세요!",
-        );
-        navigate("/login");
+
+        if (isReset) {
+          // 닉네임 업데이트 성공 메시지
+          alert("닉네임이 성공적으로 변경되었습니다!");
+        } else {
+          // 회원가입 성공 메시지
+          const userNick = response.data.nickname;
+          alert(
+            userNick + "님 가입을 축하드립니다! 로그인을 한번 더 진행해주세요!",
+          );
+          navigate("/login");
+        }
       } else if (response.data.message === "already_exist_nick") {
         setNicknameError("중복된 닉네임입니다. 다른 닉네임을 사용해주세요.");
         setNicknameChecked(false);
@@ -127,7 +139,7 @@ const NickSetting = () => {
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }} />
           <Typography component="h1" variant="h5">
-            닉네임 설정
+            {isReset ? "닉네임 재설정" : "닉네임 설정"}
           </Typography>
           <Boxs
             component="form"
@@ -142,7 +154,7 @@ const NickSetting = () => {
           >
             <FormControl component="fieldset" variant="standard">
               <Grid container spacing={2} alignItems="center">
-                <Grid item xs={8}>
+                <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth
@@ -161,7 +173,7 @@ const NickSetting = () => {
                 sx={{ mt: 3, mb: 2 }}
                 size="large"
               >
-                파란장터 시작하기
+                {isReset ? "닉네임 변경하기" : "파란장터 시작하기"}
               </Button>
             </FormControl>
             <FormHelperTexts>{nicknameError}</FormHelperTexts>

@@ -44,7 +44,7 @@ const LogoutButton = () => {
 
   return (
     <>
-      <Button variant="contained" onClick={handleClickOpen}>
+      <Button variant="contained" onClick={handleClickOpen} fullWidth>
         로그아웃
       </Button>
       <Dialog
