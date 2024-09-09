@@ -54,9 +54,11 @@ const MoreIcon = ({ post }) => {
   };
 
   // 본인 제외 - 신고기능
+  console.log(post);
   const report_post = {
     post_title: post.post_title,
     post_user_nick: post.user_nick,
+    post_user_no: post.post_user_no,
   };
   const handleReport = () => {
     navigate(`/report/${post_no}`, {
