@@ -91,6 +91,11 @@ const Mypage = () => {
     navigate("/nickReset");
   };
 
+  // 공지사항으로 이동
+  const handleNotification = () => {
+    navigate("/notification");
+  };
+
   // 탈퇴하기 버튼용 다이얼로그
   const handleOpen = () => {
     setOpen(true);
@@ -172,6 +177,16 @@ const Mypage = () => {
             </CardContent>
           </Card>
         </Box>
+        {/* 공지사항 버튼 */}
+        <Box mb={4} onClick={handleNotification}>
+          <Card>
+            <CardContent>
+              <Grid alignItems="center">
+                <Typography variant="body1">공지사항</Typography>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Box>
         {/* 로그아웃 버튼 */}
         <LogoutButton />
 
@@ -181,7 +196,7 @@ const Mypage = () => {
           variant="contained"
           color="secondary"
           onClick={handleOpen}
-          style={{ marginTop: "40px" }}
+          style={{ marginTop: "30px" }}
         >
           탈퇴하기
         </Button>

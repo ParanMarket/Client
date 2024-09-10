@@ -9,8 +9,7 @@ import First from "./pages/first";
 import Chat from "./pages/FooterNav/Chat/chat";
 import Favorite from "./pages/FooterNav/MyPage/favorite";
 import Search from "./pages/HeaderNav/search";
-import Notifications from "./pages/HeaderNav/notifications";
-import Settings from "./pages/FooterNav/MyPage/settings";
+import Notification from "./pages/FooterNav/MyPage/notification";
 import Profile from "./pages/FooterNav/MyPage/profile";
 import WritePost from "./pages/FooterNav/Post/WritePost";
 import Mypage from "./pages/FooterNav/MyPage/mypage";
@@ -60,7 +59,7 @@ function App() {
             <Route path="/favorite" element={<Favorite />}></Route>
             <Route path="/writePost" element={<WritePost />}></Route>
             <Route path="/search" element={<Search />}></Route>
-            <Route path="/settings" element={<Settings />}></Route>
+            <Route path="/notification" element={<Notification />}></Route>
             <Route path="/profile" element={<Profile />}></Route>
             <Route path="/mypage" element={<Mypage />}></Route>
             <Route path="/buy" element={<Buy />}></Route>
@@ -72,7 +71,6 @@ function App() {
               element={<ChatRoom />}
             ></Route>
             <Route path="/editPost/:post_no" element={<EditPost />}></Route>
-            <Route path="/notifications" element={<Notifications />}></Route>
             <Route path="/nickSetting" element={<NickSetting />}></Route>
             <Route
               path="/nickReset"
