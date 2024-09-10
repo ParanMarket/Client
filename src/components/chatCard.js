@@ -27,7 +27,6 @@ import axios from "axios";
 const ChatCard = ({ chat }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState("");
-  console.log("chatcard", chat);
   const post_no = chat.post_no;
 
   useEffect(() => {
