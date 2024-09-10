@@ -190,7 +190,7 @@ const Mypage = () => {
           <DialogTitle>정말 탈퇴하시겠습니까?</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              계정을 탈퇴하면 복구할 수 없습니다. 정말 탈퇴하시겠습니까?
+              계정을 탈퇴하면 복구할 수 없습니다. <br /> 탈퇴하시겠습니까?
             </DialogContentText>
           </DialogContent>
           <DialogActions>

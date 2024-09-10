@@ -67,13 +67,13 @@ const Sell = () => {
           variant={filter === "sell" ? "contained" : "outlined"}
           onClick={() => handleFilterChange("sell")}
         >
-          판매
+          팔아요
         </Button>
         <Button
           variant={filter === "buy" ? "contained" : "outlined"}
           onClick={() => handleFilterChange("buy")}
         >
-          구매
+          구해요
         </Button>
       </ButtonGroup>
 
