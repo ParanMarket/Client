@@ -4,26 +4,14 @@ import {
   CardContent,
   CardMedia,
   Typography,
-  Badge,
   Grid,
   CardActionArea,
   Box,
 } from "@mui/material";
-import { styled } from "@mui/system";
 import { indigo } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// 안읽음 표시
-// const UnreadBadge = styled(Badge)(({ theme }) => ({
-//   "& .MuiBadge-badge": {
-//     backgroundColor: indigo[100],
-//     color: indigo[100],
-//     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-//   },
-// }));
-
-// 더미데이터 페이징
 const ChatCard = ({ chat }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState("");
@@ -46,6 +34,23 @@ const ChatCard = ({ chat }) => {
 
   const handleCardClick = () => {
     navigate(`chatRoom/${chat.chat_no}`, { state: { post } }); // 각 채팅방으로 이동하기
+  };
+
+  // 채팅을 보낸 시점 띄우는 함수
+  const chatTime = (chatTime) => {
+    const chatDate = new Date(chatTime);
+    const today = new Date();
+
+    // 채팅을 보낸 시점이 오늘인지 판단
+    const isToday =
+      chatDate.getDate() === today.getDate() &&
+      chatDate.getMonth() === today.getMonth() &&
+      chatDate.getFullYear() === today.getFullYear();
+
+    // 채팅을 보낸 시점이 오늘이면 시:분 표시
+    return isToday
+      ? chatDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+      : chatDate.toLocaleDateString();
   };
 
   return (
@@ -88,7 +93,7 @@ const ChatCard = ({ chat }) => {
                 {chat.post_title}
               </Typography>
               <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                {new Date(chat.chat_time).toLocaleDateString()}
+                {chatTime(chat.chat_time)}
               </Typography>
               <Typography
                 variant="subtitle1"
