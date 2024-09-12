@@ -107,7 +107,7 @@ const PostForm = ({
       });
     }
   };
-  console.log("삭제된 사진 위에", deletedImages);
+
   // 이미지 상태가 변경될 때마다 이미지 개수 업데이트
   useEffect(() => {
     setCount(existingImages.length + files.length);
@@ -177,7 +177,10 @@ const PostForm = ({
       isValid = false;
     }
     if (!comment || comment.length < 10) {
-      newErrors.comment = "내용은 10자 이상 적어주세요.";
+      newErrors.comment = "내용은 10자 이상 작성해주세요.";
+      isValid = false;
+    } else if (comment.length > 2000) {
+      newErrors.comment = "내용은 2000자 이하로 작성해주세요.";
       isValid = false;
     }
 
@@ -205,7 +208,6 @@ const PostForm = ({
       JSON.stringify(existingImages.map((img) => img.url)),
     );
 
-    console.log("삭제된 사진 여기", deletedImages);
     // 삭제된 이미지 URL 리스트 전송
     if (deletedImages.length > 0) {
       formData.append("deletedImages", JSON.stringify(deletedImages));
