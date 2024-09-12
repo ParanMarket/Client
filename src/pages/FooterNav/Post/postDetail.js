@@ -11,14 +11,18 @@ import {
   Avatar,
   IconButton,
   Grid,
+  Button,
 } from "@mui/material";
 import moment from "moment"; // 시간 계산
+import "moment/locale/ko"; // 한국어 기준
 import "slick-carousel/slick/slick.css"; // 이미지 여러개 일 때 슬라이드
 import "slick-carousel/slick/slick-theme.css";
 import blurImg from "../../../css/blurImg";
 import {
+  AllInbox,
   ArrowBackIosRounded,
   ArrowForwardIosRounded,
+  People,
 } from "@mui/icons-material";
 
 const PostDetail = () => {
@@ -29,6 +33,7 @@ const PostDetail = () => {
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
   useEffect(() => {
+    // 게시글 정보 가져오기
     const fetchPostData = async () => {
       try {
         console.log(post_no);
@@ -61,6 +66,7 @@ const PostDetail = () => {
     fetchPostData();
   }, [post_no]);
 
+  // 게시글 이미지 가져오기
   useEffect(() => {
     const fetchImageData = async () => {
       try {
@@ -85,18 +91,58 @@ const PostDetail = () => {
 
   if (!post) return <div>Loading...</div>; //없으면 로딩임
 
+  // 이미지 슬라이더 화살표 커스텀
+  const PrevArrow = (props) => {
+    const { onClick } = props;
+    return (
+      <ArrowBackIosRounded
+        sx={{
+          position: "absolute",
+          left: "-35px",
+          top: "50%",
+          zIndex: 1,
+          fontSize: "30px",
+          cursor: "pointer",
+          color: "gray",
+        }}
+        onClick={onClick}
+      />
+    );
+  };
+
+  const NextArrow = (props) => {
+    const { onClick } = props;
+    return (
+      <ArrowForwardIosRounded
+        sx={{
+          position: "absolute",
+          right: "-35px",
+          zIndex: 1,
+          top: "50%",
+          fontSize: "30px",
+          cursor: "pointer",
+          color: "gray",
+        }}
+        onClick={onClick}
+      />
+    );
+  };
+
   // 이미지 슬라이더 세팅
   const slider_setting = {
-    dots: postImages.length > 1,
+    dots: postImages.length > 0,
     infinite: postImages.length > 1,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    objectFit: "cover",
+    arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
   };
 
   // 업로드 시간 계산 (현재시간으로부터 ~)
-  const uploadedTime = moment(post.post_sdd).fromNow();
-  //console.log(uploadedTime);
+  const uploadedTime = moment(post.post_sdd).local("ko").fromNow();
 
   // 닉네임의 첫 글자 추출
   const getInitial = (name) => {
@@ -104,7 +150,7 @@ const PostDetail = () => {
   };
 
   return (
-    <div style={{ paddingBottom: 100 }}>
+    <div style={{ paddingBottom: "13vh" }}>
       <PostHeader post={post} />
       <Box
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
@@ -112,10 +158,10 @@ const PostDetail = () => {
         <Box
           sx={{
             position: "relative",
-            width: "100%",
+            width: "83%",
             maxWidth: "400px",
             maxHeight: "400px",
-            margin: "0 auto",
+            margin: "10px auto",
             overflow: "show",
           }}
         >
@@ -123,15 +169,25 @@ const PostDetail = () => {
           <Box>
             <Slider {...slider_setting}>
               {postImages.map((image, index) => (
-                <div key={index}>
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    maxHeight: "400px",
+                    maxWidth: "400px",
+                    alignItems: "center",
+                  }}
+                >
                   <img
                     src={image.post_img}
                     alt={`Post image ${index + 1}`}
                     style={{
-                      width: "90%",
-                      display: "block",
-                      maxHeight: "380px",
-                      objectFit: "cover",
+                      width: "100%",
+                      height: "100%",
+                      maxWidth: "400px",
+                      maxHeight: "400px",
+                      objectFit: "contain",
                     }}
                   />
                 </div>
@@ -147,6 +203,7 @@ const PostDetail = () => {
           )}
         </Box>
       </Box>
+
       <Box sx={{ p: 2 }}>
         {/* 사용자 정보 => 사용자 개인 프로필 볼 수 있도록 나중에 설정하기*/}
         <Box
@@ -170,22 +227,123 @@ const PostDetail = () => {
             </Typography>
           </Box>
         </Box>
-        <Divider sx={{ my: 2 }} />
-        {/* 포스트 정보 */}
-        {post.post_status === 1 && (
-          <Typography variant="h6" component="div" color="primary">
-            거래중
+        <Divider sx={{ mt: 2 }} />
+      </Box>
+
+      {/* 게시글 정보 띄우기 */}
+      <Box sx={{ padding: "0px 25px 25px 25px" }}>
+        {/* 게시글  유형 */}
+        {post.post_type === 0 ? (
+          <Typography variant="body1" color="secondary">
+            #팔아요
+          </Typography>
+        ) : (
+          <Typography variant="body1" color="secondary">
+            #구해요
           </Typography>
         )}
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          {post.post_title}
-        </Typography>
-        <Typography variant="body1" sx={{ mt: 1 }}>
+
+        <Grid
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          marginBottom="15px"
+        >
+          {/* 게시글 거래 상태 */}
+          {post.post_status === 1 && (
+            <Typography
+              variant="h6"
+              borderRadius="15px"
+              color="white"
+              padding="1vh"
+              marginRight="10px"
+              sx={{ backgroundColor: "#7986CB" }}
+            >
+              거래중
+            </Typography>
+          )}
+          {post.post_status === 2 && (
+            <Typography
+              variant="h6"
+              borderRadius="15px"
+              color="white"
+              padding="1vh"
+              margin="1vh"
+              sx={{ backgroundColor: "indigo" }}
+            >
+              거래완료
+            </Typography>
+          )}
+          {/* 게시글 제목 */}
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            {post.post_title}
+          </Typography>
+        </Grid>
+        {/* 게시글 내용 */}
+        <Typography
+          variant="body1"
+          sx={{
+            mt: 1,
+            overflowWrap: "break-word",
+            wordBreak: "break-word",
+            whiteSpace: "pre-line", // 줄바꿈 유지
+          }}
+        >
           {post.post_comment}
         </Typography>
+
+        {/* 게시글 업로드 시간 */}
         <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
           {uploadedTime}
         </Typography>
+
+        {/* 거래 방식 */}
+        <Typography sx={{ margin: "20px 0px 5px 0px" }} fontWeight="bold">
+          선호하는 거래방식
+        </Typography>
+        <Box display="flex">
+          {(post.post_way === 0 || post.post_way === 2) && (
+            <Box
+              sx={{
+                marginRight: 2,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                padding: 2,
+                borderRadius: "15px",
+                color: "primary.main",
+                border: "2px solid #7986CB",
+                width: "112px",
+                height: "112px",
+              }}
+            >
+              <People sx={{ fontSize: 40, marginBottom: 1 }} />
+              <Typography variant="body1" fontWeight="bold">
+                대면 거래
+              </Typography>
+            </Box>
+          )}
+          {(post.post_way === 1 || post.post_way === 2) && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                padding: 2,
+                borderRadius: "15px",
+                color: "primary.main",
+                border: "2px solid #7986CB",
+                width: "112px",
+                height: "112px",
+              }}
+            >
+              <AllInbox sx={{ fontSize: 40, marginBottom: 1 }} />
+              <Typography variant="body1" fontWeight="bold">
+                사물함 거래
+              </Typography>
+            </Box>
+          )}
+        </Box>
       </Box>
       <div>
         <PostFooter post={post} />
