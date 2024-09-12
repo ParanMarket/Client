@@ -24,7 +24,8 @@
 .chat-window {
   width: 100%;
   max-width: 750px;
-  height: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .chat-window p {
@@ -52,6 +53,8 @@
   background: #fff;
   position: relative;
   border-radius: 5px;
+  flex: 1;
+  overflow-y: auto;
 }
 .chat-window .chat-body .message-container {
   width: 100%;
@@ -146,7 +149,7 @@
   resize: none;
   overflow-wrap: break-word;
   word-break: break-word;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .chat-window .chat-footer button {

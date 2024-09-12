@@ -34,6 +34,15 @@ function ChatRoom() {
   const user_no = jwtDecode(userToken).no;
   const navigate = useNavigate();
 
+  // 채팅방 전체 페이지 스크롤 막기
+  useEffect(() => {
+    document.body.style.overflow = "hidden"; // 페이지 스크롤 막기
+
+    return () => {
+      document.body.style.overflow = "auto"; // 컴포넌트 언마운트시 스크구롤 복구
+    };
+  }, []);
+
   // 채팅방 정보 구성
   useEffect(() => {
     const initializeChatDetails = async () => {
