@@ -37,6 +37,22 @@ const Postcard = ({ post }) => {
     navigate(`/report/${post.post_no}`);
   };
 
+  // 게시글 올린 시점 띄우는 함수
+  const postTime = (postTime) => {
+    const postDate = new Date(postTime);
+    const today = new Date();
+
+    // 게시글을 올린 시점이 오늘인지 판단
+    const isToday =
+      postDate.getDate() === today.getDate() &&
+      postDate.getMonth() === today.getMonth() &&
+      postDate.getFullYear() === today.getFullYear();
+
+    // 게시글을 올린 시점이 오늘이면 시:분 표시
+    return isToday
+      ? postDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+      : postDate.toLocaleDateString();
+  };
   return (
     <Card
       sx={{
@@ -88,7 +104,7 @@ const Postcard = ({ post }) => {
             {post.post_price}원
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            {new Date(post.post_sdd).toLocaleDateString()}
+            {postTime(post.post_sdd)}
           </Typography>
         </CardContent>
       </CardActionArea>
