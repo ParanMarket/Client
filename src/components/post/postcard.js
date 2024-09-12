@@ -7,12 +7,16 @@ import {
   CardActions,
   IconButton,
   Typography,
-  Menu,
-  MenuItem,
+  Grid,
   CardActionArea,
   Box,
 } from "@mui/material";
-import { Favorite, Chat, MoreVert } from "@mui/icons-material";
+import {
+  Favorite,
+  Chat,
+  SellRounded,
+  ShoppingCartRounded,
+} from "@mui/icons-material";
 import { indigo } from "@mui/material/colors";
 import blurBox from "../../css/blurBox";
 
@@ -90,9 +94,29 @@ const Postcard = ({ post }) => {
           )}
         </Box>
         <CardContent sx={{ flexGrow: 1, overflow: "hidden", pr: 3 }}>
-          <Typography variant="button" component="div" color="primary">
-            {post.post_type === 0 ? "팔아요" : "구해요"}
-          </Typography>
+          {post.post_type === 0 ? (
+            <Grid container>
+              <SellRounded
+                variant="button"
+                color="primary"
+                sx={{ marginRight: 1 }}
+              />
+              <Typography variant="button" color="primary">
+                팔아요
+              </Typography>
+            </Grid>
+          ) : (
+            <Grid container>
+              <ShoppingCartRounded
+                variant="button"
+                color="primary"
+                sx={{ marginRight: 1 }}
+              />
+              <Typography variant="button" color="primary">
+                구해요
+              </Typography>
+            </Grid>
+          )}
           <Typography variant="subtitle1" component="div">
             {post.post_title}
           </Typography>
