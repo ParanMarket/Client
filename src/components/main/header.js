@@ -159,7 +159,6 @@ const Header = () => {
           src={Logo}
           alt="logo_name"
           style={{ width: "120px", marginLeft: "16px" }}
-          onClick={() => navigate("/")}
         />
         <div style={{ marginLeft: "auto" }}>
           <IconButton color="inherit" onClick={() => navigate("/search")}>

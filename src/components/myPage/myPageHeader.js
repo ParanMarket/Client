@@ -1,10 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { AppBar, Toolbar, IconButton, Grid } from "@mui/material";
+import { AppBar, Toolbar, Grid, Button } from "@mui/material";
 import { ArrowBackIosNewRounded } from "@mui/icons-material";
 import "../../css/logo_font.css";
+import ChatOutButton from "../../pages/FooterNav/Chat/chatOutButton";
 
-const MyPageHeader = ({ title = "파란장터" }) => {
+const MyPageHeader = ({
+  title = "파란장터",
+  showChatOutButton = false,
+  chatNo,
+}) => {
   const navigate = useNavigate();
 
   const handleBackClick = () => {
@@ -13,19 +18,23 @@ const MyPageHeader = ({ title = "파란장터" }) => {
 
   return (
     <AppBar position="static" color="transparent">
-      <Toolbar sx={{ p: 0 }}>
-        <IconButton
-          color="secondary"
+      <Toolbar sx={{ p: 0, justifyContent: "space-between" }}>
+        <Button
+          color="primary"
           aria-label="back"
           onClick={handleBackClick}
-          justifyContent="left"
-          alignItems="center"
+          edge="start"
         >
           <ArrowBackIosNewRounded />
-        </IconButton>
+        </Button>
         <Grid container justifyContent="center">
           <h1 className="logo_font">{title}</h1>
         </Grid>
+        {showChatOutButton && (
+          <Button aria-label="out" edge="end">
+            <ChatOutButton chatNo={chatNo} />
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );

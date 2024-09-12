@@ -3,12 +3,11 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import ScrollToBottom from "react-scroll-to-bottom";
 import axios from "axios";
-import ChatRoomCard from "../../../components/chat/chatRoomCard";
-import { IconButton } from "@mui/material";
+import { IconButton, Box, Typography } from "@mui/material";
 import { SendRounded } from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";
+import ChatRoomCard from "../../../components/chat/chatRoomCard";
 import Header from "../../../components/myPage/myPageHeader";
-import { Box, Typography } from "@mui/material/";
 
 function ChatRoom() {
   const location = useLocation(); // state 에서 post정보 가져오기
@@ -24,7 +23,6 @@ function ChatRoom() {
   const [postNo, setPostNo] = useState("");
   const [postUserNo, setPostUserNo] = useState("");
   const [postUserNick, setPostUserNick] = useState("");
-  //const [myToken, setMyToken] = useState("");
 
   const [currentMessage, setCurrentMessage] = useState(""); // 현재 입력창에 있는 내용
   const [messageList, setMessageList] = useState([]); // 메시지 보여지게 쌓는 리스트
@@ -106,14 +104,25 @@ function ChatRoom() {
       const newSocket = io.connect("http://localhost:5001");
       setSocket(newSocket);
 
+      // 채팅방 참여
       newSocket.emit("join_room", chatNo);
+
       console.log(newSocket);
 
+      // 다른 사용자가 나갔을 때 서버로부터 메시지 전달받음
+      newSocket.on("user_left", (data) => {
+        setMessageList((list) => [
+          ...list,
+          { ...data, system: true, message: data.message }, // 상대방이 떠났다는 메시지가 옴
+        ]);
+      });
+
       return () => {
-        newSocket.disconnect();
+        newSocket.emit("leave_room", { chatNo, user_no }); // 내가 방에서 나가기
+        newSocket.disconnect(); // 소켓 연결 해제
       };
     }
-  }, [chatNo, myUserToken]);
+  }, [chatNo, myUserToken, user_no]);
 
   // 구매자(나)가 메시지 보내기 (백과 소통)
   const sendMessage = async () => {
@@ -189,10 +198,7 @@ function ChatRoom() {
   return (
     <div className="app_center">
       <div className="chat-window">
-        <Header title={otherNick} />
-        {/*<div className="chat-header">*/}
-        {/*  <p>{otherNick}</p>*/}
-        {/*</div>*/}
+        <Header title={otherNick} showChatOutButton={true} chatNo={chatNo} />
         <ChatRoomCard post={post} />
         <div className="chat-body">
           <ScrollToBottom className="message-container">
@@ -204,7 +210,28 @@ function ChatRoom() {
               return (
                 <div key={index}>
                   {/*메시지를 보낸 날짜가 다르면 상단에 날짜 띄우기*/}
-                  {prevMessageDate !== messageDate && (
+                  {messageList.system == null &&
+                    prevMessageDate !== messageDate && (
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        margin={2}
+                      >
+                        <Typography
+                          variant="body2"
+                          padding="10px 20px"
+                          borderRadius="30px"
+                          textAlign="center"
+                          sx={{ backgroundColor: "#e8eaf6", color: "#1a237e" }}
+                        >
+                          {messageDate}
+                        </Typography>
+                      </Box>
+                    )}
+
+                  {/* 시스템 메시지 처리 (상대방 나감)*/}
+                  {messageList.system ? (
                     <Box
                       display="flex"
                       justifyContent="center"
@@ -216,27 +243,27 @@ function ChatRoom() {
                         padding="10px 20px"
                         borderRadius="30px"
                         textAlign="center"
-                        sx={{ backgroundColor: "#e8eaf6", color: "#1a237e" }}
+                        sx={{ backgroundColor: "#bdbdbd", color: "#1a237e" }}
                       >
-                        {messageDate}
+                        {messageList.message} {/* 시스템 메시지 */}
                       </Typography>
                     </Box>
-                  )}
-
-                  <div
-                    className="message"
-                    id={user_no === messageConent.author ? "other" : "you"}
-                  >
-                    <div>
-                      <div className="message-content">
-                        <p>{messageConent.message}</p>
-                      </div>
-                      <div className="message-meta">
-                        <p id="time">{formatTime(messageConent.time)}</p>
-                        {/*<p id="author">{messageConent.author}</p>*/}
+                  ) : (
+                    <div
+                      className="message"
+                      id={user_no === messageConent.author ? "other" : "you"}
+                    >
+                      <div>
+                        <div className="message-content">
+                          <p>{messageConent.message}</p>
+                        </div>
+                        <div className="message-meta">
+                          <p id="time">{formatTime(messageConent.time)}</p>
+                          {/*<p id="author">{messageConent.author}</p>*/}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
