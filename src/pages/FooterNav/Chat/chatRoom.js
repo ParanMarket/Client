@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import ScrollToBottom from "react-scroll-to-bottom";
 import axios from "axios";
-import ChatRoomCard from "../../../components/chatRoomCard";
+import ChatRoomCard from "../../../components/chat/chatRoomCard";
 import { IconButton } from "@mui/material";
 import { SendRounded } from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";

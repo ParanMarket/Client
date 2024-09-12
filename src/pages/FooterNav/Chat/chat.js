@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Typography, Grid } from "@mui/material";
 import FooterNav from "../../../components/main/footer";
 import Header from "../../../components/main/header";
-import ChatCard from "../../../components/chatCard";
+import ChatCard from "../../../components/chat/chatCard";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";

@@ -12,10 +12,18 @@ import {
   CardActionArea,
   Box,
   Button,
+  Grid,
 } from "@mui/material";
-import { Favorite, Chat, MoreVert, GppMaybeRounded } from "@mui/icons-material";
+import {
+  Favorite,
+  Chat,
+  MoreVert,
+  GppMaybeRounded,
+  SellRounded,
+  ShoppingCartRounded,
+} from "@mui/icons-material";
 import { indigo } from "@mui/material/colors";
-import blurBox from "../css/blurBox";
+import blurBox from "../../css/blurBox";
 import axios from "axios";
 
 const ChatRoomcard = ({ post }) => {
@@ -108,6 +116,7 @@ const ChatRoomcard = ({ post }) => {
         display: "flex",
         height: 140,
         position: "relative",
+        margin: "2px",
         "&:hover": {
           backgroundColor: indigo[50],
         },
@@ -118,11 +127,23 @@ const ChatRoomcard = ({ post }) => {
         sx={{ display: "flex", width: "90%" }}
       >
         <Box
-          sx={{ position: "relative", width: 120, height: 120, margin: "3%" }}
+          sx={{
+            position: "relative",
+            width: 120,
+            height: 120,
+            margin: "3%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <CardMedia
             component="img"
-            sx={{ width: "100%", height: "100%", borderRadius: 2 }}
+            sx={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              borderRadius: 2,
+            }}
             image={post.post_img || "https://via.placeholder.com/140"}
             alt={post.post_title}
           />
@@ -139,9 +160,29 @@ const ChatRoomcard = ({ post }) => {
           )}
         </Box>
         <CardContent sx={{ flexGrow: 1, overflow: "hidden", pr: 3 }}>
-          <Typography variant="button" component="div" color="primary">
-            {post.post_type === 0 ? "팔아요" : "구해요"}
-          </Typography>
+          {post.post_type === 0 ? (
+            <Grid container>
+              <SellRounded
+                variant="button"
+                color="primary"
+                sx={{ marginRight: 1 }}
+              />
+              <Typography variant="button" color="primary">
+                팔아요
+              </Typography>
+            </Grid>
+          ) : (
+            <Grid container>
+              <ShoppingCartRounded
+                variant="button"
+                color="primary"
+                sx={{ marginRight: 1 }}
+              />
+              <Typography variant="button" color="primary">
+                구해요
+              </Typography>
+            </Grid>
+          )}
           <Typography variant="subtitle1" component="div">
             {post.post_title}
           </Typography>
@@ -171,7 +212,7 @@ const ChatRoomcard = ({ post }) => {
           color="primary"
           size="small"
           onClick={handleCheckCheat}
-          sx={{ mt: 1, width: "130px", height: "50px" }}
+          sx={{ mt: 1, width: "110px", height: "50px" }}
         >
           <GppMaybeRounded sx={{ mr: 1 }} />
           <Typography variant="body2">사기조회</Typography>
