@@ -5,7 +5,6 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  Container,
   Typography,
   Accordion,
   AccordionSummary,
@@ -16,6 +15,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Footer from "../../components/main/footer";
 import Header from "../../components/main/header";
 import axios from "axios";
+import { Grid } from "@mui/material/";
 
 function Report() {
   const location = useLocation(); // state 에서 post정보 가져오기
@@ -95,56 +95,67 @@ function Report() {
     }
   };
   return (
-    <div style={{ paddingTop: 80, paddingBottom: 80 }}>
+    <div style={{ padding: "80px 0px" }}>
       <Header />
-      <Typography variant="h5" gutterBottom>
-        게시글을 신고하려는 이유를 선택해주세요.
-      </Typography>
-      <p>신고하려는 게시물 제목: {post.post_title}</p>
-      <p>신고하려는 게시물 게시자: {post.post_user_nick}</p>
+      <Grid padding="0px 10px">
+        <Typography variant="h5" gutterBottom>
+          게시글 신고 사유를 선택해주세요.
+        </Typography>
+        <Typography variant="body1">
+          신고하려는 게시물: {post.post_title}
+        </Typography>
+        <Typography variant="body1">
+          신고하려는 게시물 게시자: {post.post_user_nick}
+        </Typography>
 
-      <RadioGroup value={selectedReason} onChange={handleReasonChange}>
-        {reportReasons.map((reason, index) => (
-          <Accordion
-            key={index}
-            expanded={expanded === index}
-            onChange={() => setExpanded(expanded === index ? false : index)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <FormControlLabel
-                value={reason.title}
-                control={<Radio />}
-                label={reason.title}
-                onClick={(event) => event.stopPropagation()}
-                onFocus={(event) => event.stopPropagation()}
-              />
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>{reason.details}</Typography>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-      </RadioGroup>
-      <TextField
-        label="추가적인 신고 사유를 작성해주세요.(선택)"
-        variant="outlined"
-        multiline
-        rows={4}
-        fullWidth
-        value={addDetail}
-        onChange={(e) => setAddDetail(e.target.value)}
-        style={{ marginTop: "20px" }}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleReportSubmit}
-        style={{ marginTop: "20px" }}
-        disabled={!selectedReason}
-        fullWidth
-      >
-        신고하기
-      </Button>
+        <RadioGroup
+          value={selectedReason}
+          onChange={handleReasonChange}
+          sx={{ marginTop: "10px" }}
+        >
+          {reportReasons.map((reason, index) => (
+            <Accordion
+              key={index}
+              expanded={expanded === index}
+              onChange={() => setExpanded(expanded === index ? false : index)}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <FormControlLabel
+                  value={reason.title}
+                  control={<Radio />}
+                  label={reason.title}
+                  onClick={(event) => event.stopPropagation()}
+                  onFocus={(event) => event.stopPropagation()}
+                />
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>{reason.details}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </RadioGroup>
+
+        <TextField
+          label="추가적인 신고 사유를 작성해주세요.(선택)"
+          variant="outlined"
+          multiline
+          rows={4}
+          fullWidth
+          value={addDetail}
+          onChange={(e) => setAddDetail(e.target.value)}
+          style={{ marginTop: "20px" }}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleReportSubmit}
+          style={{ marginTop: "20px" }}
+          disabled={!selectedReason}
+          fullWidth
+        >
+          신고하기
+        </Button>
+      </Grid>
       <Footer />
     </div>
   );
