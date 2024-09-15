@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Grid, Button } from "@mui/material";
 import { ArrowBackIosNewRounded } from "@mui/icons-material";
 import "../../css/logo_font.css";
-import ChatOutButton from "../../pages/FooterNav/Chat/chatOutButton";
+import ChatOutButton from "../chat/chatOutButton";
 
 const MyPageHeader = ({
   title = "파란장터",

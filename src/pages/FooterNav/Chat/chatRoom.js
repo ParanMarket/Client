@@ -1,10 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import ScrollToBottom from "react-scroll-to-bottom";
 import axios from "axios";
-import { IconButton, Box, Typography } from "@mui/material";
-import { SendRounded } from "@mui/icons-material";
+import {
+  IconButton,
+  Box,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
+import {
+  Clear,
+  DeleteRounded,
+  InsertPhotoRounded,
+  SendRounded,
+} from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";
 import ChatRoomCard from "../../../components/chat/chatRoomCard";
 import Header from "../../../components/myPage/myPageHeader";
@@ -19,27 +33,19 @@ function ChatRoom() {
     localStorage.getItem("userToken"),
   );
   const [otherNick, setOtherNick] = useState("");
-
   const [postNo, setPostNo] = useState("");
   const [postUserNo, setPostUserNo] = useState("");
   const [postUserNick, setPostUserNick] = useState("");
-
   const [currentMessage, setCurrentMessage] = useState(""); // 현재 입력창에 있는 내용
   const [messageList, setMessageList] = useState([]); // 메시지 보여지게 쌓는 리스트
-
-  const currentTime = new Date(); // 시간 세팅
-  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
-  const user_no = jwtDecode(userToken).no;
+  const [selectedImages, setSelectedImages] = useState([]); // 이미지 업로드 관련
+  const [openImageDialog, setOpenImageDialog] = useState(false); // 이미지 확대 보기 다이얼로그
+  const [previewImage, setPreviewImage] = useState(""); // 확대하려는 이미지
+  const maxImages = 9; // 최대 이미지 9개 선택 가능
+  const fileInputRef = useRef(null);
+  const user_no = jwtDecode(myUserToken).no;
+  const currentTime = new Date();
   const navigate = useNavigate();
-
-  // 채팅방 전체 페이지 스크롤 막기
-  useEffect(() => {
-    document.body.style.overflow = "hidden"; // 페이지 스크롤 막기
-
-    return () => {
-      document.body.style.overflow = "auto"; // 컴포넌트 언마운트시 스크구롤 복구
-    };
-  }, []);
 
   // 채팅방 정보 구성
   useEffect(() => {
@@ -52,17 +58,12 @@ function ChatRoom() {
         const response = await axios.post(
           "http://localhost:5001/chat/get_chat_details",
           {
-            post_no: post.post_no, // 물품 번호
-            post_user_no: post.post_user_no, // 등록자 번호
-            post_user_nick: post.user_nick, // 등록자 유저 닉네임
+            post_no: post.post_no,
+            post_user_no: post.post_user_no,
+            post_user_nick: post.user_nick,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${myUserToken}`,
-            },
-          },
+          { headers: { Authorization: `Bearer ${myUserToken}` } },
         );
-
         if (response.data && !chatNo) {
           setChatNo(response.data.chat_no);
           setOtherNick(response.data.user_nick);
@@ -73,23 +74,17 @@ function ChatRoom() {
         navigate("/home");
       }
     };
-
     initializeChatDetails();
   }, [post, myUserToken, chatNo]);
 
   // 채팅방 연결
   useEffect(() => {
     if (chatNo) {
-      // 히스토리 가져오기
       const fetchChatHistory = async () => {
         try {
           const response = await axios.get(
             `http://localhost:5001/chat/get_chat_history/${chatNo}`,
-            {
-              headers: {
-                Authorization: `Bearer ${myUserToken}`,
-              },
-            },
+            { headers: { Authorization: `Bearer ${myUserToken}` } },
           );
           if (response.data) {
             setMessageList(response.data);
@@ -98,57 +93,113 @@ function ChatRoom() {
           console.log("채팅 기록 불러오기 오류", error);
         }
       };
-
       fetchChatHistory();
 
       const newSocket = io.connect("http://localhost:5001");
       setSocket(newSocket);
 
-      // 채팅방 참여
       newSocket.emit("join_room", chatNo);
 
-      console.log(newSocket);
-
-      // 다른 사용자가 나갔을 때 서버로부터 메시지 전달받음
       newSocket.on("user_left", (data) => {
         setMessageList((list) => [
           ...list,
-          { ...data, system: true, message: data.message }, // 상대방이 떠났다는 메시지가 옴
+          { ...data, system: true, message: data.message },
         ]);
       });
 
       return () => {
-        newSocket.emit("leave_room", { chatNo, user_no }); // 내가 방에서 나가기
-        newSocket.disconnect(); // 소켓 연결 해제
+        newSocket.emit("leave_room", { chatNo, user_no, myUserToken });
+        newSocket.disconnect();
       };
     }
   }, [chatNo, myUserToken, user_no]);
 
-  // 구매자(나)가 메시지 보내기 (백과 소통)
+  // 이미지 업로드
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newImages = files.slice(0, maxImages - selectedImages.length);
+    if (newImages.length + selectedImages.length > maxImages) {
+      alert(`최대 ${maxImages}개의 이미지만 업로드 가능합니다.`);
+      return;
+    }
+    setSelectedImages((prevImages) => [...prevImages, ...newImages]);
+  };
+
+  // 이미지 삭제
+  const handleRemoveImage = (index) => {
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  // 파일 선택 창 열기 (ref 사용)
+  const openFileSelector = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // 이미지 확대보기 처리
+  const handleImageClick = (imageSrc) => {
+    setPreviewImage(imageSrc);
+    setOpenImageDialog(true);
+  };
+
+  // 이미지 업로드 함수
+  const uploadImages = async (images) => {
+    const formData = new FormData();
+
+    images.forEach((images) => {
+      formData.append("images", images.file); // 이미지 파일을 formData에 추가
+    });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5001/chat/upload_images", // 이미지 업로드 엔드포인트
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${myUserToken}`,
+          },
+        },
+      );
+
+      // 서버에서 반환된 이미지 URL 목록 반환
+      return response.data.imageUrls;
+    } catch (err) {
+      console.error("이미지 업로드 중 오류 발생: ", err);
+      throw new Error("이미지 업로드 실패");
+    }
+  };
+
+  // 메시지 전송
   const sendMessage = async () => {
     if (currentMessage.length > 1001) {
       alert("메시지는 1000자 이하만 전송 가능합니다!");
       return;
     }
-    if (currentMessage !== "") {
+    if (currentMessage !== "" || selectedImages.length > 0) {
+      let imageUrls = [];
+
+      // 선택된 이미지가 있을 경우 이미지를 먼저 업로드
+      if (selectedImages.length > 0) {
+        imageUrls = await uploadImages(selectedImages); // 이미지 업로드 후 URL을 받음
+      }
+
       const messageData = {
-        // 보내는 메시지 정보
-        chat_no: chatNo, // 채팅방 번호 <- 나중에 지우기 (백에서 받아올것임) 현재는 post_no로 설정됨
-        //author: myNickname, // 현재 보내는 사람 (나중에 백에서 nickname받아오면 세팅) / 번호로 세팅하기 user_no_2: user_no_2
-        message: currentMessage, // 보내는 메시지
-        time: currentTime, // 보낸 시간
-        //user_no_2: user_no_2,  // 백에서 유저 번호 알려줘야 보낼 수 있음
-        userToken: myUserToken, // 유저번호
-        user_no_1: postUserNo, // 판매자 유저번호
+        chat_no: chatNo,
+        message: currentMessage,
+        images: imageUrls, // 서버에서 받은 이미지 URL        time: currentTime,
+        userToken: myUserToken,
+        user_no_1: postUserNo,
         post_no: postNo,
         author: user_no,
       };
 
       try {
         await socket.emit("send_message", messageData);
-        setMessageList((list) => [...list, messageData]); // 내가 보낸 메시지도 이력 남게
-        console.log(messageList);
-        setCurrentMessage(""); // 메시지 전송 후 입력 필드를 클리어
+        setMessageList((list) => [...list, messageData]);
+        setCurrentMessage("");
+        setSelectedImages([]);
       } catch (err) {
         console.error("통신 연결 오류", err);
         alert("게시자가 물품을 삭제했습니다!");
@@ -157,43 +208,20 @@ function ChatRoom() {
     }
   };
 
-  // 판매자(상대방)이 메시지 보내기 (백과 소통)
+  // 수신 메시지 처리
   useEffect(() => {
-    console.log(socket);
     if (socket) {
       const messageListener = (data) => {
-        setMessageList((list) => [...list, data]); //이력 남게 만듬 (전에 메시지 + 지금 받은 메시지)
-        console.log(messageList);
+        setMessageList((list) => [...list, data]);
       };
 
       socket.on("receive_message", messageListener);
-      console.log("Received message:", messageList);
 
       return () => {
-        socket.off("receive_message", messageList);
+        socket.off("receive_message", messageListener);
       };
     }
   }, [socket]);
-
-  // 시간 표시
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
-  };
-
-  // 날짜 표시
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("ko-KR", day); // 요일까지 같이 표시
-  };
 
   return (
     <div className="app_center">
@@ -203,35 +231,17 @@ function ChatRoom() {
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageConent, index) => {
-              const messageDate = formatDate(messageConent.time); // 현재 메시지 날짜
+              const messageDate = new Date(
+                messageConent.time,
+              ).toLocaleDateString();
               const prevMessageDate =
-                index > 0 ? formatDate(messageList[index - 1].time) : null; // 이전 메시지 날짜
-              // 메시지 하나씩 보이기
+                index > 0
+                  ? new Date(messageList[index - 1].time).toLocaleDateString()
+                  : null;
+
               return (
                 <div key={index}>
-                  {/*메시지를 보낸 날짜가 다르면 상단에 날짜 띄우기*/}
-                  {messageList.system == null &&
-                    prevMessageDate !== messageDate && (
-                      <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        margin={2}
-                      >
-                        <Typography
-                          variant="body2"
-                          padding="10px 20px"
-                          borderRadius="30px"
-                          textAlign="center"
-                          sx={{ backgroundColor: "#e8eaf6", color: "#1a237e" }}
-                        >
-                          {messageDate}
-                        </Typography>
-                      </Box>
-                    )}
-
-                  {/* 시스템 메시지 처리 (상대방 나감)*/}
-                  {messageList.system ? (
+                  {prevMessageDate !== messageDate && (
                     <Box
                       display="flex"
                       justifyContent="center"
@@ -243,47 +253,156 @@ function ChatRoom() {
                         padding="10px 20px"
                         borderRadius="30px"
                         textAlign="center"
-                        sx={{ backgroundColor: "#bdbdbd", color: "#1a237e" }}
+                        sx={{ backgroundColor: "#e8eaf6", color: "#1a237e" }}
                       >
-                        {messageList.message} {/* 시스템 메시지 */}
+                        {messageDate}
                       </Typography>
                     </Box>
-                  ) : (
-                    <div
-                      className="message"
-                      id={user_no === messageConent.author ? "other" : "you"}
-                    >
-                      <div>
-                        <div className="message-content">
-                          <p>{messageConent.message}</p>
-                        </div>
-                        <div className="message-meta">
-                          <p id="time">{formatTime(messageConent.time)}</p>
-                          {/*<p id="author">{messageConent.author}</p>*/}
+                  )}
+                  <div
+                    className="message"
+                    id={user_no === messageConent.author ? "other" : "you"}
+                  >
+                    <div>
+                      <div className="message-content">
+                        <p>{messageConent.message}</p>
+                        <div
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(3, 1fr)",
+                            gap: "5px",
+                          }}
+                        >
+                          {messageConent.images &&
+                            messageConent.images.length > 0 &&
+                            messageConent.images.map((img, idx) => (
+                              <img
+                                key={idx}
+                                src={img}
+                                alt={`image-${idx}`}
+                                style={{ width: "100%", height: "auto" }}
+                                onClick={() => handleImageClick(img)}
+                              />
+                            ))}
                         </div>
                       </div>
+                      <div className="message-meta">
+                        <p id="time">
+                          {new Date(messageConent.time).toLocaleTimeString()}
+                        </p>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}
           </ScrollToBottom>
         </div>
+
+        {/* 이미지 미리보기 */}
         <div className="chat-footer">
-          <textarea
-            placeholder="내용을 작성해주세요."
-            value={currentMessage}
-            onChange={(event) => {
-              setCurrentMessage(event.target.value);
-            }}
-            onKeyPress={(event) => {
-              event.key === "Enter" && sendMessage();
-            }}
-          />
-          <IconButton onClick={sendMessage}>
-            <SendRounded />
-          </IconButton>
+          {selectedImages.length > 0 ? (
+            <Box
+              sx={{
+                display: "flex",
+                overflowX: "auto",
+                padding: "8px 0",
+                whiteSpace: "nowrap",
+                width: "100%",
+              }}
+            >
+              {selectedImages.map((image, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    position: "relative",
+                    width: "100px",
+                    height: "100px",
+                    marginRight: "10px",
+                    display: "inline-block",
+                  }}
+                >
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={`preview-${index}`}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <IconButton
+                    size="small"
+                    onClick={() => handleRemoveImage(index)}
+                    sx={{
+                      position: "absolute",
+                      top: -30,
+                      right: 0,
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <DeleteRounded />
+                  </IconButton>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <textarea
+              placeholder="내용을 작성해주세요."
+              value={currentMessage}
+              onChange={(event) => setCurrentMessage(event.target.value)}
+              style={{
+                width: "80%",
+                height: "60px",
+                padding: "10px",
+                border: "none",
+                resize: "none",
+              }}
+            />
+          )}
+
+          {/* 입력 및 전송 버튼 */}
+          <div
+            className="chat-footer"
+            style={{ display: "flex", alignItems: "center", padding: "10px" }}
+          >
+            <IconButton onClick={openFileSelector}>
+              <InsertPhotoRounded />
+              <input
+                type="file"
+                hidden
+                multiple
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleImageChange}
+              />
+            </IconButton>
+            <IconButton
+              onClick={sendMessage}
+              disabled={!currentMessage && selectedImages.length === 0}
+            >
+              <SendRounded />
+            </IconButton>
+          </div>
         </div>
+
+        {/* 이미지 확대 보기 다이얼로그 */}
+        <Dialog
+          open={openImageDialog}
+          onClose={() => setOpenImageDialog(false)}
+        >
+          <DialogTitle>이미지 크게 보기</DialogTitle>
+          <DialogContent>
+            <img
+              src={previewImage}
+              alt="preview"
+              style={{ width: "100%", height: "auto" }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenImageDialog(false)}>닫기</Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import {
   Grid,
   CardActionArea,
   Box,
+  Badge,
 } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +17,7 @@ const ChatCard = ({ chat }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState("");
   const post_no = chat.post_no;
+  const [unread, setUnread] = useState(0);
 
   useEffect(() => {
     const fetchPostData = async () => {
@@ -31,6 +33,23 @@ const ChatCard = ({ chat }) => {
     };
     fetchPostData();
   }, [post_no]);
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/chat/unread/${chat.user_no}`,
+        );
+        const unreadData = response.data.find(
+          (c) => c.chat_no === chat.chat_no,
+        );
+        setUnread(unreadData ? unreadData.unread_count : 0);
+      } catch (error) {
+        console.log("안읽음 뱃지 처리 오류", error);
+      }
+    };
+    fetchUnread();
+  }, []);
 
   const handleCardClick = () => {
     navigate(`chatRoom/${chat.chat_no}`, { state: { post } }); // 각 채팅방으로 이동하기
@@ -109,6 +128,11 @@ const ChatCard = ({ chat }) => {
                 {chat.chat_sender_nick}
               </Typography>
             </Grid>
+            <Badge
+              badgeContent={unread}
+              color="error"
+              sx={{ position: "absolute", top: 10, right: 10 }}
+            />
           </Grid>
         </CardContent>
       </CardActionArea>
