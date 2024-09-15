@@ -151,14 +151,19 @@ const Mypage = () => {
                   </Avatar>
                 </Grid>
                 <Grid item xs={12} md={8}>
-                  <Grid display="flex" justifyContent="space-between">
-                    <Typography variant="h4" gutterBottom>
+                  <Grid
+                    display="flex"
+                    justifyContent="space-between"
+                    paddingBottom="10px"
+                  >
+                    <Typography variant="h5" display="flex" alignItems="center">
                       {userInfo.user_nick}
                     </Typography>
                     <Button
                       variant="outlined"
                       color="secondary"
                       onClick={handleNicknameReset}
+                      sx={{ padding: 1 }}
                     >
                       닉네임 재설정
                     </Button>

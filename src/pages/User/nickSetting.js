@@ -71,9 +71,10 @@ const NickSetting = ({ isReset }) => {
 
     try {
       // 회원가입 중 닉네임 설정 vs 닉네임 재설정 구분
-      const apiEndpoint = isReset
-        ? `http://localhost:5001/auth/nick_update` // 닉네임 업데이트 api
-        : `http://localhost:5001/auth/nick_check`; // 첫 닉네임 설정 api
+      // const apiEndpoint = isReset
+      //   ? `http://localhost:5001/auth/nick_update` // 닉네임 업데이트 api
+      //   : `http://localhost:5001/auth/nick_check`; // 첫 닉네임 설정 api
+      const apiEndpoint = `http://localhost:5001/auth/nick_check`;
       const response = await axios.post(
         apiEndpoint,
         { nickname },
@@ -91,6 +92,7 @@ const NickSetting = ({ isReset }) => {
         if (isReset) {
           // 닉네임 업데이트 성공 메시지
           alert("닉네임이 성공적으로 변경되었습니다!");
+          navigate("/mypage");
         } else {
           // 회원가입 성공 메시지
           const userNick = response.data.nickname;
@@ -109,10 +111,12 @@ const NickSetting = ({ isReset }) => {
     }
   };
 
-  // 뒤로 가기 시 토큰 삭제
+  // 초기 닉네임 세팅 시 뒤로가면 토큰 삭제
   useEffect(() => {
     const handlePopState = () => {
-      localStorage.removeItem("userToken");
+      if (!isReset) {
+        localStorage.removeItem("userToken");
+      }
     };
 
     window.history.pushState(null, "", window.location.href);
@@ -121,7 +125,7 @@ const NickSetting = ({ isReset }) => {
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, []);
+  }, [isReset]);
 
   return (
     <div className="screen">
