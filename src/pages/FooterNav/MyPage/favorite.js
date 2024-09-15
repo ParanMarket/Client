@@ -59,7 +59,7 @@ const Favorite = () => {
         <Container style={{ paddingTop: "5%", paddingBottom: "20%" }}>
           <Grid container spacing={2}>
             {posts.map((post, index) => (
-              <Grid item key={post.post_no} xs={12} sm={6} md={4} key={index}>
+              <Grid item xs={12} sm={6} md={4} key={index}>
                 <Postcard post={post} />
               </Grid>
             ))}
