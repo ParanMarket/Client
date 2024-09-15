@@ -14,7 +14,6 @@ const Favorite = () => {
   useEffect(() => {
     const fetchLikedPosts = async () => {
       try {
-        console.log(userToken);
         const response = await axios.post(
           "http://localhost:5001/mypage/get_like_list",
           {},
