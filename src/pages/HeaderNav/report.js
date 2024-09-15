@@ -65,7 +65,7 @@ function Report() {
   const handleReportSubmit = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5001/report",
+        "http://localhost:5001/auth/report",
         {
           user_no: post.post_user_no,
           post_no: post_no,
