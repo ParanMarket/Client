@@ -9,6 +9,7 @@ const MyPageHeader = ({
   title = "파란장터",
   showChatOutButton = false,
   chatNo,
+  socket,
 }) => {
   const navigate = useNavigate();
 
@@ -32,7 +33,7 @@ const MyPageHeader = ({
         </Grid>
         {showChatOutButton && (
           <Button aria-label="out" edge="end">
-            <ChatOutButton chatNo={chatNo} />
+            <ChatOutButton chatNo={chatNo} socket={socket} />
           </Button>
         )}
       </Toolbar>

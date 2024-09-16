@@ -101,15 +101,13 @@ function ChatRoom() {
       newSocket.emit("join_room", chatNo);
 
       newSocket.on("user_left", (data) => {
-        setMessageList((list) => [
-          ...list,
-          { ...data, system: true, message: data.message },
-        ]);
+        setMessageList((list) => [...list, { ...data, left: true }]);
       });
 
       return () => {
-        newSocket.emit("leave_room", { chatNo, user_no, myUserToken });
-        newSocket.disconnect();
+        if (newSocket) {
+          newSocket.disconnect();
+        }
       };
     }
   }, [chatNo, myUserToken, user_no]);
@@ -147,9 +145,15 @@ function ChatRoom() {
   const uploadImages = async (images) => {
     const formData = new FormData();
 
-    images.forEach((images) => {
-      formData.append("images", images.file); // 이미지 파일을 formData에 추가
+    // 이미지 파일을 FormData에 추가
+    images.forEach((image) => {
+      formData.append("images", image); // 'images'는 서버에서 처리할 키 이름
     });
+
+    // formData 확인
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value); // key와 value 출력 (이미지 파일을 확인)
+    }
 
     try {
       const response = await axios.post(
@@ -242,15 +246,21 @@ function ChatRoom() {
     };
     return date.toLocaleDateString("ko-KR", day); // 요일까지 같이 표시
   };
+
   return (
     <div className="app_center">
       <div className="chat-window">
-        <Header title={otherNick} showChatOutButton={true} chatNo={chatNo} />
+        <Header
+          title={otherNick}
+          showChatOutButton={true}
+          chatNo={chatNo}
+          socket={socket}
+        />
         <ChatRoomCard post={post} />
         <div className="chat-body">
           <ScrollToBottom className="message-container">
-            {messageList.map((messageConent, index) => {
-              const messageDate = formatDate(messageConent.time); // 현재 메시지 날짜
+            {messageList.map((messageContent, index) => {
+              const messageDate = formatDate(messageContent.time); // 현재 메시지 날짜
               const prevMessageDate =
                 index > 0 ? formatDate(messageList[index - 1].time) : null; // 이전 메시지 날짜
 
@@ -258,60 +268,80 @@ function ChatRoom() {
               return (
                 <div key={index}>
                   {/*메시지를 보낸 날짜가 다르면 상단에 날짜 띄우기*/}
-                  {messageList.system == null &&
-                    prevMessageDate !== messageDate && (
-                      <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        margin={2}
+                  {!messageContent.left && prevMessageDate !== messageDate && (
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      margin={2}
+                    >
+                      <Typography
+                        variant="body2"
+                        padding="10px 20px"
+                        borderRadius="30px"
+                        textAlign="center"
+                        sx={{ backgroundColor: "#e8eaf6", color: "#1a237e" }}
                       >
-                        <Typography
-                          variant="body2"
-                          padding="10px 20px"
-                          borderRadius="30px"
-                          textAlign="center"
-                          sx={{ backgroundColor: "#e8eaf6", color: "#1a237e" }}
-                        >
-                          {messageDate}
-                        </Typography>
-                      </Box>
-                    )}
+                        {messageDate}
+                      </Typography>
+                    </Box>
+                  )}
 
-                  <div
-                    className="message"
-                    id={user_no === messageConent.author ? "other" : "you"}
-                  >
-                    <div>
-                      <div className="message-content">
-                        <p>{messageConent.message}</p>
-                        <div
-                          style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(3, 1fr)",
-                            gap: "5px",
-                          }}
-                        >
-                          {messageConent.images &&
-                            messageConent.images.length > 0 &&
-                            messageConent.images.map((img, idx) => (
-                              <img
-                                key={idx}
-                                src={img}
-                                alt={`image-${idx}`}
-                                style={{ width: "100%", height: "auto" }}
-                                onClick={() => handleImageClick(img)}
-                              />
-                            ))}
+                  {/* 시스템 메시지 처리 (상대방 나감)*/}
+                  {messageContent.left && (
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      margin={2}
+                    >
+                      <Typography
+                        variant="body2"
+                        padding="10px 20px"
+                        borderRadius="30px"
+                        textAlign="center"
+                        sx={{ backgroundColor: "#bdbdbd", color: "#1a237e" }}
+                      >
+                        {messageContent.message} {/* 시스템 메시지 */}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* 일반 메시지 렌더링 */}
+                  {!messageContent.left && (
+                    <div
+                      className="message"
+                      id={user_no === messageContent.author ? "other" : "you"}
+                    >
+                      <div>
+                        <div className="message-content">
+                          <p>{messageContent.message}</p>
+                          <div
+                            style={{
+                              display: "grid",
+                              gridTemplateColumns: "repeat(3, 1fr)",
+                              gap: "5px",
+                            }}
+                          >
+                            {messageContent.images &&
+                              messageContent.images.length > 0 &&
+                              messageContent.images.map((img, idx) => (
+                                <img
+                                  key={idx}
+                                  src={img}
+                                  alt={`image-${idx}`}
+                                  style={{ width: "100%", height: "auto" }}
+                                  onClick={() => handleImageClick(img)}
+                                />
+                              ))}
+                          </div>
+                        </div>
+                        <div className="message-meta">
+                          <p id="time">{formatTime(messageContent.time)}</p>
                         </div>
                       </div>
-                      <div className="message-meta">
-                        <p id="time">
-                          {new Date(messageConent.time).toLocaleTimeString()}
-                        </p>
-                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { LogoutRounded } from "@mui/icons-material";
 import axios from "axios";
 
-const ChatOutButton = ({ chatNo }) => {
+const ChatOutButton = ({ chatNo, socket }) => {
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -38,6 +38,11 @@ const ChatOutButton = ({ chatNo }) => {
           },
         },
       );
+
+      // 소켓 이벤트 발생
+      if (socket) {
+        socket.emit("leave_room", { chatNo, userToken });
+      }
 
       navigate("/chat");
     } catch (error) {
