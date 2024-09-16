@@ -188,7 +188,7 @@ function ChatRoom() {
       const messageData = {
         chat_no: chatNo,
         message: currentMessage,
-        images: imageUrls, // 서버에서 받은 이미지 URL        time: currentTime,
+        images: imageUrls, // 서버에서 받은 이미지 URL
         userToken: myUserToken,
         user_no_1: postUserNo,
         post_no: postNo,
@@ -223,6 +223,25 @@ function ChatRoom() {
     }
   }, [socket]);
 
+  // 시간 표시
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  // 날짜 표시
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("ko-KR", day); // 요일까지 같이 표시
+  };
   return (
     <div className="app_center">
       <div className="chat-window">
@@ -231,34 +250,34 @@ function ChatRoom() {
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageConent, index) => {
-              const messageDate = new Date(
-                messageConent.time,
-              ).toLocaleDateString();
+              const messageDate = formatDate(messageConent.time); // 현재 메시지 날짜
               const prevMessageDate =
-                index > 0
-                  ? new Date(messageList[index - 1].time).toLocaleDateString()
-                  : null;
+                index > 0 ? formatDate(messageList[index - 1].time) : null; // 이전 메시지 날짜
 
+              // 메시지 하나씩 보이기
               return (
                 <div key={index}>
-                  {prevMessageDate !== messageDate && (
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      alignItems="center"
-                      margin={2}
-                    >
-                      <Typography
-                        variant="body2"
-                        padding="10px 20px"
-                        borderRadius="30px"
-                        textAlign="center"
-                        sx={{ backgroundColor: "#e8eaf6", color: "#1a237e" }}
+                  {/*메시지를 보낸 날짜가 다르면 상단에 날짜 띄우기*/}
+                  {messageList.system == null &&
+                    prevMessageDate !== messageDate && (
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        margin={2}
                       >
-                        {messageDate}
-                      </Typography>
-                    </Box>
-                  )}
+                        <Typography
+                          variant="body2"
+                          padding="10px 20px"
+                          borderRadius="30px"
+                          textAlign="center"
+                          sx={{ backgroundColor: "#e8eaf6", color: "#1a237e" }}
+                        >
+                          {messageDate}
+                        </Typography>
+                      </Box>
+                    )}
+
                   <div
                     className="message"
                     id={user_no === messageConent.author ? "other" : "you"}
