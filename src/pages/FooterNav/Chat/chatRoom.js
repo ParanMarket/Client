@@ -104,10 +104,9 @@ function ChatRoom() {
         setMessageList((list) => [...list, { ...data, left: true }]);
       });
 
+      // 컴포넌트가 언마운트될 때 방에서만 나가기
       return () => {
-        if (newSocket) {
-          newSocket.disconnect();
-        }
+        newSocket.off(); // 모든 소켓 이벤트 핸들러 해제
       };
     }
   }, [chatNo, myUserToken, user_no]);
@@ -197,6 +196,7 @@ function ChatRoom() {
         user_no_1: postUserNo,
         post_no: postNo,
         author: user_no,
+        time: currentTime, // 보낸 시간
       };
 
       try {
@@ -219,7 +219,19 @@ function ChatRoom() {
         setMessageList((list) => [...list, data]);
       };
 
+      const reconnectListener = () => {
+        console.log("Socket reconnected, rejoining room.");
+        // 나간 방에 다시 참가
+        if (socket.chatNo) {
+          socket.emit("join_room", socket.chatNo);
+        }
+      };
+
+      // 메시지 수신
       socket.on("receive_message", messageListener);
+
+      // 소켓 재연결
+      socket.on("reconnect", reconnectListener);
 
       return () => {
         socket.off("receive_message", messageListener);
@@ -260,6 +272,8 @@ function ChatRoom() {
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageContent, index) => {
+              console.log(messageContent);
+
               const messageDate = formatDate(messageContent.time); // 현재 메시지 날짜
               const prevMessageDate =
                 index > 0 ? formatDate(messageList[index - 1].time) : null; // 이전 메시지 날짜
@@ -288,7 +302,7 @@ function ChatRoom() {
                   )}
 
                   {/* 시스템 메시지 처리 (상대방 나감)*/}
-                  {messageContent.left && (
+                  {(messageContent.author === 0 || messageContent.left) && (
                     <Box
                       display="flex"
                       justifyContent="center"
@@ -308,14 +322,17 @@ function ChatRoom() {
                   )}
 
                   {/* 일반 메시지 렌더링 */}
-                  {!messageContent.left && (
+                  {!(messageContent.author === 0 || messageContent.left) && (
                     <div
                       className="message"
                       id={user_no === messageContent.author ? "other" : "you"}
                     >
                       <div>
                         <div className="message-content">
-                          <p>{messageContent.message}</p>
+                          {/* 메시지가 있을 때만 표시 */}
+                          {messageContent.message !== "" && (
+                            <p>{messageContent.message}</p>
+                          )}
                           <div
                             style={{
                               display: "grid",
@@ -324,16 +341,36 @@ function ChatRoom() {
                             }}
                           >
                             {messageContent.images &&
-                              messageContent.images.length > 0 &&
-                              messageContent.images.map((img, idx) => (
-                                <img
-                                  key={idx}
-                                  src={img}
-                                  alt={`image-${idx}`}
-                                  style={{ width: "100%", height: "auto" }}
-                                  onClick={() => handleImageClick(img)}
-                                />
-                              ))}
+                            typeof messageContent.images === "string"
+                              ? // JSON 문자열을 배열로 변환
+                                (() => {
+                                  try {
+                                    const imagesArray = JSON.parse(
+                                      messageContent.images,
+                                    ); // JSON 문자열을 배열로 변환
+                                    return Array.isArray(imagesArray) &&
+                                      imagesArray.length > 0
+                                      ? imagesArray.map((img, idx) => (
+                                          <img
+                                            key={idx}
+                                            src={img}
+                                            alt={`image-${idx}`}
+                                            style={{
+                                              width: "100%",
+                                              height: "auto",
+                                            }}
+                                            onClick={() =>
+                                              handleImageClick(img)
+                                            }
+                                          />
+                                        ))
+                                      : null;
+                                  } catch (e) {
+                                    console.error("JSON 파싱 오류:", e);
+                                    return null;
+                                  }
+                                })()
+                              : null}
                           </div>
                         </div>
                         <div className="message-meta">
@@ -430,7 +467,20 @@ function ChatRoom() {
               onClick={sendMessage}
               disabled={!currentMessage && selectedImages.length === 0}
             >
-              <SendRounded />
+              <SendRounded
+                sx={{
+                  color:
+                    !currentMessage && selectedImages.length === 0
+                      ? ""
+                      : "primary.main",
+                  "&:hover": {
+                    color:
+                      !currentMessage && selectedImages.length === 0
+                        ? ""
+                        : "primary.dark", // hover 시 색상 변경
+                  },
+                }}
+              />
             </IconButton>
           </div>
         </div>
