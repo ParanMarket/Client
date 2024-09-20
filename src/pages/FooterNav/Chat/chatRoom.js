@@ -490,7 +490,6 @@ function ChatRoom() {
           open={openImageDialog}
           onClose={() => setOpenImageDialog(false)}
         >
-          <DialogTitle>이미지 크게 보기</DialogTitle>
           <DialogContent>
             <img
               src={previewImage}

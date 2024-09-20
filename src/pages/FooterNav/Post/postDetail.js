@@ -315,6 +315,7 @@ const PostDetail = () => {
                 border: "2px solid #7986CB",
                 width: "112px",
                 height: "112px",
+                justifyContent: "center",
               }}
             >
               <People sx={{ fontSize: 40, marginBottom: 1 }} />
@@ -335,6 +336,7 @@ const PostDetail = () => {
                 border: "2px solid #7986CB",
                 width: "112px",
                 height: "112px",
+                justifyContent: "center",
               }}
             >
               <AllInbox sx={{ fontSize: 40, marginBottom: 1 }} />
