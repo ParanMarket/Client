@@ -21,6 +21,8 @@ import PostDetail from "./pages/FooterNav/Post/postDetail";
 import NickSetting from "./pages/User/nickSetting";
 import EditPost from "./pages/FooterNav/Post/editPost";
 import NotFoundPage from "./components/notFoundPage";
+import AdHome from "./pages/Admin/ad_home";
+
 //import ProtectedRoute from "./ProtectedRoute"; // Import the ProtectedRoute component
 
 function App() {
@@ -78,6 +80,9 @@ function App() {
             ></Route>
             <Route path="/404" element={<NotFoundPage />}></Route>
             <Route path="*" element={<Navigate to="/404" replace />} />
+
+            {/*관리자 페이지*/}
+            <Route path="/adHome" element={<AdHome />}></Route>
           </Routes>
         </div>
       </BrowserRouter>

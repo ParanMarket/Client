@@ -48,13 +48,25 @@ const Chat = () => {
     <div style={{ paddingTop: 80, paddingBottom: 50 }}>
       <Header />
       <Container>
-        <Grid container spacing={2}>
-          {chats.map((chat, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <ChatCard chat={chat} />
-            </Grid>
-          ))}
-        </Grid>
+        {/* 채팅 내역이 없을 때 메시지 표시 */}
+        {chats.length === 0 ? (
+          <Typography
+            variant="h6"
+            align="center"
+            color="textSecondary"
+            sx={{ mt: 5 }}
+          >
+            채팅 내역이 없습니다.
+          </Typography>
+        ) : (
+          <Grid container spacing={2}>
+            {chats.map((chat, index) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                <ChatCard chat={chat} />
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Container>
       <FooterNav />
     </div>

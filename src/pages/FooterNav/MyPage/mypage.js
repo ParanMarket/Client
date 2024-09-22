@@ -127,6 +127,11 @@ const Mypage = () => {
       setOpen(false); // 다이얼로그 닫기
     }
   };
+
+  const handleAdminPage = () => {
+    navigate("/adHome");
+  };
+
   return (
     <div style={{ paddingTop: 50, paddingBottom: 50 }}>
       <Header />
@@ -222,6 +227,19 @@ const Mypage = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        {/*사용자 정보 중 관리자만 해당 버튼 나오도록*/}
+        {userInfo.user_tp === 0 && (
+          <Button
+            fullWidth
+            variant="contained"
+            color="warning"
+            onClick={handleAdminPage}
+            style={{ marginTop: "80px" }}
+          >
+            관리자 페이지로 이동
+          </Button>
+        )}
       </Container>
 
       <FooterNav />
