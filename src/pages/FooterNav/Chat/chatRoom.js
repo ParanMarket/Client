@@ -185,7 +185,12 @@ function ChatRoom() {
 
       // 선택된 이미지가 있을 경우 이미지를 먼저 업로드
       if (selectedImages.length > 0) {
-        imageUrls = await uploadImages(selectedImages); // 이미지 업로드 후 URL을 받음
+        try {
+          imageUrls = await uploadImages(selectedImages); // 이미지 업로드 후 URL을 받음
+        } catch (err) {
+          console.error("이미지 업로드 중 오류 발생: ", err);
+          return;
+        }
       }
 
       const messageData = {
@@ -201,6 +206,8 @@ function ChatRoom() {
 
       try {
         await socket.emit("send_message", messageData);
+
+        // 이미지를 보낸 후 바로 채팅창에 표시
         setMessageList((list) => [...list, messageData]);
         setCurrentMessage("");
         setSelectedImages([]);
@@ -338,39 +345,56 @@ function ChatRoom() {
                               display: "grid",
                               gridTemplateColumns: "repeat(3, 1fr)",
                               gap: "5px",
+                              padding: "5px",
                             }}
                           >
                             {messageContent.images &&
-                            typeof messageContent.images === "string"
-                              ? // JSON 문자열을 배열로 변환
-                                (() => {
-                                  try {
-                                    const imagesArray = JSON.parse(
-                                      messageContent.images,
-                                    ); // JSON 문자열을 배열로 변환
-                                    return Array.isArray(imagesArray) &&
-                                      imagesArray.length > 0
-                                      ? imagesArray.map((img, idx) => (
-                                          <img
-                                            key={idx}
-                                            src={img}
-                                            alt={`image-${idx}`}
-                                            style={{
-                                              width: "100%",
-                                              height: "auto",
-                                            }}
-                                            onClick={() =>
-                                              handleImageClick(img)
-                                            }
-                                          />
-                                        ))
-                                      : null;
-                                  } catch (e) {
-                                    console.error("JSON 파싱 오류:", e);
-                                    return null;
-                                  }
-                                })()
-                              : null}
+                            Array.isArray(messageContent.images)
+                              ? // 이미 배열인 경우 바로 렌더링
+                                messageContent.images.map((img, idx) => (
+                                  <img
+                                    key={idx}
+                                    src={img}
+                                    alt={`image-${idx}`}
+                                    style={{
+                                      width: "100%",
+                                      height: "100%",
+                                      borderRadius: "10px",
+                                    }}
+                                    onClick={() => handleImageClick(img)}
+                                  />
+                                ))
+                              : // 문자열인 경우 파싱 시도
+                                typeof messageContent.images === "string"
+                                ? (() => {
+                                    try {
+                                      const imagesArray = JSON.parse(
+                                        messageContent.images,
+                                      ); // JSON 문자열을 배열로 변환
+                                      return Array.isArray(imagesArray) &&
+                                        imagesArray.length > 0
+                                        ? imagesArray.map((img, idx) => (
+                                            <img
+                                              key={idx}
+                                              src={img}
+                                              alt={`image-${idx}`}
+                                              style={{
+                                                width: "100%",
+                                                height: "100%",
+                                                borderRadius: "10px",
+                                              }}
+                                              onClick={() =>
+                                                handleImageClick(img)
+                                              }
+                                            />
+                                          ))
+                                        : null;
+                                    } catch (e) {
+                                      console.error("JSON 파싱 오류:", e);
+                                      return null;
+                                    }
+                                  })()
+                                : null}
                           </div>
                         </div>
                         <div className="message-meta">
