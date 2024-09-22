@@ -18,6 +18,8 @@ import {
   DeleteRounded,
   InsertPhotoRounded,
   SendRounded,
+  ArrowBack,
+  ArrowForward,
 } from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";
 import ChatRoomCard from "../../../components/chat/chatRoomCard";
@@ -114,12 +116,16 @@ function ChatRoom() {
   // 이미지 업로드
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const newImages = files.slice(0, maxImages - selectedImages.length);
-    if (newImages.length + selectedImages.length > maxImages) {
+    const totalSelected = selectedImages.length + files.length;
+
+    if (totalSelected > maxImages) {
       alert(`최대 ${maxImages}개의 이미지만 업로드 가능합니다.`);
-      return;
+      const remainingSlots = maxImages - selectedImages.length;
+      const newImages = files.slice(0, remainingSlots);
+      setSelectedImages((prevImages) => [...prevImages, ...newImages]);
+    } else {
+      setSelectedImages((prevImages) => [...prevImages, ...files]);
     }
-    setSelectedImages((prevImages) => [...prevImages, ...newImages]);
   };
 
   // 이미지 삭제
@@ -132,12 +138,6 @@ function ChatRoom() {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
-  };
-
-  // 이미지 확대보기 처리
-  const handleImageClick = (imageSrc) => {
-    setPreviewImage(imageSrc);
-    setOpenImageDialog(true);
   };
 
   // 이미지 업로드 함수
@@ -223,6 +223,7 @@ function ChatRoom() {
   useEffect(() => {
     if (socket) {
       const messageListener = (data) => {
+        console.log("Received Message Data:", data); // 수신된 메시지 데이터를 확인
         setMessageList((list) => [...list, data]);
       };
 
@@ -266,6 +267,12 @@ function ChatRoom() {
     return date.toLocaleDateString("ko-KR", day); // 요일까지 같이 표시
   };
 
+  // 채팅 이미지 크게 보기
+  const handleImageClick = (imageSrc) => {
+    setPreviewImage(imageSrc);
+    setOpenImageDialog(true);
+  };
+
   return (
     <div className="app_center">
       <div className="chat-window">
@@ -279,8 +286,6 @@ function ChatRoom() {
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageContent, index) => {
-              console.log(messageContent);
-
               const messageDate = formatDate(messageContent.time); // 현재 메시지 날짜
               const prevMessageDate =
                 index > 0 ? formatDate(messageList[index - 1].time) : null; // 이전 메시지 날짜
@@ -373,11 +378,11 @@ function ChatRoom() {
                                       ); // JSON 문자열을 배열로 변환
                                       return Array.isArray(imagesArray) &&
                                         imagesArray.length > 0
-                                        ? imagesArray.map((img, idx) => (
+                                        ? imagesArray.map((img, imgIndex) => (
                                             <img
-                                              key={idx}
+                                              key={imgIndex}
                                               src={img}
-                                              alt={`image-${idx}`}
+                                              alt={`image-${imgIndex}`}
                                               style={{
                                                 width: "100%",
                                                 height: "100%",

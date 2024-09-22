@@ -87,7 +87,7 @@ const ChatRoomcard = ({ post }) => {
 
       if (response.data.message === "success") {
         console.log("거래완료 처리했습니다.");
-        alert("거래 완료 처라 되었습니다!");
+        alert("거래 완료 처리 되었습니다!");
         navigate("/home");
       } else {
         console.error("게시물 상태 변경 실패", response.data);
