@@ -1,11 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { BottomNavigation, BottomNavigationAction } from "@mui/material";
+import { BottomNavigation, BottomNavigationAction, Badge } from "@mui/material";
 import { Home, Add, Chat, Person } from "@mui/icons-material";
+import axios from "axios";
+import { io } from "socket.io-client"; // 실시간 unread 상태 업데이트를 위한 소켓 가져오기
 
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [unread, setUnread] = useState(0); // unread 상태 추가
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const socket = io("http://localhost:5001"); // 소켓 연결
+
+  useEffect(() => {
+    // unread 상태 가져오기
+    const fetchUnread = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/chat/unread_total`,
+          {
+            headers: { Authorization: `Bearer ${userToken}` },
+          },
+        );
+        setUnread(response.data.unread_total);
+      } catch (error) {
+        console.log("안읽음 메시지 오류:", error);
+      }
+    };
+    fetchUnread();
+
+    // 소켓으로 업데이트 이벤트 수신
+    socket.on("update_unread_total", (data) => {
+      setUnread(data.unread_total);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [userToken, socket]);
 
   const getSelectedIndex = () => {
     switch (location.pathname) {
@@ -56,7 +88,14 @@ const Footer = () => {
         showLabels
       >
         <BottomNavigationAction label="홈" icon={<Home />} />
-        <BottomNavigationAction label="채팅" icon={<Chat />} />
+        <BottomNavigationAction
+          label="채팅"
+          icon={
+            <Badge badgeContent={unread} color="error">
+              <Chat />
+            </Badge>
+          }
+        ></BottomNavigationAction>
         <BottomNavigationAction label="글쓰기" icon={<Add />} />
         <BottomNavigationAction label="나의 장터" icon={<Person />} />
       </BottomNavigation>

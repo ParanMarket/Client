@@ -71,7 +71,10 @@ function ChatRoom() {
           setOtherNick(response.data.user_nick);
         }
       } catch (error) {
-        console.log("채팅 통신 오류", error);
+        console.log(
+          "채팅 통신 오류",
+          error.response ? error.response.data : error,
+        );
         alert("게시자가 물품을 삭제했습니다!");
         navigate("/home");
       }
@@ -90,6 +93,17 @@ function ChatRoom() {
           );
           if (response.data) {
             setMessageList(response.data);
+
+            // chat_read 상태 업데이트
+            console.log("읽음 업데이트 요청 시작");
+
+            // chat_read 상태 업데이트
+            const updateResponse = await axios.post(
+              "http://localhost:5001/chat/updateChatRead",
+              { chatNo },
+              { headers: { Authorization: `Bearer ${myUserToken}` } },
+            );
+            console.log("읽음 업데이트 요청 완료", updateResponse.data); // 응답 확인용
           }
         } catch (error) {
           console.log("채팅 기록 불러오기 오류", error);
@@ -100,7 +114,7 @@ function ChatRoom() {
       const newSocket = io.connect("http://localhost:5001");
       setSocket(newSocket);
 
-      newSocket.emit("join_room", chatNo);
+      newSocket.emit("join_room", chatNo, user_no);
 
       newSocket.on("user_left", (data) => {
         setMessageList((list) => [...list, { ...data, left: true }]);
@@ -230,8 +244,8 @@ function ChatRoom() {
       const reconnectListener = () => {
         console.log("Socket reconnected, rejoining room.");
         // 나간 방에 다시 참가
-        if (socket.chatNo) {
-          socket.emit("join_room", socket.chatNo);
+        if (socket.chatNo && socket.user_no) {
+          socket.emit("join_room", socket.chatNo, socket.user_no);
         }
       };
 

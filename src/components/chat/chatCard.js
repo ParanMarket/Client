@@ -12,12 +12,14 @@ import {
 import { indigo } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import io from "socket.io-client"; // socket.io 추가
 
 const ChatCard = ({ chat }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState("");
   const post_no = chat.post_no;
   const [unread, setUnread] = useState(0);
+  const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
   useEffect(() => {
     const fetchPostData = async () => {
@@ -35,21 +37,40 @@ const ChatCard = ({ chat }) => {
   }, [post_no]);
 
   useEffect(() => {
+    const chatNo = chat.chat_no;
     const fetchUnread = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/chat/unread/${chat.user_no}`,
-        );
-        const unreadData = response.data.find(
-          (c) => c.chat_no === chat.chat_no,
-        );
-        setUnread(unreadData ? unreadData.unread_count : 0);
+        const response = await axios.get(`http://localhost:5001/chat/unread`, {
+          params: {
+            chat_no: chatNo,
+          },
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+
+        console.log(response.data.unread_count);
+        setUnread(response.data.unread_count);
       } catch (error) {
         console.log("안읽음 뱃지 처리 오류", error);
       }
     };
+    console.log(unread);
+
+    // 소켓 연결 및 이벤트 처리
+    const socket = io("http://localhost:5001");
+    socket.emit("join_room", chat.chat_no); // 현재 채팅방에 참가
+
+    socket.on("update_unread", (data) => {
+      if (data.chat_no === chat.chat_no) {
+        fetchUnread(); // 동일한 채팅방인 경우에만 업데이트
+      }
+    });
+
     fetchUnread();
-  }, []);
+
+    return () => {
+      socket.disconnect(); // 컴포넌트 언마운트 시 소켓 연결 해제
+    };
+  }, [chat.chat_no]);
 
   const handleCardClick = () => {
     navigate(`chatRoom/${chat.chat_no}`, { state: { post } }); // 각 채팅방으로 이동하기
