@@ -24,6 +24,8 @@ import {
 import { jwtDecode } from "jwt-decode";
 import ChatRoomCard from "../../../components/chat/chatRoomCard";
 import Header from "../../../components/myPage/myPageHeader";
+import { Grid } from "@mui/material/";
+import "../../../css/chatRoom.css";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function ChatRoom() {
@@ -482,51 +484,60 @@ function ChatRoom() {
               value={currentMessage}
               onChange={(event) => setCurrentMessage(event.target.value)}
               style={{
-                width: "80%",
-                height: "60px",
+                borderRight: "0",
+                borderColor: "#7986cb",
                 padding: "10px",
-                border: "none",
-                resize: "none",
               }}
             />
           )}
 
           {/* 입력 및 전송 버튼 */}
-          <div
-            className="chat-footer"
-            style={{ display: "flex", alignItems: "center", padding: "10px" }}
+          <Grid
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              border: "1px solid",
+              color: "#7986cb",
+              borderRadius: "5px",
+            }}
           >
-            <IconButton onClick={openFileSelector}>
-              <InsertPhotoRounded />
-              <input
-                type="file"
-                hidden
-                multiple
-                accept="image/*"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-              />
-            </IconButton>
-            <IconButton
-              onClick={sendMessage}
-              disabled={!currentMessage && selectedImages.length === 0}
-            >
-              <SendRounded
-                sx={{
-                  color:
-                    !currentMessage && selectedImages.length === 0
-                      ? ""
-                      : "primary.main",
-                  "&:hover": {
+            <Grid item margin="10px">
+              <IconButton onClick={openFileSelector}>
+                <InsertPhotoRounded fontSize="large" />
+                <input
+                  type="file"
+                  hidden
+                  multiple
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                />
+              </IconButton>
+            </Grid>
+            <Grid item margin="10px">
+              <IconButton
+                onClick={sendMessage}
+                disabled={!currentMessage && selectedImages.length === 0}
+              >
+                <SendRounded
+                  fontSize="large"
+                  sx={{
                     color:
                       !currentMessage && selectedImages.length === 0
                         ? ""
-                        : "primary.dark", // hover 시 색상 변경
-                  },
-                }}
-              />
-            </IconButton>
-          </div>
+                        : "primary.main",
+                    "&:hover": {
+                      color:
+                        !currentMessage && selectedImages.length === 0
+                          ? ""
+                          : "primary.dark", // hover 시 색상 변경
+                    },
+                  }}
+                />
+              </IconButton>
+            </Grid>
+          </Grid>
         </div>
 
         {/* 이미지 확대 보기 다이얼로그 */}
