@@ -5,6 +5,8 @@ import { MoreVertRounded } from "@mui/icons-material";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const MoreIcon = ({ post }) => {
   const { post_no } = useParams(); //현재 페이지 URL에서 post_no 파라미터 추출
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const MoreIcon = ({ post }) => {
     const verifyUser = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5001/auth/verify_user",
+          `${API_BASE_URL}/auth/verify_user`,
           { post_user_no: post.post_user_no },
           {
             headers: {
@@ -81,7 +83,7 @@ const MoreIcon = ({ post }) => {
     //사용자 확인 후 삭제 로직
     try {
       const response = await axios.delete(
-        `http://localhost:5001/post/post_delete/${post_no}`,
+        `${API_BASE_URL}/post/post_delete/${post_no}`,
       );
 
       if (response.data.message === "success") {
@@ -106,7 +108,7 @@ const MoreIcon = ({ post }) => {
     if (confirmUpdate) {
       try {
         const response = await axios.get(
-          `http://localhost:5001/post/post_bump/${post_no}`,
+          `${API_BASE_URL}/post/post_bump/${post_no}`,
         );
 
         if (response.data.message === "success") {
@@ -134,7 +136,7 @@ const MoreIcon = ({ post }) => {
     try {
       console.log("상태변경", post_no, changeStatus);
       const response = await axios.post(
-        `http://localhost:5001/post/post_update_status_no/`,
+        `${API_BASE_URL}/post/post_update_status_no/`,
         { post_no, post_status: changeStatus },
       );
 

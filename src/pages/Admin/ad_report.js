@@ -15,6 +15,7 @@ import {
   TextField,
 } from "@mui/material/";
 import axios from "axios";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const AdReport = () => {
   const [reports, setReports] = useState([]);
@@ -29,9 +30,7 @@ const AdReport = () => {
   // 신고 목록을 가져오는 함수
   const fetchReports = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/manager/report_list",
-      );
+      const response = await axios.post(`${API_BASE_URL}/manager/report_list`);
       setReports(response.data);
     } catch (error) {
       console.error("신고 목록 조회 에러:", error);
@@ -57,12 +56,9 @@ const AdReport = () => {
 
     // 해당 black_no의 post_no에 대한 게시글 정보를 서버로부터 가져옴
     try {
-      const response = await axios.post(
-        "http://localhost:5001/manager/report_post",
-        {
-          post_no: post_no,
-        },
-      );
+      const response = await axios.post(`${API_BASE_URL}/manager/report_post`, {
+        post_no: post_no,
+      });
 
       setViewedPosts((prev) => ({
         ...prev,
@@ -103,7 +99,7 @@ const AdReport = () => {
     if (confirmBlack) {
       try {
         const response = await axios.post(
-          "http://localhost:5001/manager/report_process",
+          `${API_BASE_URL}/manager/report_process`,
           {
             status: status, // 1: 특이사항 없음, 2: 경고, 3: 탈퇴
             user_no: selectedReport.Black_user_no,

@@ -15,6 +15,8 @@ import { indigo } from "@mui/material/colors";
 import axios from "axios";
 import { useInView } from "react-intersection-observer"; // 무한스크롤
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Search = () => {
   const [keyword, setKeyword] = useState("");
   const [type, setType] = useState("all");
@@ -35,14 +37,11 @@ const Search = () => {
         sendType = 1;
       }
       console.log("in fetch log", type);
-      const response = await axios.post(
-        `http://localhost:5001/post/search_post`,
-        {
-          keyword: keyword,
-          page: page,
-          type: sendType,
-        },
-      );
+      const response = await axios.post(`${API_BASE_URL}/post/search_post`, {
+        keyword: keyword,
+        page: page,
+        type: sendType,
+      });
       console.log("send data", keyword, page, sendType);
       console.log("Fetching search result:", page);
       console.log("response data : ", response.data.results);

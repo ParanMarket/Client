@@ -5,6 +5,8 @@ import Footer from "../../../components/main/footer";
 import Header from "../../../components/myPage/myPageHeader";
 import Postcard from "../../../components/post/postcard";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Favorite = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +17,7 @@ const Favorite = () => {
     const fetchLikedPosts = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5001/mypage/get_like_list",
+          `${API_BASE_URL}/mypage/get_like_list`,
           {},
           {
             headers: {

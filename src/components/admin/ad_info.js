@@ -3,6 +3,8 @@ import { Grid, Box, Typography } from "@mui/material/";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const AdInfo = () => {
   const [adminNo, setAdminNo] = useState(null);
   const [adminNick, setAdminNick] = useState(null);
@@ -14,7 +16,7 @@ const AdInfo = () => {
     const checkAdmin = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5001/manager/manager_check",
+          `${API_BASE_URL}/manager/manager_check`,
           {},
           {
             headers: {

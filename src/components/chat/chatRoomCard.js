@@ -26,6 +26,8 @@ import { indigo } from "@mui/material/colors";
 import blurBox from "../../css/blurBox";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const ChatRoomcard = () => {
   const location = useLocation();
   const { post, chatNo } = location.state;
@@ -43,7 +45,7 @@ const ChatRoomcard = () => {
     const verifyUser = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5001/auth/verify_user",
+          `${API_BASE_URL}/auth/verify_user`,
           { post_user_no: post.post_user_no },
           {
             headers: {
@@ -76,7 +78,7 @@ const ChatRoomcard = () => {
     //사용자 확인 후 거래완료 처리
     try {
       const response = await axios.post(
-        `http://localhost:5001/post/post_update_finish`,
+        `${API_BASE_URL}/post/post_update_finish`,
         { post_no: post_no, chat_no: chatNo },
         {
           headers: {

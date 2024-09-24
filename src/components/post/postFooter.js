@@ -14,6 +14,8 @@ import {
 import { ChatBubbleRounded, FavoriteRounded } from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const PostFooter = ({ post }) => {
   //console.log("footer recived: ", postProp);
   const { post_no } = useParams(); //현재 페이지 URL에서 no 파라미터 추출
@@ -42,7 +44,7 @@ const PostFooter = ({ post }) => {
     try {
       if (likeStatus) {
         await axios.post(
-          `http://localhost:5001/post/dislike_post/${post_no}`,
+          `${API_BASE_URL}/post/dislike_post/${post_no}`,
           {},
           {
             headers: {
@@ -53,7 +55,7 @@ const PostFooter = ({ post }) => {
         setLikeStatus(false);
       } else {
         await axios.post(
-          `http://localhost:5001/post/like_post/${post_no}`,
+          `${API_BASE_URL}/post/like_post/${post_no}`,
           {},
           {
             headers: {

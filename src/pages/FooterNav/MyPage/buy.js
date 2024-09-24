@@ -5,6 +5,8 @@ import Footer from "../../../components/main/footer";
 import Header from "../../../components/myPage/myPageHeader";
 import Postcard from "../../../components/post/postcard";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Buy = () => {
   const [allPosts, setAllPosts] = useState([]); // 모든 데이터를 저장할 상태
   const [posts, setPosts] = useState([]); // 필터링된 데이터를 저장할 상태
@@ -15,7 +17,7 @@ const Buy = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5001/mypage/get_user_join_post",
+          `${API_BASE_URL}/mypage/get_user_join_post`,
           {},
           {
             headers: {

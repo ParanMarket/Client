@@ -25,6 +25,8 @@ import {
   People,
 } from "@mui/icons-material";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const PostDetail = () => {
   const { post_no } = useParams();
   const [post, setPost] = useState(null);
@@ -38,7 +40,7 @@ const PostDetail = () => {
       try {
         console.log(post_no);
         const response = await axios.get(
-          `http://localhost:5001/post/get_post/${post_no}`,
+          `${API_BASE_URL}/post/get_post/${post_no}`,
           {},
           {
             headers: {
@@ -71,7 +73,7 @@ const PostDetail = () => {
     const fetchImageData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/post/get_post_img/${post_no}`,
+          `${API_BASE_URL}/post/get_post_img/${post_no}`,
           {},
           {
             headers: {

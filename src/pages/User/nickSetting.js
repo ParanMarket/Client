@@ -15,6 +15,8 @@ import {
 } from "@mui/material/";
 import styled from "styled-components";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const FormHelperTexts = styled(FormHelperText)`
   width: 100%;
   padding-left: 16px;
@@ -70,11 +72,11 @@ const NickSetting = ({ isReset }) => {
     }
 
     try {
-      // 회원가입 중 닉네임 설정 vs 닉네임 재설정 구분
-      // const apiEndpoint = isReset
-      //   ? `http://localhost:5001/auth/nick_update` // 닉네임 업데이트 api
-      //   : `http://localhost:5001/auth/nick_check`; // 첫 닉네임 설정 api
-      const apiEndpoint = `http://localhost:5001/auth/nick_check`;
+      //회원가입 중 닉네임 설정 vs 닉네임 재설정 구분
+      const apiEndpoint = isReset
+        ? `${API_BASE_URL}/auth/nick_update` // 닉네임 업데이트 api
+        : `${API_BASE_URL}/auth/nick_check`; // 첫 닉네임 설정 api
+
       const response = await axios.post(
         apiEndpoint,
         { nickname },

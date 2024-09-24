@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { LogoutRounded } from "@mui/icons-material";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const ChatOutButton = ({ chatNo, socket }) => {
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
   const [open, setOpen] = useState(false);
@@ -30,7 +32,7 @@ const ChatOutButton = ({ chatNo, socket }) => {
 
     try {
       await axios.post(
-        "http://localhost:5001/chat/leaveChatRoom",
+        `${API_BASE_URL}/chat/leaveChatRoom`,
         { chat_no: chatNo },
         {
           headers: {

@@ -22,6 +22,8 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import LogoutButton from "../../../components/main/logoutButton";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Mypage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const userToken = localStorage.getItem("userToken");
@@ -32,7 +34,7 @@ const Mypage = () => {
     const fetchUserInfo = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5001/auth/authinfo",
+          `${API_BASE_URL}/auth/authinfo`,
           {},
           {
             headers: {
@@ -106,7 +108,7 @@ const Mypage = () => {
   const handleDeleteAccount = async () => {
     try {
       await axios.post(
-        "http://localhost:5001/auth/deleteaccount",
+        `${API_BASE_URL}/auth/deleteaccount`,
         {},
         {
           headers: {

@@ -24,6 +24,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import ChatRoomCard from "../../../components/chat/chatRoomCard";
 import Header from "../../../components/myPage/myPageHeader";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function ChatRoom() {
   const location = useLocation(); // state 에서 post정보 가져오기
@@ -58,7 +59,7 @@ function ChatRoom() {
 
       try {
         const response = await axios.post(
-          "http://localhost:5001/chat/get_chat_details",
+          `${API_BASE_URL}/chat/get_chat_details`,
           {
             post_no: post.post_no,
             post_user_no: post.post_user_no,
@@ -88,7 +89,7 @@ function ChatRoom() {
       const fetchChatHistory = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5001/chat/get_chat_history/${chatNo}`,
+            `${API_BASE_URL}/chat/get_chat_history/${chatNo}`,
             { headers: { Authorization: `Bearer ${myUserToken}` } },
           );
           if (response.data) {
@@ -99,7 +100,7 @@ function ChatRoom() {
 
             // chat_read 상태 업데이트
             const updateResponse = await axios.post(
-              "http://localhost:5001/chat/updateChatRead",
+              `${API_BASE_URL}/chat/updateChatRead`,
               { chatNo },
               { headers: { Authorization: `Bearer ${myUserToken}` } },
             );
@@ -111,7 +112,7 @@ function ChatRoom() {
       };
       fetchChatHistory();
 
-      const newSocket = io.connect("http://localhost:5001");
+      const newSocket = io.connect(`${API_BASE_URL}`);
       setSocket(newSocket);
 
       newSocket.emit("join_room", chatNo, user_no);
@@ -170,7 +171,7 @@ function ChatRoom() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5001/chat/upload_images", // 이미지 업로드 엔드포인트
+        `${API_BASE_URL}/chat/upload_images`, // 이미지 업로드 엔드포인트
         formData,
         {
           headers: {

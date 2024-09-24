@@ -6,6 +6,7 @@ import ChatCard from "../../../components/chat/chatCard";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Chat = () => {
   const [chats, setChats] = useState([]);
@@ -18,7 +19,7 @@ const Chat = () => {
     const fetchChats = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5001/chat/chatlist",
+          `${API_BASE_URL}/chat/chatlist`,
           {},
           {
             headers: {

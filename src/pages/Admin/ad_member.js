@@ -16,6 +16,8 @@ import {
 } from "@mui/material/";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const AdMember = () => {
   const [members, setMembers] = useState([]); // 회원 리스트
   const [searchTerm, setSearchTerm] = useState(""); // 검색어
@@ -26,13 +28,10 @@ const AdMember = () => {
   const fetchMembers = async (page = 1) => {
     try {
       const offset = (page - 1) * itemsPerPage;
-      const response = await axios.post(
-        "http://localhost:5001/manager/user_list",
-        {
-          offset: offset,
-          page: page,
-        },
-      );
+      const response = await axios.post(`${API_BASE_URL}/manager/user_list`, {
+        offset: offset,
+        page: page,
+      });
       setMembers(response.data);
     } catch (error) {
       console.error("회원 목록 조회 에러:", error);
@@ -42,12 +41,9 @@ const AdMember = () => {
   // 검색된 회원 목록을 가져오는 함수
   const searchMembers = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/manager/user_list",
-        {
-          keyword: searchTerm,
-        },
-      );
+      const response = await axios.post(`${API_BASE_URL}/manager/user_list`, {
+        keyword: searchTerm,
+      });
       setMembers(response.data);
       setCurrentPage(1); // 검색 결과를 표시할 때 페이지를 1로 설정
     } catch (error) {

@@ -12,15 +12,15 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Notification = () => {
   const [expanded, setExpanded] = useState(false);
   const [notices, setNotices] = useState([]); // 공지사항 리스트
 
   const fetchNotices = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/manager/notice_list",
-      );
+      const response = await axios.post(`${API_BASE_URL}/manager/notice_list`);
       setNotices(response.data);
     } catch (error) {
       console.error("공지사항 목록 조회 에러:", error);

@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import io from "socket.io-client"; // socket.io 추가
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const ChatCard = ({ chat }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState("");
@@ -25,7 +27,7 @@ const ChatCard = ({ chat }) => {
     const fetchPostData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/post/get_post/${post_no}`,
+          `${API_BASE_URL}/post/get_post/${post_no}`,
         );
         const postData = response.data[0];
         setPost(postData);
@@ -40,7 +42,7 @@ const ChatCard = ({ chat }) => {
     const chatNo = chat.chat_no;
     const fetchUnread = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/chat/unread`, {
+        const response = await axios.get(`${API_BASE_URL}/chat/unread`, {
           params: {
             chat_no: chatNo,
           },
@@ -56,7 +58,7 @@ const ChatCard = ({ chat }) => {
     console.log(unread);
 
     // 소켓 연결 및 이벤트 처리
-    const socket = io("http://localhost:5001");
+    const socket = io(`${API_BASE_URL}`);
     socket.emit("join_room", chat.chat_no); // 현재 채팅방에 참가
 
     socket.on("update_unread", (data) => {

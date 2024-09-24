@@ -5,6 +5,8 @@ import Header from "../../../components/main/header";
 import axios from "axios";
 import PostForm from "../../../components/post/postForm";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const WritePost = () => {
   const navigate = useNavigate();
   const userToken = localStorage.getItem("userToken");
@@ -13,7 +15,7 @@ const WritePost = () => {
   const handleSubmit = async (formData) => {
     try {
       const response = await axios.post(
-        "http://localhost:5001/post/post_write",
+        `${API_BASE_URL}/post/post_write`,
         formData,
         {
           headers: {
@@ -36,40 +38,6 @@ const WritePost = () => {
       navigate("/home");
     }
   };
-
-  //   const handleSubmit = async (e) => {
-  //     e.preventDefault();
-  //
-  //     const formData = {
-  //       post_no: updateNo,
-  //       post_title: title,
-  //       post_comment: comment,
-  //       post_price: updatePrice,
-  //       post_type: updateType,
-  //     };
-  //     console.log(formData);
-  //     try {
-  //       const response = await axios.post(
-  //         `http://localhost:5001/post/post_update`,
-  //         formData,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${userToken}`,
-  //           },
-  //         },
-  //       );
-  //
-  //       if (response.data.message === "success") {
-  //         alert("수정하였습니다.");
-  //         navigate("/home");
-  //       } else {
-  //         console.log(response.data.message + " 서버 오류");
-  //       }
-  //     } catch (error) {
-  //       console.error("수정 중 오류 발생", error);
-  //     }
-  //   };
-  //
 
   return (
     <div style={{ paddingTop: 50, paddingBottom: 50 }}>

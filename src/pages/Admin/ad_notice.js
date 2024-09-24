@@ -19,6 +19,7 @@ import {
   DeleteRounded,
 } from "@mui/icons-material";
 import axios from "axios";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const AdNotice = () => {
   const [open, setOpen] = useState(false);
@@ -35,9 +36,7 @@ const AdNotice = () => {
   // 공지사항 목록을 가져오는 함수
   const fetchNotices = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/manager/notice_list",
-      );
+      const response = await axios.post(`${API_BASE_URL}/manager/notice_list`);
       setNotices(response.data);
     } catch (error) {
       console.error("공지사항 목록 조회 에러:", error);
@@ -68,7 +67,7 @@ const AdNotice = () => {
     if (confirmUpload) {
       try {
         const response = await axios.post(
-          "http://localhost:5001/manager/notice_write",
+          `${API_BASE_URL}/manager/notice_write`,
           {
             title: title,
             con: content,
@@ -99,7 +98,7 @@ const AdNotice = () => {
     const confirmDelete = window.confirm("정말로 삭제하시겠습니까?");
     if (confirmDelete) {
       try {
-        await axios.post("http://localhost:5001/manager/notice_delete", {
+        await axios.post(`${API_BASE_URL}/manager/notice_delete`, {
           notice_no: notice_no,
         });
         alert("공지사항이 성공적으로 삭제되었습니다.");

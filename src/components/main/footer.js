@@ -5,23 +5,22 @@ import { Home, Add, Chat, Person } from "@mui/icons-material";
 import axios from "axios";
 import { io } from "socket.io-client"; // 실시간 unread 상태 업데이트를 위한 소켓 가져오기
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unread, setUnread] = useState(0); // unread 상태 추가
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
-  const socket = io("http://localhost:5001"); // 소켓 연결
+  const socket = io(`${API_BASE_URL}`); // 소켓 연결
 
   useEffect(() => {
     // unread 상태 가져오기
     const fetchUnread = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/chat/unread_total`,
-          {
-            headers: { Authorization: `Bearer ${userToken}` },
-          },
-        );
+        const response = await axios.get(`${API_BASE_URL}/chat/unread_total`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
         setUnread(response.data.unread_total);
       } catch (error) {
         console.log("안읽음 메시지 오류:", error);

@@ -9,6 +9,8 @@ import { useInView } from "react-intersection-observer"; // 무한스크롤
 import PostCard from "../../components/post/postcard";
 import { Grid } from "@mui/material/";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -20,7 +22,7 @@ const Home = () => {
   const fetchPosts = async (page, append = false) => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/post/post_list/${page}`,
+        `${API_BASE_URL}/post/post_list/${page}`,
       );
       if (response.data.length === 0) {
         setHasMore(false); // 데이터가 더이상 없으면 false
@@ -38,7 +40,7 @@ const Home = () => {
   const fetchCategoryPosts = async (cate) => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/post/post_cate_list/${cate}`,
+        `${API_BASE_URL}/post/post_cate_list/${cate}`,
       );
       setPosts(response.data);
     } catch (err) {

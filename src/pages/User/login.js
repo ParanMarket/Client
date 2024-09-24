@@ -15,10 +15,11 @@ import { Person } from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 // 구글 OAuth 클라이언트 ID 설정
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT;
 const allowedEmail = process.env.REACT_APP_SYSTEM_EMAIL;
-const redirectUri = "https://localhost:3000/home";
 
 function Copyright(props) {
   return (
@@ -69,7 +70,7 @@ function Login() {
     setGoogleToken(credentialResponse.credential);
 
     try {
-      const response = await axios.post("http://localhost:5001/auth/login", {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         token: credentialResponse.credential,
       });
       console.log(response.data);

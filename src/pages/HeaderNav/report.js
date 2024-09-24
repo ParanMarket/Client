@@ -17,6 +17,8 @@ import Header from "../../components/main/header";
 import axios from "axios";
 import { Grid } from "@mui/material/";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 function Report() {
   const location = useLocation(); // state 에서 post정보 가져오기
   const post = JSON.parse(location.state);
@@ -65,7 +67,7 @@ function Report() {
   const handleReportSubmit = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5001/auth/report",
+        `${API_BASE_URL}s/auth/report`,
         {
           user_no: post.post_user_no,
           post_no: post_no,
