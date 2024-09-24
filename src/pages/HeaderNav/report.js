@@ -67,7 +67,7 @@ function Report() {
   const handleReportSubmit = async () => {
     try {
       const response = await axios.post(
-        `${API_BASE_URL}s/auth/report`,
+        `${API_BASE_URL}/auth/report`,
         {
           user_no: post.post_user_no,
           post_no: post_no,

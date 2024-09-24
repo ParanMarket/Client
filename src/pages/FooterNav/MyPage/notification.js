@@ -68,7 +68,15 @@ const Notification = () => {
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography variant="body2" color="textSecondary">
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                sx={{
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "pre-line",
+                }}
+              >
                 {notice.Notice_con}
               </Typography>
             </AccordionDetails>

@@ -36,10 +36,13 @@ const AdHome = () => {
         {/* 중앙의 변경되는 콘텐츠 영역 */}
         <Grid
           display="flex"
-          justifyContent="center"
+          flexDirection="column"
+          alignItems="center"
           item
           xs={8}
-          style={{ marginTop: "20px" }}
+          style={{
+            marginTop: "20px",
+          }}
         >
           {selectedContent === "member" && <AdMember />}
           {selectedContent === "report" && <AdReport />}

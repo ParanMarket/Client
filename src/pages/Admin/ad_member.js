@@ -150,7 +150,7 @@ const AdMember = () => {
                   <TableRow key={member.User_no}>
                     <TableCell align="center">{member.User_no}</TableCell>
                     <TableCell align="center">{member.User_nick}</TableCell>
-                    <TableCell align="center">{member.user_email}</TableCell>
+                    <TableCell align="center">{member.User_email}</TableCell>
                     <TableCell align="center">
                       {new Date(member.User_sdd).toLocaleDateString()}
                     </TableCell>
@@ -158,9 +158,9 @@ const AdMember = () => {
                       {member.User_tp === 0 ? "관리자" : member.User_black}
                     </TableCell>
                     <TableCell align="center">
-                      {member.user_status === 0
+                      {member.User_status === 0
                         ? "활동 중"
-                        : member.user_status === 1
+                        : member.User_status === 1
                           ? "자진탈퇴"
                           : "강제탈퇴"}
                     </TableCell>

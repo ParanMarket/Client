@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import axios from "axios";
 import PostFooter from "../../../components/post/postFooter";
@@ -33,6 +33,7 @@ const PostDetail = () => {
   const [grade, setGrade] = useState("");
   const [postImages, setPostImages] = useState([]);
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 게시글 정보 가져오기
@@ -60,6 +61,7 @@ const PostDetail = () => {
         // 초기 설정
       } catch (err) {
         console.log("데이터를 가져오는데 실패하였습니다.");
+        navigate("/home");
       }
     };
     fetchPostData();
