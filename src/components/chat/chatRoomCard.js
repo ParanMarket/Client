@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Card,
   CardMedia,
@@ -26,7 +26,9 @@ import { indigo } from "@mui/material/colors";
 import blurBox from "../../css/blurBox";
 import axios from "axios";
 
-const ChatRoomcard = ({ post }) => {
+const ChatRoomcard = () => {
+  const location = useLocation();
+  const { post, chatNo } = location.state;
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -70,14 +72,12 @@ const ChatRoomcard = ({ post }) => {
       return;
     }
     const post_no = post.post_no;
-    console.log("chatroomcard", post_no);
-    console.log(userToken);
 
     //사용자 확인 후 거래완료 처리
     try {
       const response = await axios.post(
         `http://localhost:5001/post/post_update_finish`,
-        { post_no: post_no },
+        { post_no: post_no, chat_no: chatNo },
         {
           headers: {
             Authorization: `Bearer ${userToken}`,
@@ -91,9 +91,13 @@ const ChatRoomcard = ({ post }) => {
         navigate("/home");
       } else {
         console.error("게시물 상태 변경 실패", response.data);
+        alert("거래완료 처리 중 오류가 발생했습니다. 다시 한번 시도해주세요!");
+        navigate("/home");
       }
     } catch (err) {
       console.error("게시글 상태 변경 중 통신 오류", err);
+      alert("거래완료 처리 중 오류가 발생했습니다. 다시 한번 시도해주세요!");
+      navigate("/home");
     }
 
     setStatusEnd(true);

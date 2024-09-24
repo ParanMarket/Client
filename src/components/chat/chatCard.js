@@ -73,7 +73,9 @@ const ChatCard = ({ chat }) => {
   }, [chat.chat_no]);
 
   const handleCardClick = () => {
-    navigate(`chatRoom/${chat.chat_no}`, { state: { post } }); // 각 채팅방으로 이동하기
+    navigate(`chatRoom/${chat.chat_no}`, {
+      state: { post, chatNo: chat.chat_no },
+    }); // 각 채팅방으로 이동하기
   };
 
   // 채팅을 보낸 시점 띄우는 함수
