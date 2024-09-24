@@ -28,6 +28,7 @@ const ChatCard = ({ chat }) => {
       try {
         const response = await axios.get(
           `${API_BASE_URL}/post/get_post/${post_no}`,
+          { headers: { Authorization: `Bearer ${userToken}` } },
         );
         const postData = response.data[0];
         setPost(postData);
@@ -37,6 +38,8 @@ const ChatCard = ({ chat }) => {
     };
     fetchPostData();
   }, [post_no]);
+
+  console.log("각 채팅방 카드 별 포스트 정보", post);
 
   useEffect(() => {
     const chatNo = chat.chat_no;

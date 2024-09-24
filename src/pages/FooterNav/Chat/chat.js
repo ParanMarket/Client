@@ -44,6 +44,7 @@ const Chat = () => {
       fetchChats();
     }
   }, [userToken]);
+  console.log("채팅모음 정보", chats);
 
   return (
     <div style={{ paddingTop: 80, paddingBottom: 50 }}>
