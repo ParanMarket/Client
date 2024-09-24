@@ -28,6 +28,7 @@ const PostFooter = ({ post }) => {
   const user_no = jwtDecode(userToken).no;
 
   console.log(userToken);
+  console.log(post);
   useEffect(() => {
     setLikeStatus(post.post_my_like);
   }, [post]);

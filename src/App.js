@@ -10,7 +10,6 @@ import Chat from "./pages/FooterNav/Chat/chat";
 import Favorite from "./pages/FooterNav/MyPage/favorite";
 import Search from "./pages/HeaderNav/search";
 import Notification from "./pages/FooterNav/MyPage/notification";
-import Profile from "./pages/FooterNav/MyPage/profile";
 import WritePost from "./pages/FooterNav/Post/WritePost";
 import Mypage from "./pages/FooterNav/MyPage/mypage";
 import Sell from "./pages/FooterNav/MyPage/sell";
@@ -62,7 +61,6 @@ function App() {
             <Route path="/writePost" element={<WritePost />}></Route>
             <Route path="/search" element={<Search />}></Route>
             <Route path="/notification" element={<Notification />}></Route>
-            <Route path="/profile" element={<Profile />}></Route>
             <Route path="/mypage" element={<Mypage />}></Route>
             <Route path="/buy" element={<Buy />}></Route>
             <Route path="/sell" element={<Sell />}></Route>

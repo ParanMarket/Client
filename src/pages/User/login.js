@@ -70,10 +70,11 @@ function Login() {
     setGoogleToken(credentialResponse.credential);
 
     try {
+      console.log("로그인 요청");
       const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         token: credentialResponse.credential,
       });
-      console.log(response.data);
+      console.log("로그인 데이터", response.data);
 
       if (response.data.needsNickname) {
         // 사용자의 정보가 없는 경우 닉네임 설정으로 이동, 닉네임이 null인 경우

@@ -38,10 +38,8 @@ const PostDetail = () => {
     // 게시글 정보 가져오기
     const fetchPostData = async () => {
       try {
-        console.log(post_no);
         const response = await axios.get(
           `${API_BASE_URL}/post/get_post/${post_no}`,
-          {},
           {
             headers: {
               Authorization: `Bearer ${userToken}`,
@@ -50,7 +48,6 @@ const PostDetail = () => {
         );
         const postData = response.data[0];
         setPost(postData);
-        console.log(postData);
 
         // 등급 설정
         if (postData.user_grade === 0) {
