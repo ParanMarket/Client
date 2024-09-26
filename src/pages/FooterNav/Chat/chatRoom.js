@@ -351,7 +351,7 @@ function ChatRoom() {
                   )}
 
                   {/* 일반 메시지 렌더링 */}
-                  {!(messageContent.author === 0 || messageContent.left) && (
+                  {!(messageContent.author === 1 || messageContent.left) && (
                     <div
                       className="message"
                       id={user_no === messageContent.author ? "other" : "you"}
