@@ -331,7 +331,7 @@ function ChatRoom() {
                   )}
 
                   {/* 시스템 메시지 처리 (상대방 나감)*/}
-                  {(messageContent.author === 0 || messageContent.left) && (
+                  {(messageContent.author === 1 || messageContent.left) && (
                     <Box
                       display="flex"
                       justifyContent="center"
