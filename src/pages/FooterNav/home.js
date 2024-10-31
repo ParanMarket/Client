@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/main/footer";
 import Header from "../../components/main/header";
-import { Container, Button } from "@mui/material";
+import { Container, Button, Box, ButtonGroup } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import axios from "axios";
 import { useInView } from "react-intersection-observer"; // 무한스크롤
@@ -13,12 +13,13 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]); // 필터링된 게시글 상태 추가
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [filter, setFilter] = useState("all"); // 상태 카테고리
   const { ref, inView } = useInView();
 
-  // 데이터 요청시에만 불러오고 이전 데이터 아래 새 데이터 추가
   const fetchPosts = async (page, append = false) => {
     try {
       const response = await axios.get(
@@ -27,28 +28,27 @@ const Home = () => {
       if (response.data.length === 0) {
         setHasMore(false); // 데이터가 더이상 없으면 false
       } else {
-        setPosts((prevPosts) =>
-          append ? [...prevPosts, ...response.data] : response.data,
-        );
+        const newPosts = append ? [...posts, ...response.data] : response.data;
+        setPosts(newPosts);
+        applyFilter(newPosts, filter); // 새로운 포스트에 필터 적용
       }
     } catch (err) {
       console.error("Error fetching posts", err);
     }
   };
 
-  // 카테고리 선택에 해당하는 데이터 불러오기
   const fetchCategoryPosts = async (cate) => {
     try {
       const response = await axios.get(
         `${API_BASE_URL}/post/post_cate_list/${cate}`,
       );
       setPosts(response.data);
+      applyFilter(response.data, filter); // 카테고리 변경 시 필터 적용
     } catch (err) {
       console.error("데이터를 불러오는데 오류가 발생했습니다.", err);
     }
   };
 
-  // 한 페이지 하단에 도달하면 데이터 요청
   const loadMorePosts = () => {
     const nextPage = page + 1;
     fetchPosts(nextPage, true);
@@ -58,16 +58,15 @@ const Home = () => {
   useEffect(() => {
     if (selectedCategory === "전체") {
       fetchPosts(0);
-      setPage(0); // 페이지를 0으로 초기화
+      setPage(0);
       setHasMore(true);
     } else {
       fetchCategoryPosts(selectedCategory);
-      setPage(0); // 페이지를 0으로 초기화
-      setHasMore(false); // 카테고리별 데이터는 모두 가져오므로 더 이상 불러오지 않음
+      setPage(0);
+      setHasMore(false);
     }
   }, [selectedCategory]);
 
-  // "전체" 선택시에 무한스크롤
   useEffect(() => {
     if (selectedCategory === "전체" && inView && hasMore) {
       loadMorePosts();
@@ -90,6 +89,31 @@ const Home = () => {
   const handleCategoryClick = (cate) => {
     setSelectedCategory(cate);
     setPosts([]);
+  };
+
+  // 필터링된 게시글 적용 함수
+  const applyFilter = (allPosts, currentFilter) => {
+    if (currentFilter === "all") {
+      setFilteredPosts(allPosts);
+    } else {
+      const filtered = allPosts.filter((post) => {
+        if (currentFilter === "sell") {
+          return post.post_type === 0;
+        } else if (currentFilter === "buy") {
+          return post.post_type === 1;
+        }
+        return false;
+      });
+      setFilteredPosts(filtered);
+    }
+  };
+
+  useEffect(() => {
+    applyFilter(posts, filter);
+  }, [filter, posts]); // 필터 상태 변경 시 필터링 적용
+
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
   };
 
   return (
@@ -119,9 +143,30 @@ const Home = () => {
             </Button>
           ))}
         </Container>
+        <ButtonGroup fullWidth sx={{ mt: 1 }}>
+          <Button
+            variant={filter === "all" ? "contained" : "outlined"}
+            onClick={() => handleFilterChange("all")}
+          >
+            전체
+          </Button>
+          <Button
+            variant={filter === "sell" ? "contained" : "outlined"}
+            onClick={() => handleFilterChange("sell")}
+          >
+            팔아요
+          </Button>
+          <Button
+            variant={filter === "buy" ? "contained" : "outlined"}
+            onClick={() => handleFilterChange("buy")}
+          >
+            구해요
+          </Button>
+        </ButtonGroup>
+
         <div>
           <Grid container spacing={2}>
-            {posts.map((post) => (
+            {filteredPosts.map((post) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={post.post_no}>
                 <PostCard post={post} />
               </Grid>
