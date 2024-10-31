@@ -82,7 +82,7 @@ const PostDetail = () => {
         );
         const postImageData = response.data;
         setPostImages(postImageData);
-        console.log(postImages);
+        //console.log(postImages);
       } catch (err) {
         console.log("데이터를 가져오는데 실패하였습니다.", err);
       }

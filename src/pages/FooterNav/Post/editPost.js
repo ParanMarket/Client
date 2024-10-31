@@ -55,11 +55,11 @@ const EditPost = () => {
   }, [post_no]);
 
   const handleSubmit = async (formData) => {
-    console.log("수정 페이지 제출");
+    // console.log("수정 페이지 제출");
     // FormData 확인용 추후 삭제
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     try {
       const response = await axios.post(

@@ -98,7 +98,7 @@ function ChatRoom() {
             setMessageList(response.data);
 
             // chat_read 상태 업데이트
-            console.log("읽음 업데이트 요청 시작");
+            //console.log("읽음 업데이트 요청 시작");
 
             // chat_read 상태 업데이트
             const updateResponse = await axios.post(
@@ -106,7 +106,7 @@ function ChatRoom() {
               { chatNo },
               { headers: { Authorization: `Bearer ${myUserToken}` } },
             );
-            console.log("읽음 업데이트 요청 완료", updateResponse.data); // 응답 확인용
+            //console.log("읽음 업데이트 요청 완료", updateResponse.data); // 응답 확인용
           }
         } catch (error) {
           console.log("채팅 기록 불러오기 오류", error);
@@ -166,10 +166,10 @@ function ChatRoom() {
       formData.append("images", image); // 'images'는 서버에서 처리할 키 이름
     });
 
-    // formData 확인
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value); // key와 value 출력 (이미지 파일을 확인)
-    }
+    // // formData 확인
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(`${key}:`, value); // key와 value 출력 (이미지 파일을 확인)
+    // }
 
     try {
       const response = await axios.post(
@@ -240,12 +240,12 @@ function ChatRoom() {
   useEffect(() => {
     if (socket) {
       const messageListener = (data) => {
-        console.log("Received Message Data:", data); // 수신된 메시지 데이터를 확인
+        //console.log("Received Message Data:", data); // 수신된 메시지 데이터를 확인
         setMessageList((list) => [...list, data]);
       };
 
       const reconnectListener = () => {
-        console.log("Socket reconnected, rejoining room.");
+        //console.log("Socket reconnected, rejoining room.");
         // 나간 방에 다시 참가
         if (socket.chatNo && socket.user_no) {
           socket.emit("join_room", socket.chatNo, socket.user_no);

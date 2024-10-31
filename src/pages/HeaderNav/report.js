@@ -81,7 +81,7 @@ function Report() {
       );
 
       if (response.data.message === "success") {
-        console.log(response.data, "신고 완료");
+        // console.log(response.data, "신고 완료");
         alert("신고가 완료되었습니다.");
         navigate("/home");
       } else {

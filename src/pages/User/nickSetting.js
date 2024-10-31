@@ -73,7 +73,7 @@ const NickSetting = ({ isReset }) => {
 
     try {
       //회원가입 중 닉네임 설정 vs 닉네임 재설정 구분
-      console.log("유저토큰", token);
+      // console.log("유저토큰", token);
       const apiEndpoint = isReset
         ? `${API_BASE_URL}/auth/nick_update` // 닉네임 업데이트 api
         : `${API_BASE_URL}/auth/nick_check`; // 첫 닉네임 설정 api

@@ -35,7 +35,7 @@ const Favorite = () => {
     fetchLikedPosts();
   }, []);
 
-  console.log(posts);
+  posts;
 
   if (loading) {
     return (

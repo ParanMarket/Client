@@ -43,7 +43,7 @@ const Mypage = () => {
           },
         );
         setUserInfo(response.data[0]); // 받아온 사용자 정보 설정
-        console.log(response.data[0]);
+        // console.log(response.data[0]);
       } catch (error) {
         console.error("Error fetching user info:", error);
       }

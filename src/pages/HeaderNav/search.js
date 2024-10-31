@@ -36,15 +36,15 @@ const Search = () => {
       } else if (type === "buy") {
         sendType = 1;
       }
-      console.log("in fetch log", type);
+      // console.log("in fetch log", type);
       const response = await axios.post(`${API_BASE_URL}/post/search_post`, {
         keyword: keyword,
         page: page,
         type: sendType,
       });
-      console.log("send data", keyword, page, sendType);
-      console.log("Fetching search result:", page);
-      console.log("response data : ", response.data.results);
+      // console.log("send data", keyword, page, sendType);
+      // console.log("Fetching search result:", page);
+      // console.log("response data : ", response.data.results);
 
       // 서버 응답에서 results 배열이 있는지 확인하고, 없다면 빈 배열로 처리
       const newResults = response.data.results || [];
@@ -70,7 +70,7 @@ const Search = () => {
       setSearchResults([]);
     }
   };
-  console.log(searchResults);
+  // console.log(searchResults);
   // 전체 / 구매 / 판매 필터 선택
   const handleFilterChange = (newType) => {
     setType(newType);

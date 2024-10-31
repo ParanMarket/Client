@@ -28,7 +28,7 @@ const ChatOutButton = ({ chatNo, socket }) => {
 
   const handleOutButton = async () => {
     // 확인용 콘솔
-    console.log("채팅방 나가기 버튼 눌림", chatNo);
+    "채팅방 나가기 버튼 눌림", chatNo;
 
     try {
       await axios.post(

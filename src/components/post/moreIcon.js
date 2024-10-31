@@ -45,7 +45,7 @@ const MoreIcon = ({ post }) => {
     };
     verifyUser();
   }, [post, userToken]);
-  console.log(checkUser);
+  // console.log(checkUser);
 
   const handleMenuClick = async (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,7 +56,7 @@ const MoreIcon = ({ post }) => {
   };
 
   // 본인 제외 - 신고기능
-  console.log(post);
+  // console.log(post);
   const report_post = {
     post_title: post.post_title,
     post_user_nick: post.user_nick,
@@ -87,11 +87,11 @@ const MoreIcon = ({ post }) => {
       );
 
       if (response.data.message === "success") {
-        console.log("게시물 삭제 완료");
+        // console.log("게시물 삭제 완료");
         alert("게시글 삭제를 완료했습니다!");
         navigate("/home");
       } else {
-        console.error("게시물 삭제 실패", response.data);
+        // console.error("게시물 삭제 실패", response.data);
       }
     } catch (err) {
       console.error("게시글 삭제 중 통신 오류", err);
@@ -103,7 +103,7 @@ const MoreIcon = ({ post }) => {
     const confirmUpdate = window.confirm(
       "끌올 하시겠습니까? \n하루에 한번만 가능합니다!",
     );
-    console.log("post", post.post_no);
+    // console.log("post", post.post_no);
     const post_no = post.post_no;
     if (confirmUpdate) {
       try {
@@ -112,7 +112,7 @@ const MoreIcon = ({ post }) => {
         );
 
         if (response.data.message === "success") {
-          console.log("게시물 끌올 완료");
+          // console.log("게시물 끌올 완료");
           alert("성공적으로 끌올되었습니다!");
           navigate("/home");
         } else {
@@ -134,14 +134,14 @@ const MoreIcon = ({ post }) => {
 
     //사용자 확인 후 거래 상태 변경하기
     try {
-      console.log("상태변경", post_no, changeStatus);
+      // console.log("상태변경", post_no, changeStatus);
       const response = await axios.post(
         `${API_BASE_URL}/post/post_update_status_no/`,
         { post_no, post_status: changeStatus },
       );
 
       if (response.data.message === "success") {
-        console.log("상태변경 완료!");
+        // console.log("상태변경 완료!");
         alert("상태 변경이 완료되었습니다!");
         window.location.reload();
       } else {

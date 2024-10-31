@@ -39,7 +39,7 @@ const ChatCard = ({ chat }) => {
     fetchPostData();
   }, [post_no]);
 
-  console.log("각 채팅방 카드 별 포스트 정보", post);
+  //console.log("각 채팅방 카드 별 포스트 정보", post);
 
   useEffect(() => {
     const chatNo = chat.chat_no;
@@ -52,13 +52,13 @@ const ChatCard = ({ chat }) => {
           headers: { Authorization: `Bearer ${userToken}` },
         });
 
-        console.log(response.data.unread_count);
+        //console.log(response.data.unread_count);
         setUnread(response.data.unread_count);
       } catch (error) {
         console.log("안읽음 뱃지 처리 오류", error);
       }
     };
-    console.log(unread);
+    // console.log(unread);
 
     // 소켓 연결 및 이벤트 처리
     const socket = io(`${API_BASE_URL}`);

@@ -88,7 +88,7 @@ const ChatRoomcard = () => {
       );
 
       if (response.data.message === "success") {
-        console.log("거래완료 처리했습니다.");
+        // console.log("거래완료 처리했습니다.");
         alert("거래 완료 처리 되었습니다!");
         navigate("/home");
       } else {
@@ -103,7 +103,7 @@ const ChatRoomcard = () => {
     }
 
     setStatusEnd(true);
-    console.log("거래 완료 처리");
+    // console.log("거래 완료 처리");
   };
 
   // 경찰청 사기 조회 사이트
