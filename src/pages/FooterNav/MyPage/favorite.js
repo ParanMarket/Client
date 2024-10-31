@@ -35,8 +35,6 @@ const Favorite = () => {
     fetchLikedPosts();
   }, []);
 
-  posts;
-
   if (loading) {
     return (
       <Grid
