@@ -67,7 +67,7 @@ const Home = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    if (selectedCategory === "전체" && inView && hasMore) {
+    if (selectedCategory === "전체" && inView && hasMore && page > 0) {
       loadMorePosts();
     }
   }, [inView, hasMore, selectedCategory]);
