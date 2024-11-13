@@ -18,10 +18,12 @@ const Home = () => {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [filter, setFilter] = useState("all"); // 상태 카테고리
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
   const { ref, inView } = useInView();
 
   const fetchPosts = async (page, append = false) => {
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `${API_BASE_URL}/post/post_list/${page}`,
       );
@@ -34,11 +36,14 @@ const Home = () => {
       }
     } catch (err) {
       console.error("Error fetching posts", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const fetchCategoryPosts = async (cate) => {
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `${API_BASE_URL}/post/post_cate_list/${cate}`,
       );
@@ -47,6 +52,8 @@ const Home = () => {
       setHasMore(false);
     } catch (err) {
       console.error("데이터를 불러오는데 오류가 발생했습니다.", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,10 +69,10 @@ const Home = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    if (selectedCategory === "전체" && inView && hasMore) {
+    if (selectedCategory === "전체" && inView && hasMore && !isLoading) {
       loadMorePosts();
     }
-  }, [inView, hasMore, selectedCategory]);
+  }, [inView, hasMore, selectedCategory, isLoading]);
 
   const loadMorePosts = async () => {
     const nextPage = page + 1;
