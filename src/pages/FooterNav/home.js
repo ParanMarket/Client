@@ -19,6 +19,7 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true);
   const [filter, setFilter] = useState("all"); // 상태 카테고리
   const { ref, inView } = useInView();
+  const [resetPage, setResetPage] = useState(false) // 페이지 초기화 확인
 
   const fetchPosts = async (page, append = false) => {
     try {
@@ -52,25 +53,28 @@ const Home = () => {
 
   const loadMorePosts = () => {
     const nextPage = page + 1;
-    fetchPosts(nextPage, true);
     setPage(nextPage);
+    fetchPosts(nextPage, true);
   };
 
   useEffect(() => {
     setPage(0);
     setHasMore(true)
+    setResetPage(false) // 0으로 초기화 되었는지 확인
+
     if (selectedCategory === "전체") {
       fetchPosts(0);
     } else {
       fetchCategoryPosts(selectedCategory);
     }
+    setResetPage(true)
   }, [selectedCategory]);
 
   useEffect(() => {
-    if (selectedCategory === "전체" && inView && hasMore && page > 0) {
+    if (selectedCategory === "전체" && inView && hasMore && resetPage) {
       loadMorePosts();
     }
-  }, [inView, hasMore, selectedCategory]);
+  }, [inView, hasMore, selectedCategory, resetPage]);
 
   const categories = [
     "전체",
