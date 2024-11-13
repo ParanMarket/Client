@@ -19,7 +19,6 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true);
   const [filter, setFilter] = useState("all"); // 상태 카테고리
   const { ref, inView } = useInView();
-  const [resetPage, setResetPage] = useState(false) // 페이지 초기화 확인
 
   const fetchPosts = async (page, append = false) => {
     try {
@@ -51,30 +50,27 @@ const Home = () => {
     }
   };
 
-  const loadMorePosts = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchPosts(nextPage, true);
-  };
-
+  // `page` 상태가 변경될 때마다 데이터 로드
   useEffect(() => {
-    setPage(0);
-    setHasMore(true)
-    setResetPage(false) // 0으로 초기화 되었는지 확인
-
-    if (selectedCategory === "전체") {
-      fetchPosts(0);
+    if (page === 0) {
+      setHasMore(true); // 새로운 카테고리 선택 시 무한 스크롤 초기화
+      if (selectedCategory === "전체") {
+        fetchPosts(0); // 전체 첫 페이지 데이터 로딩
+      } else {
+        fetchCategoryPosts(selectedCategory); // 카테고리별 첫 페이지 데이터 로딩
+      }
     } else {
-      fetchCategoryPosts(selectedCategory);
+      // page가 0이 아닐 경우 추가 데이터를 로드
+      fetchPosts(page, true);
     }
-    setResetPage(true)
-  }, [selectedCategory]);
+  }, [page, selectedCategory]);
 
+  // 스크롤 이벤트 발생 시 페이지 증가
   useEffect(() => {
-    if (selectedCategory === "전체" && inView && hasMore && resetPage) {
-      loadMorePosts();
+    if (selectedCategory === "전체" && inView && hasMore) {
+      setPage((prevPage) => prevPage + 1);
     }
-  }, [inView, hasMore, selectedCategory, resetPage]);
+  }, [inView, hasMore, selectedCategory]);
 
   const categories = [
     "전체",
