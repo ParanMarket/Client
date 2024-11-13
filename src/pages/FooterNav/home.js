@@ -30,6 +30,7 @@ const Home = () => {
       } else {
         const newPosts = append ? [...posts, ...response.data] : response.data;
         setPosts(newPosts);
+        //applyFilter(newPosts, filter);
       }
     } catch (err) {
       console.error("Error fetching posts", err);
@@ -43,6 +44,7 @@ const Home = () => {
       );
       setPosts(response.data);
       applyFilter(response.data, filter); // 카테고리 변경 시 필터 적용
+      //setHasMore(false);
     } catch (err) {
       console.error("데이터를 불러오는데 오류가 발생했습니다.", err);
     }
@@ -57,12 +59,8 @@ const Home = () => {
   useEffect(() => {
     if (selectedCategory === "전체") {
       fetchPosts(0);
-      setPage(0);
-      setHasMore(true);
     } else {
       fetchCategoryPosts(selectedCategory);
-      setPage(0);
-      setHasMore(false);
     }
   }, [selectedCategory]);
 
@@ -87,7 +85,10 @@ const Home = () => {
 
   const handleCategoryClick = (cate) => {
     setSelectedCategory(cate);
+    setFilter("all")
     setPosts([]);
+    setPage(0);
+    setHasMore(true)
   };
 
   // 필터링된 게시글 적용 함수
