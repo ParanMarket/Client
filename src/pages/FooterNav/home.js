@@ -52,7 +52,7 @@ const Home = () => {
 
   useEffect(() => {
     setPage(0);
-    setHasMore(true)
+    setHasMore(true);
 
     if (selectedCategory === "전체") {
       fetchPosts(0);
@@ -67,9 +67,9 @@ const Home = () => {
     }
   }, [inView, hasMore, selectedCategory]);
 
-  const loadMorePosts = () => {
+  const loadMorePosts = async () => {
     const nextPage = page + 1;
-    fetchPosts(nextPage, true);
+    await fetchPosts(nextPage, true);
     setPage(nextPage);
   };
 
@@ -89,8 +89,7 @@ const Home = () => {
   const handleCategoryClick = (cate) => {
     setSelectedCategory(cate);
     setFilter("all")
-    // setPosts([]);
-    // setPage(0);
+    setPage(0);
     setHasMore(true)
   };
 
