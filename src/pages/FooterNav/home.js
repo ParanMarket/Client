@@ -30,7 +30,7 @@ const Home = () => {
       } else {
         const newPosts = append ? [...posts, ...response.data] : response.data;
         setPosts(newPosts);
-        //applyFilter(newPosts, filter);
+        applyFilter(newPosts, filter);
       }
     } catch (err) {
       console.error("Error fetching posts", err);
@@ -44,7 +44,7 @@ const Home = () => {
       );
       setPosts(response.data);
       applyFilter(response.data, filter); // 카테고리 변경 시 필터 적용
-      //setHasMore(false);
+      setHasMore(false);
     } catch (err) {
       console.error("데이터를 불러오는데 오류가 발생했습니다.", err);
     }
@@ -57,6 +57,8 @@ const Home = () => {
   };
 
   useEffect(() => {
+    setPage(0);
+    setHasMore(true)
     if (selectedCategory === "전체") {
       fetchPosts(0);
     } else {
