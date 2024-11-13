@@ -30,7 +30,6 @@ const Home = () => {
       } else {
         const newPosts = append ? [...posts, ...response.data] : response.data;
         setPosts(newPosts);
-        applyFilter(newPosts, filter); // 새로운 포스트에 필터 적용
       }
     } catch (err) {
       console.error("Error fetching posts", err);
@@ -71,7 +70,7 @@ const Home = () => {
     if (selectedCategory === "전체" && inView && hasMore) {
       loadMorePosts();
     }
-  }, [inView, hasMore]);
+  }, [inView, hasMore, selectedCategory]);
 
   const categories = [
     "전체",
@@ -143,6 +142,7 @@ const Home = () => {
             </Button>
           ))}
         </Container>
+
         <ButtonGroup fullWidth sx={{ mt: 1 }}>
           <Button
             variant={filter === "all" ? "contained" : "outlined"}
