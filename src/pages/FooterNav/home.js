@@ -50,27 +50,28 @@ const Home = () => {
     }
   };
 
-  // `page` 상태가 변경될 때마다 데이터 로드
   useEffect(() => {
-    if (page === 0) {
-      setHasMore(true); // 새로운 카테고리 선택 시 무한 스크롤 초기화
-      if (selectedCategory === "전체") {
-        fetchPosts(0); // 전체 첫 페이지 데이터 로딩
-      } else {
-        fetchCategoryPosts(selectedCategory); // 카테고리별 첫 페이지 데이터 로딩
-      }
-    } else {
-      // page가 0이 아닐 경우 추가 데이터를 로드
-      fetchPosts(page, true);
-    }
-  }, [page, selectedCategory]);
+    setPage(0);
+    setHasMore(true)
 
-  // 스크롤 이벤트 발생 시 페이지 증가
+    if (selectedCategory === "전체") {
+      fetchPosts(0);
+    } else {
+      fetchCategoryPosts(selectedCategory);
+    }
+  }, [selectedCategory]);
+
   useEffect(() => {
     if (selectedCategory === "전체" && inView && hasMore) {
-      setPage((prevPage) => prevPage + 1);
+      loadMorePosts();
     }
   }, [inView, hasMore, selectedCategory]);
+
+  const loadMorePosts = () => {
+    const nextPage = page + 1;
+    fetchPosts(nextPage, true);
+    setPage(nextPage);
+  };
 
   const categories = [
     "전체",
@@ -88,8 +89,8 @@ const Home = () => {
   const handleCategoryClick = (cate) => {
     setSelectedCategory(cate);
     setFilter("all")
-    setPosts([]);
-    setPage(0);
+    // setPosts([]);
+    // setPage(0);
     setHasMore(true)
   };
 
