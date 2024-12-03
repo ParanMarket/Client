@@ -8,7 +8,7 @@
 - 2024.03.15 ~ 2024.09.27
 
 ### 배포 링크
-- [Frontend (FE)](https://www.paranmarket.shop/)
+- [Frontend (FE)](https://paran-market.vercel.app/)
 - [Backend (BE)](https://api.paranmarket.shop/)
 
 ### 기술 스택
